@@ -1,0 +1,6 @@
+# test
+<https://github.com/dbpedia/dbpedia-links/blob/master/datasets/dbpedia.org/www.geonames.org/geonames_links.nt> 
+	<http://example.org/vocab/uncompressedturtlefile> "datasets/dbpedia.org/www.geonames.org/geonames_links.nt" ;
+	<http://example.org/vocab/createdby> "Peter Griffin" .
+	
+
