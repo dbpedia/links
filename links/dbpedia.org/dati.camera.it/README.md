@@ -1,4 +1,4 @@
-1533 triples extracetd using this query 
+1533 triples extracted using this query 
 
 		CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} 
 		where {
