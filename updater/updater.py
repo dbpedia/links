@@ -5,7 +5,6 @@ Tries to execute every available shell-script for their respective links and rea
 """
 from os import walk, path, getcwd, listdir, chdir
 import subprocess
-import sys
 
 class Updater:
 
@@ -43,14 +42,17 @@ class Updater:
         :param scripts: Paths of all (currently only) shell scripts
         :return: Executes all scripts
         """
+        basecwd = getcwd()
         for script in scripts:
-            basecwd = getcwd()
             chdir(path.normpath(path.dirname(script)))
             try:
-                subprocess.Popen(['sh', script])
+                print('Starting: ' + script)
+                process = subprocess.Popen(['sh', script])
+                process.wait
             except Exception as e:
-                print(e)
-            chdir(path.normpath(basecwd))
+                process.kill()
+                print('Killing process: ' + script + '\n' + process.stderr)
+        chdir(path.normpath(basecwd))
 
 
 def main():
