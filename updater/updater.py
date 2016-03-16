@@ -3,7 +3,7 @@
 Updater class, currently main class.
 Tries to execute every available shell-script for their respective links and reading the directories
 """
-from os import walk, path, getcwd, listdir
+from os import walk, path, getcwd, listdir, chdir
 import subprocess
 import sys
 
@@ -44,10 +44,13 @@ class Updater:
         :return: Executes all scripts
         """
         for script in scripts:
+            basecwd = getcwd()
+            chdir(path.normpath(path.dirname(script)))
             try:
                 subprocess.Popen(['sh', script])
             except Exception as e:
-                print (e)
+                print(e)
+            chdir(path.normpath(basecwd))
 
 
 def main():
