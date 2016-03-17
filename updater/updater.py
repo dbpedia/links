@@ -4,6 +4,7 @@ Updater class, currently main class.
 Tries to execute every available shell-script for their respective links and reading the directories
 """
 from os import walk, path, getcwd, listdir, chdir
+from verify import Verify
 import subprocess
 
 class Updater:
@@ -33,9 +34,22 @@ class Updater:
         for dir in dirs:
             for (dirpath, dirnames, filenames) in walk(path.normpath(self.linksDir + '/' + dir)):
                 for file in filenames:
-                    if '.sh' in file:
+                    if '.sh' == file[-3:]:
                         scripts.append(path.normpath(dirpath + '/' + file))
         return scripts
+
+    def readTriples(self, dirs):
+        """
+        :param dirs: List of directories within linkDir
+        :return: List of the absolute path to all .nt files
+        """
+        triples = []
+        for dir in dirs:
+            for (dirpath, dirnames, filenames) in walk(path.normpath(self.linksDir + '/' + dir)):
+                for file in filenames:
+                    if '.nt' == file[-3:]:
+                        triples.append(path.normpath(dirpath + '/' + file))
+        return triples
 
     def executeScripts(self, scripts):
         """
@@ -54,10 +68,21 @@ class Updater:
                 print('Killing process: ' + script + '\n' + process.stderr)
         chdir(path.normpath(basecwd))
 
+    def verifyAllLinks(self, triples):
+        """
+        :param triples: A list of all absolute paths for .nt files
+        :return: Errors
+        """
+        for file in triples:
+            print('Verifying ' + file)
+            verify = Verify(file)
+            verify.verifyLinks()
+
 
 def main():
     updater = Updater(input('Insert the parent directory (e.g. dbpedia.org):'))
-    updater.executeScripts(updater.readScripts(updater.readDirs()))
+    updater.verifyAllLinks(updater.readTriples(updater.readDirs()))
+    #updater.executeScripts(updater.readScripts(updater.readDirs()))
 
 if __name__ == '__main__':
     main()
