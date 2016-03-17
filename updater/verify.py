@@ -2,7 +2,7 @@
 """
 Verify class which will verify a given .nt file
 """
-from urllib import request
+from http import client
 import sys
 
 class Verify:
@@ -51,23 +51,26 @@ class Verify:
         """
         errs = []
         count = len(catalouge)
-        if 'http://dbpedia.org' in catalouge[0][0]:
-            for i, triple in enumerate(catalouge):
-                try:
-                    request.urlopen(triple[2])
-                except request.HTTPError:
-                    errs.append(i)
-                sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
-                sys.stdout.flush()
+        if count == 0:
+            print('File is empty.')
         else:
-            for i, triple in enumerate(catalouge):
-                try:
-                    request.urlopen(triple[0])
-                except request.HTTPError:
-                    errs.append(i)
-                sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
-                sys.stdout.flush()
-        sys.stdout.write('\nDone\n')
+            if 'http://dbpedia.org' in catalouge[0][0]:
+                for i, triple in enumerate(catalouge):
+                    try:
+                        client.HTTPConnection(triple[2])
+                    except client.HTTPException:
+                        errs.append(i)
+                    sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
+                    sys.stdout.flush()
+            else:
+                for i, triple in enumerate(catalouge):
+                    try:
+                        client.HTTPConnection(triple[0])
+                    except client.HTTPException:
+                        errs.append(i)
+                    sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
+                    sys.stdout.flush()
+            sys.stdout.write('\nDone\n')
         return errs
 
     def verifyLinks(self):
@@ -80,6 +83,6 @@ class Verify:
         else:
             output = 'There were HTTPErrors on the following positions:'
             for place in self.checkCatalouge(self.catalougeLinks(self.readFile())):
-                output += ' ' + place + ','
+                output += ' ' + str(place) + ','
             output += '\n\n'
             print(output)
