@@ -71,7 +71,6 @@ class Verify:
                         errs.append([i, err])
                     sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
                     sys.stdout.flush()
-                print('lmao')
             sys.stdout.write('\r\nDone\n')
         return errs
 
