@@ -62,11 +62,11 @@ class Updater:
             try:
                 print('Starting: ' + script)
                 process = subprocess.Popen(['sh', script])
-                process.wait
             except Exception as e:
                 process.kill()
                 print('Killing process: ' + script + '\n' + process.stderr)
         chdir(path.normpath(basecwd))
+        process.wait()
 
     def verifyAllLinks(self, triples):
         """
@@ -81,8 +81,8 @@ class Updater:
 
 def main():
     updater = Updater(input('Insert the parent directory (e.g. dbpedia.org):'))
+    updater.executeScripts(updater.readScripts(updater.readDirs()))
     updater.verifyAllLinks(updater.readTriples(updater.readDirs()))
-    #updater.executeScripts(updater.readScripts(updater.readDirs()))
 
 if __name__ == '__main__':
     main()
