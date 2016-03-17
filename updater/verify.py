@@ -29,9 +29,10 @@ class Verify:
         :param line: A single line from the .nt file
         :return: A list with 3 links
         """
-        links = str.split(line, '> <')
-        links[0] = links[0][1:]
-        links[2] = links[2][:-3]
+        links = str.split(line, '>')[0:3]
+        links[0] = links[0].replace('<', '').strip()
+        links[1] = links[1].replace('<', '').strip()
+        links[2] = links[2].replace('<', '').strip()
         return links
 
     def catalougeLinks(self, text):
@@ -57,20 +58,21 @@ class Verify:
             if 'http://dbpedia.org' in catalouge[0][0]:
                 for i, triple in enumerate(catalouge):
                     try:
-                        client.HTTPConnection(triple[2])
-                    except client.HTTPException:
-                        errs.append(i)
+                        client.HTTPConnection(triple[2].strip('http://'))
+                    except client.HTTPException as err:
+                        errs.append([i, err])
                     sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
                     sys.stdout.flush()
             else:
                 for i, triple in enumerate(catalouge):
                     try:
-                        client.HTTPConnection(triple[0])
-                    except client.HTTPException:
-                        errs.append(i)
+                        client.HTTPConnection(triple[0].strip('http://'))
+                    except client.HTTPException as err:
+                        errs.append([i, err])
                     sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
                     sys.stdout.flush()
-            sys.stdout.write('\nDone\n')
+                print('lmao')
+            sys.stdout.write('\r\nDone\n')
         return errs
 
     def verifyLinks(self):
@@ -79,10 +81,10 @@ class Verify:
         :return:
         """
         if len(self.checkCatalouge(self.catalougeLinks(self.readFile()))) == 0:
-            print('There were no HTTPErrors in ' + self.file + '\n\n')
+            output = 'There were no HTTPErrors in ' + self.file + '\n\n'
         else:
             output = 'There were HTTPErrors on the following positions:'
             for place in self.checkCatalouge(self.catalougeLinks(self.readFile())):
                 output += ' ' + str(place) + ','
             output += '\n\n'
-            print(output)
+        print(output)
