@@ -3,6 +3,7 @@
 Verify class which will verify a given .nt file
 """
 from http import client
+import urllib3
 import sys
 
 class Verify:
@@ -57,18 +58,22 @@ class Verify:
         else:
             if 'http://dbpedia.org' in catalouge[0][0]:
                 for i, triple in enumerate(catalouge):
-                    try:
-                        client.HTTPConnection(triple[2].strip('http://'))
-                    except client.HTTPException as err:
-                        errs.append([i, err])
+                    http = urllib3.PoolManager()
+                    r = http.request('HEAD', triple[2])
+                    print (r.status)
+                    #connection = client.HTTPConnection(triple[2].strip('http://'))
+                    #connection.request("HEAD", '')
+                    #print(connection.getresponse().status)
                     sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
                     sys.stdout.flush()
             else:
                 for i, triple in enumerate(catalouge):
-                    try:
-                        client.HTTPConnection(triple[0].strip('http://'))
-                    except client.HTTPException as err:
-                        errs.append([i, err])
+                    http = urllib3.PoolManager()
+                    r = http.request('HEAD', triple[0])
+                    print (r.status)
+                    #connection = client.HTTPConnection(triple[0].strip('http://'))
+                    #connection.request("HEAD", '')
+                    #print(connection.getresponse().status)
                     sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
                     sys.stdout.flush()
             sys.stdout.write('\r\nDone\n')

@@ -81,7 +81,7 @@ class Updater:
 
 def main():
     updater = Updater(input('Insert the parent directory (e.g. dbpedia.org):'))
-    updater.executeScripts(updater.readScripts(updater.readDirs()))
+    #updater.executeScripts(updater.readScripts(updater.readDirs()))
     updater.verifyAllLinks(updater.readTriples(updater.readDirs()))
 
 if __name__ == '__main__':
