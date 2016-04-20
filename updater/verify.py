@@ -2,8 +2,7 @@
 """
 Verify class which will verify a given .nt file
 """
-from http import client
-import urllib3
+import subprocess
 import sys
 
 class Verify:
@@ -58,6 +57,10 @@ class Verify:
         else:
             if 'http://dbpedia.org' in catalouge[0][0]:
                 for i, triple in enumerate(catalouge):
+                    sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
+                    sys.stdout.flush()
+                    subprocess.check_output(["./URIheader.sh", triple[2]])
+                    """
                     http = urllib3.PoolManager()
                     r = http.request('HEAD', triple[2])
                     print (r.status)
@@ -66,8 +69,13 @@ class Verify:
                     #print(connection.getresponse().status)
                     sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
                     sys.stdout.flush()
-            else:
+                    """
+            elif 'http://dbpedia.org' in catalouge[0][2]:
                 for i, triple in enumerate(catalouge):
+                    sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
+                    sys.stdout.flush()
+                    subprocess.check_output(["./URIheader.sh", triple[0]])
+                    """
                     http = urllib3.PoolManager()
                     r = http.request('HEAD', triple[0])
                     print (r.status)
@@ -76,6 +84,7 @@ class Verify:
                     #print(connection.getresponse().status)
                     sys.stdout.write('\rValidating file: %d%%' % int((i * 100) / count))
                     sys.stdout.flush()
+                    """
             sys.stdout.write('\r\nDone\n')
         return errs
 
