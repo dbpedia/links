@@ -2,9 +2,9 @@
 @prefix dc: 		<http://purl.org/dc/elements/1.1/> .
 @prefix void: 		<http://rdfs.org/ns/void#> .
 
-<http://dbpedia.org/links/transparency.270a.info> a void:Linkset ;
-	dcterms:author "[Insert Authors name]" ;
+<http://dbpedia.org/links/gadm.geovocab.org> a void:Linkset ;
+	dcterms:author "Robin Murphy" ;
 	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dc:description "[Some description]" .
+	dc:description "BBC Things provides a single reference for a growing collection of the things that matter to the BBC and their audiences." .
 
 #still under discussion

@@ -2,7 +2,7 @@
 @prefix dc: 		<http://purl.org/dc/elements/1.1/> .
 @prefix void: 		<http://rdfs.org/ns/void#> .
 
-<http://dbpedia.org/links/transparency.270a.info> a void:Linkset ;
+<http://dbpedia.org/links/rdfdata.elonet.europa.eu> a void:Linkset ;
 	dcterms:author "[Insert Authors name]" ;
 	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dc:description "[Some description]" .
