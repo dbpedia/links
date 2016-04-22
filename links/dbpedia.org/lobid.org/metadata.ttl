@@ -6,7 +6,7 @@
 
 <http://dbpedia.org/links/lobid.org> a void:Linkset ;
 	dbp:script "scripts/makeManifestationLinks.sh"^^dbp:shell ;
-	conf:limesConf <https://github.com/lobid/silk-xml-configs/tree/master/international-dbpedia> ; 
+	conf:silkConf <https://github.com/lobid/silk-xml-configs/tree/master/international-dbpedia> ; 
 	void:objectsTarget <http://datahub.io/dataset/lobid-resources> ;
 	dct:author "http://lobid.org/person/pc" ;
 	dc:description "These links are used in the LOD service of the hbz. The data is also described at the datahub." ;
@@ -15,7 +15,7 @@
 
 <http://dbpedia.org/links/lobid.org> a void:Linkset ;
 	dbp:script "scripts/makeOrganisationLinks.sh"^^dbp:shell ;
-	conf:limesConf <https://github.com/lobid/silk-xml-configs/tree/master/international-dbpedia> ; 
+	conf:silkConf <https://github.com/lobid/silk-xml-configs/tree/master/international-dbpedia> ; 
 	void:objectsTarget <http://datahub.io/dataset/lobid-organisations> ;
 	dct:author "http://lobid.org/person/pc" ;
 	dc:description "These links maps to libraries, museums and archives. They are used in the LOD service of the hbz. The data is also described at the datahub." .
