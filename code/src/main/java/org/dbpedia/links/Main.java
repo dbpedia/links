@@ -20,7 +20,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        File f = new File("/home/jim/Downloads");
+        File f = new File("."); //current directory adjust according to folder remove the trailing '/'
         List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
 
         allFilesInRepo.stream().forEach(file -> {
