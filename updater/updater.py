@@ -78,11 +78,21 @@ class Updater:
             verify = Verify(file)
             verify.verifyLinks()
 
+    def checkAllSyntax(self, triples):
+        """
+        Testmethod for Syntax - should be deleted later on
+        """
+        for file in triples:
+            print('Checking' + file)
+            verify = Verify(file)
+            verify.checkRDFsyntax()
+
 
 def main():
     updater = Updater(input('Insert the parent directory (e.g. dbpedia.org):'))
     #updater.executeScripts(updater.readScripts(updater.readDirs()))
-    updater.verifyAllLinks(updater.readTriples(updater.readDirs()))
+    #updater.verifyAllLinks(updater.readTriples(updater.readDirs()))
+    updater.checkAllSyntax(updater.readTriples(updater.readDirs()))
 
 if __name__ == '__main__':
     main()

@@ -101,3 +101,16 @@ class Verify:
                 output += ' ' + str(place) + ','
             output += '\n\n'
         print(output)
+
+    def checkRDFsyntax(self):
+        error = ""
+        try:
+            output = subprocess.check_output(["./rdfCheck.sh", self.file])
+        except subprocess.SubprocessError as e:
+            error = e
+        if len(error) < 1:
+            print(output)
+        else:
+            prin("Error occured:\n" + error)
+
+        print (subprocess.check_output(["./rdfCheck.sh", self.file]))
