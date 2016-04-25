@@ -31,6 +31,12 @@
             <version>${rdfunit-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.aksw.rdfunit</groupId>
+            <artifactId>rdfunit-core</artifactId>
+            <version>${rdfunit-version}</version>
+        </dependency>
+
         <!-- jena-sparql-api -->
         <dependency>
             <groupId>org.aksw.jena-sparql-api</groupId>
