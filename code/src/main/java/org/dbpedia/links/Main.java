@@ -25,6 +25,9 @@ public class Main {
 
         checkRdfSyntax(allFilesInRepo);
 
+        checkDBpediaAsSubject(allFilesInRepo);
+
+        checkMetadataFiles(allFilesInRepo);
 
 
 
@@ -42,6 +45,40 @@ public class Main {
 
                     //Syntax error reading file...
                 }
+            }
+
+        });
+    }
+
+    private static void checkDBpediaAsSubject(List<File> filesList) {
+        filesList.stream().forEach(file -> {
+            String fileName = file.getAbsolutePath();
+            if (fileName.endsWith("links.nt")) {  // TODO make sure we check everything
+                RdfReader reader = new RdfStreamReader(fileName);
+                try {
+                    Model model = reader.read();
+                    model.listSubjects()
+                            .forEachRemaining( subject -> {
+                                if (!subject.toString().contains("dbpedia.org/")) {
+                                    throw new RuntimeException("File " + fileName + " does not have a dbpedia URI as subject");
+                                }
+                            });
+                } catch (RdfReaderException e) {
+                    throw new RuntimeException("Syntax error in file:" + fileName, e);
+
+                    //Syntax error reading file...
+                }
+            }
+
+        });
+    }
+
+
+    private static void checkMetadataFiles(List<File> filesList) {
+        filesList.stream().forEach(file -> {
+            String fileName = file.getAbsolutePath();
+            if (fileName.endsWith("metadata.ttl")) {
+                // TODO RDFUnit check
             }
 
         });
