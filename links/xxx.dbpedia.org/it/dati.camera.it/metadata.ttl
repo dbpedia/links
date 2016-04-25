@@ -4,7 +4,7 @@
 @prefix dbp:		<http://dbpedia.org/property/> .
 
 <http://dbpedia.org/links/dati.camera.it> a void:Linkset ;
-	dbp:script "scripts/ocd_get_and_sort.sh"^^dbp:shell ;
-	dct:author "[insert author]" ;
-	dc:description "[insert description]" ;
+	dbp:script <scripts/ocd_get_and_sort.sh> ;
+	dc:author <http://example.org/author> ;
+	dct:description "[insert description]" ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> .

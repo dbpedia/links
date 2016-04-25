@@ -1,17 +1,17 @@
 @prefix dcterms:	<http://purl.org/dc/terms/> .
 @prefix dc: 		<http://purl.org/dc/elements/1.1/> .
 @prefix void: 		<http://rdfs.org/ns/void#> .
-@prefix conf:		<[LIMES / SILK configuration namespace]>
+@prefix dbp:		<http://dbpedia.org/property/linkConf> .
 
 <http://dbpedia.org/links/www.geoname.org> a void:Linkset ;
-	conf:silkConf "link-specs/dbpedia-geonames-airport.xml" ;
-	conf:silkConf "link-specs/dbpedia-geonames-city.xml" ;
-	conf:silkConf "link-specs/dbpedia-geonames-island.xml" ;
-	conf:silkConf "link-specs/dbpedia-geonames-lake.xml" ;
-	conf:silkConf "link-specs/dbpedia-geonames-mountain.xml" ;
-	conf:silkConf "link-specs/dbpedia-geonames-mountainRange.xml" ;
-	dcterms:author "Peter Griffin" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-airport.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-city.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-island.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-lake.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-mountain.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-mountainRange.xml" ;
+	dc:author <http://example.org/Peter-Griffin> ;
 	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dc:description "[Some description]" .
+	dcterms:description "[Some description]" .
 
 #still under discussion

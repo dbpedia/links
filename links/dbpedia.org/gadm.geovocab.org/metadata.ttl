@@ -7,5 +7,6 @@
 	dbp:script <scripts/makeLinks.sh> ;
 	dbp:ntriplefilelocation <gadm_links.nt> ;
 	void:objectsTarget <http://gadm.geovocab.org/> ;
-	dc:description "An RDF spatial representation of all the administrative regions in the world." ;
+	dct:description "An RDF spatial representation of all the administrative regions in the world." ;
+	dc:author <http://example.org/gadm-author> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	.

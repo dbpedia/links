@@ -980,7 +980,7 @@
 <http://dbpedia.org/resource/Campbell_House_Museum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Organization> .
 <http://dbpedia.org/resource/Campbell_Independent_School_District> <http://umbel.org/umbel#isLike> <http://lobid.org/organisation/US-TxCmpISD> .
 <http://dbpedia.org/resource/Campbell_Independent_School_District> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Organization> .
-<http://dbpedia.org/resource/Canadian_Centre_for_Architecture> <http://umbel.org/umbel#isLike> <http://lobid.org/organisation/US-NNCCA [obsolete; do not use]> .
+<http://dbpedia.org/resource/Canadian_Centre_for_Architecture> <http://umbel.org/umbel#isLike> <http://lobid.org/organisation/US-NNCCA> .
 <http://dbpedia.org/resource/Canadian_Centre_for_Architecture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Organization> .
 <http://dbpedia.org/resource/Canadian_Independent_School_District> <http://umbel.org/umbel#isLike> <http://lobid.org/organisation/US-TxCndISD> .
 <http://dbpedia.org/resource/Canadian_Independent_School_District> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Organization> .

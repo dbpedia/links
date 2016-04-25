@@ -3,8 +3,8 @@
 @prefix void: 		<http://rdfs.org/ns/void#> .
 
 <http://dbpedia.org/links/gadm.geovocab.org> a void:Linkset ;
-	dcterms:author "Robin Murphy" ;
+	dc:author <http://example.org/Robin-Murphy> ;
 	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dc:description "BBC Things provides a single reference for a growing collection of the things that matter to the BBC and their audiences." .
+	dcterms:description "BBC Things provides a single reference for a growing collection of the things that matter to the BBC and their audiences." .
 
 #still under discussion

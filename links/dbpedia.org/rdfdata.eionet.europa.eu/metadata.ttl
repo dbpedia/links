@@ -3,8 +3,8 @@
 @prefix void: 		<http://rdfs.org/ns/void#> .
 
 <http://dbpedia.org/links/rdfdata.elonet.europa.eu> a void:Linkset ;
-	dcterms:author "[Insert Authors name]" ;
+	dc:author <http://example.org/rdfdata-author> ;
 	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dc:description "[Some description]" .
+	dcterms:description "[Some description]" .
 
 #still under discussion

@@ -5,8 +5,8 @@
 
 <http://dbpedia.org/links/transparency.270a.info> a void:Linkset ;
     void:objectsTarget <http://vocabulary.wolterskluwer.de/arbeitsrecht> ;
-    dc:author "Wolters Kluwer Deutschland GmbH" ;
-    dc:description "Thesaurus zum Thema Arbeitsrecht"@de ;
+    dc:author <http://example.org/Wolters-Kluwer-Deutschland-GmbH> ;
+    dcterms:description "Thesaurus zum Thema Arbeitsrecht"^^xsd:string ;
     dcterms:created: "2012-04-01T00:00:00Z" ;
     dcterms:hasVersion: "0.1"^^xsd:decimal ;
     dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> .

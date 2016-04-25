@@ -3,6 +3,6 @@
 @prefix void: 		<http://rdfs.org/ns/void#> .
 
 <http://dbpedia.org/links/test.rce.rnatoolset.net> a void:Linkset ;
-	dct:author "[insert author]" ;
-	dc:description "[insert description]" ;
+	dc:author <http://example.org/author> ;
+	dct:description "[insert description]" ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> .
