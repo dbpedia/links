@@ -16,11 +16,11 @@ import static java.util.Arrays.stream;
  * @author Dimitris Kontokostas
  * @since 22/4/2016 5:10 μμ
  */
-public class Main {
+public class ValidateRepo {
 
     public static void main(String[] args) throws Exception {
 
-        File f = new File("./").getParentFile();
+        File f = new File("../");  // hard code this for now
         List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
 
         checkRdfSyntax(allFilesInRepo);
