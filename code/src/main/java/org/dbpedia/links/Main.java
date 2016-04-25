@@ -1,9 +1,9 @@
 package org.dbpedia.links;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import org.aksw.rdfunit.io.reader.RDFReader;
-import org.aksw.rdfunit.io.reader.RDFReaderException;
-import org.aksw.rdfunit.io.reader.RDFStreamReader;
+import org.aksw.rdfunit.io.reader.RdfReader;
+import org.aksw.rdfunit.io.reader.RdfReaderException;
+import org.aksw.rdfunit.io.reader.RdfStreamReader;
+import org.apache.jena.rdf.model.Model;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,24 +20,31 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        File f = new File("."); //current directory adjust according to folder remove the trailing '/'
+        File f = new File("./").getParentFile();
         List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
 
-        allFilesInRepo.stream().forEach(file -> {
+        checkRdfSyntax(allFilesInRepo);
+
+
+
+
+    }
+
+    private static void checkRdfSyntax(List<File> filesList) {
+        filesList.stream().forEach(file -> {
             String fileName = file.getAbsolutePath();
             if (fileName.endsWith("nt") || fileName.endsWith("ttl")) {
-                RDFReader reader = new RDFStreamReader(fileName);
+                RdfReader reader = new RdfStreamReader(fileName);
                 try {
                     Model model = reader.read();
-                } catch (RDFReaderException e) {
-                    e.printStackTrace();
+                } catch (RdfReaderException e) {
+                    throw new RuntimeException("Syntax error in file:" + fileName, e);
+
                     //Syntax error reading file...
                 }
             }
 
         });
-
-
     }
 
     private static List<File> getAllFilesInFolderOrFile (File input)
