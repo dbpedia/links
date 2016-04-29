@@ -69,7 +69,7 @@ public class GenerateLinks {
     private static void executeShellScript(File file) {
         Process p = null;
         try {
-            p = Runtime.getRuntime().exec(" ( cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) ");
+            p = Runtime.getRuntime().exec(" bash -c ( cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) ");
             p.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
