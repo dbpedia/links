@@ -13,12 +13,11 @@ import org.aksw.rdfunit.validate.wrappers.RDFUnitStaticValidator;
 import org.apache.jena.rdf.model.Model;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.stream;
 import static org.aksw.rdfunit.io.reader.RdfReaderFactory.createResourceReader;
 import static org.aksw.rdfunit.sources.SchemaSourceFactory.createSchemaSourceSimple;
+import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
 
 
 /**
@@ -120,24 +119,5 @@ public class ValidateRepo {
         return new TestSuite(new ShaclTestGenerator().generate(ontologyShaclSource));
     }
 
-    private static List<File> getAllFilesInFolderOrFile (File input)
-    {
-        List<File> fileList = new ArrayList<>();
-        if(input.isDirectory()) {
-            stream(input.listFiles()).forEach(file ->  {
 
-                if (file.isDirectory()) {
-                    fileList.addAll(getAllFilesInFolderOrFile(file));
-                } else {
-                    fileList.add(file);
-                }
-            });
-        }
-        if(input.isFile())
-        {
-            fileList.add(input);
-        }
-
-        return fileList;
-    }
 }
