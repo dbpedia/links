@@ -58,7 +58,7 @@ public class GenerateLinks {
 
             if (fileName.equals("metadata.ttl")) {
 
-                L.info("Process " + filePath);
+                L.info("Process       " + filePath);
 
                 Model model = RDFDataMgr.loadModel(filePath);
 
@@ -70,31 +70,29 @@ public class GenerateLinks {
                             try {
                                 scriptFilePath = FilenameUtils.normalize(new URI(node.asResource().getURI()).getPath());
                             } catch (URISyntaxException e) {
-                                e.printStackTrace();
+                                L.error(e);
                             }
 
-                            L.info("  Script: " + scriptFilePath);
+                            L.info("  Script            " + scriptFilePath);
 
                             File scriptFile = new File(scriptFilePath);
                             if (scriptFile.exists()) {
                                 L.info("  Going to execute " + scriptFilePath);
                                 executeShellScript(scriptFile);
                             } else {
-                                L.warn("  No file " + scriptFilePath);
+                                L.warn("  No file           " + scriptFilePath);
                             }
                         });
 
                 } catch (Exception e) {
-                    throw new RuntimeException("Syntax error in file:" + fileName, e);
-
-                    //Syntax error reading file...
+                    L.error(e);
                 }
             }
         });
     }
 
     private static void executeShellScript(File file) {
-        L.info("  Execute " + file.getAbsolutePath());
+        L.info("  Execute           " + file.getAbsolutePath());
 
         Process p = null;
         try {
