@@ -31,28 +31,30 @@ public class ValidateRepo {
         File f = new File("../");  // hard code this for now
         List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
 
-        checkRdfSyntax(allFilesInRepo);
+        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".nt"));
+        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".ttl"));
+        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".n3"));
 
-        checkDBpediaAsSubject(allFilesInRepo);
+        checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.nt"));
+        checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
 
-        checkMetadataFiles(allFilesInRepo);
+        checkFolderStructure(allFilesInRepo);
 
-
+        checkMetadataFilesWithRdfUnit(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 
     }
 
     private static void checkRdfSyntax(List<File> filesList) {
+
         filesList.stream().forEach(file -> {
             String fileName = file.getAbsolutePath();
-            if (fileName.endsWith("nt") || fileName.endsWith("ttl")) {
-                RdfReader reader = new RdfStreamReader(fileName);
-                try {
-                    Model model = reader.read();
-                } catch (RdfReaderException e) {
-                    throw new RuntimeException("Syntax error in file:" + fileName, e);
+            RdfReader reader = new RdfStreamReader(fileName);
+            try {
+                reader.read();
+            } catch (RdfReaderException e) {
+                throw new RuntimeException("Syntax error in file:" + fileName, e);
 
-                    //Syntax error reading file...
-                }
+                //Syntax error reading file...
             }
 
         });
@@ -61,28 +63,58 @@ public class ValidateRepo {
     private static void checkDBpediaAsSubject(List<File> filesList) {
         filesList.stream().forEach(file -> {
             String fileName = file.getAbsolutePath();
-            if (fileName.endsWith("links.nt")) {  // TODO make sure we check everything
-                RdfReader reader = new RdfStreamReader(fileName);
-                try {
-                    Model model = reader.read();
-                    model.listSubjects()
-                            .forEachRemaining( subject -> {
-                                if (!subject.toString().contains("dbpedia.org/")) {
-                                    throw new RuntimeException("File " + fileName + " does not have a dbpedia URI as subject");
-                                }
-                            });
-                } catch (RdfReaderException e) {
-                    throw new RuntimeException("Syntax error in file:" + fileName, e);
+            RdfReader reader = new RdfStreamReader(fileName);
+            try {
+                Model model = reader.read();
+                model.listSubjects()
+                        .forEachRemaining( subject -> {
+                            if (!subject.toString().contains("dbpedia.org/")) {
+                                throw new RuntimeException("File " + fileName + " does not have a dbpedia URI as subject");
+                            }
+                        });
+            } catch (RdfReaderException e) {
+                throw new RuntimeException("Syntax error in file:" + fileName, e);
 
-                    //Syntax error reading file...
-                }
+                //Syntax error reading file...
             }
 
         });
     }
 
+    private static void checkFolderStructure(List<File> fileList) {
+        fileList.stream()
+                .filter(File::isDirectory)
+                .filter(f -> f.getAbsolutePath().contains("dbpedia.org/"))
 
-    private static void checkMetadataFiles(List<File> filesList) {
+                .filter(f -> !f.getAbsolutePath().endsWith("dbpedia.org")) // exclude main link folder
+                .filter(f -> f.getAbsolutePath().contains("xxx.dbpedia.org/") && f.getName().length() > 2 ) // exclude lang folders
+
+                .filter(f -> !f.getName().equals("scripts")) // exclude subfolders
+                .filter(f -> !f.getName().equals("link-specs")) // exclude subfolders
+                .forEach( f -> {
+                    boolean foundReadMe = false;
+                    boolean foundMetadata = false;
+                    for (File file : f.listFiles()) {
+                        if (file.getName().toLowerCase().startsWith("readme")) {
+                            foundReadMe = true;
+                        }
+                        if (file.getName().equals("metadata.ttl")) {
+                            foundMetadata = true;
+                        }
+                    }
+
+                    if (!foundMetadata) {
+                        throw new IllegalArgumentException("No metadata.ttl file found in folder " + f.getAbsolutePath());
+                    }
+
+                    if (!foundReadMe) {
+                        throw new IllegalArgumentException("No readme file found in folder " + f.getAbsolutePath());
+                    }
+                });
+    }
+
+
+    private static void checkMetadataFilesWithRdfUnit(List<File> filesList) {
 
         TestSuite testSuite = createTestSuiteWithShacl("/shacl_metadata.ttl");
 
@@ -108,7 +140,7 @@ public class ValidateRepo {
         });
     }
 
-    public static TestSuite createTestSuiteWithShacl(String schemaSource) {
+    private static TestSuite createTestSuiteWithShacl(String schemaSource) {
         RdfReader ontologyShaclReader = null;
         try {
             ontologyShaclReader = new RdfModelReader(createResourceReader(schemaSource).read());
