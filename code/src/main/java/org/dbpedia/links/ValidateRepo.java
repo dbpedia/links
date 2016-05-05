@@ -4,7 +4,6 @@ import org.aksw.rdfunit.enums.TestCaseExecutionType;
 import org.aksw.rdfunit.io.reader.RdfModelReader;
 import org.aksw.rdfunit.io.reader.RdfReader;
 import org.aksw.rdfunit.io.reader.RdfReaderException;
-import org.aksw.rdfunit.io.reader.RdfStreamReader;
 import org.aksw.rdfunit.model.interfaces.TestSuite;
 import org.aksw.rdfunit.model.interfaces.results.TestExecution;
 import org.aksw.rdfunit.sources.SchemaSource;
@@ -13,8 +12,10 @@ import org.aksw.rdfunit.validate.wrappers.RDFUnitStaticValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.riot.RiotException;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +29,9 @@ import static org.dbpedia.links.LinksUtils.*;
  * @author Dimitris Kontokostas
  * @since 22/4/2016 5:10 μμ
  */
-public class ValidateRepo {
+public final class ValidateRepo {
+
+    private ValidateRepo(){}
 
     public static void main(String[] args) throws Exception {
 
@@ -53,14 +56,10 @@ public class ValidateRepo {
     private static void checkRdfSyntax(List<File> filesList) {
 
         filesList.stream().forEach(file -> {
-            String fileName = file.getAbsolutePath();
-            RdfReader reader = new RdfStreamReader(fileName);
             try {
-                reader.read();
-            } catch (RdfReaderException e) {
-                throw new IllegalArgumentException("Syntax error in file:" + fileName, e);
-
-                //Syntax error reading file...
+                LinksUtils.getModelFromFile(file);
+            } catch (RiotException e) {
+                throw new IllegalArgumentException("File " + file + " has syntax errors", e);
             }
 
         });
@@ -69,20 +68,13 @@ public class ValidateRepo {
     private static void checkDBpediaAsSubject(List<File> filesList) {
         filesList.stream().forEach(file -> {
             String fileName = file.getAbsolutePath();
-            RdfReader reader = new RdfStreamReader(fileName);
-            try {
-                Model model = reader.read();
-                model.listSubjects()
-                        .forEachRemaining( subject -> {
-                            if (!subject.toString().contains("dbpedia.org/")) {
-                                throw new IllegalArgumentException("File " + fileName + " does not have a dbpedia URI as subject");
-                            }
-                        });
-            } catch (RdfReaderException e) {
-                throw new IllegalArgumentException("Syntax error in file:" + fileName, e);
-
-                //Syntax error reading file...
-            }
+            Model model = getModelFromFile(file);
+            model.listSubjects()
+                    .forEachRemaining(subject -> {
+                        if (!subject.toString().contains("dbpedia.org/")) {
+                            throw new IllegalArgumentException("File " + fileName + " does not have a dbpedia URI as subject");
+                        }
+                    });
 
         });
     }
@@ -93,11 +85,11 @@ public class ValidateRepo {
                 .filter(f -> f.getAbsolutePath().contains("dbpedia.org/"))
 
                 .filter(f -> !f.getAbsolutePath().endsWith("dbpedia.org")) // exclude main link folder
-                .filter(f -> f.getAbsolutePath().contains("xxx.dbpedia.org/") && f.getName().length() > 2 ) // exclude lang folders
+                .filter(f -> f.getAbsolutePath().contains("xxx.dbpedia.org/") && f.getName().length() > 2) // exclude lang folders
 
                 .filter(f -> !f.getName().equals("scripts")) // exclude subfolders
                 .filter(f -> !f.getName().equals("link-specs")) // exclude subfolders
-                .forEach( f -> {
+                .forEach(f -> {
                     boolean foundReadMe = false;
                     boolean foundMetadata = false;
                     for (File file : f.listFiles()) {
@@ -127,40 +119,38 @@ public class ValidateRepo {
         filesList.stream().forEach(file -> {
             String fileName = file.getAbsolutePath();
             if (fileName.endsWith("metadata.ttl")) {
-                RdfReader reader = new RdfStreamReader(fileName);
-                try {
-                    Model model = reader.read();
-                    TestExecution te = RDFUnitStaticValidator.validate(TestCaseExecutionType.shaclFullTestCaseResult, model,  testSuite);
 
-                    te.getTestCaseResults().stream().forEach( result -> {
-                        throw new IllegalArgumentException("In file: " + fileName + " resource: "  + result.getTestCaseUri() + " failed with message: " + result.getMessage());
-                    });
-                } catch (RdfReaderException e) {
-                    throw new IllegalArgumentException("Syntax error in file:" + fileName, e);
+                Model model = getModelFromFile(file);
+                TestExecution te = RDFUnitStaticValidator.validate(TestCaseExecutionType.shaclFullTestCaseResult, model, testSuite);
 
-                    //Syntax error reading file...
-                }
-
+                te.getTestCaseResults().stream().forEach(result -> {
+                    throw new IllegalArgumentException("In file: " + fileName + " resource: " + result.getTestCaseUri() + " failed with message: " + result.getMessage());
+                });
             }
-
         });
     }
 
     private static void checkMetadataLinks(List<File> filesList) {
         filesList.stream().forEach(file -> {
-            String fileName = file.getAbsolutePath();
-
             getModelFromFile(file).listStatements()
-                    .forEachRemaining( statement -> {
+                    .forEachRemaining(statement -> {
                         if (getLinkProperties().contains(statement.getPredicate())) {
                             String uri = statement.getObject().asResource().toString();
                             if (uri.startsWith("file://")) {
                                 File linkFile = new File(uri.substring(6)); // remove "file://"
                                 if (!linkFile.exists()) {
-                                    throw new IllegalArgumentException("In metadata file: " + fileName + " provided file does not exists in repo: " + linkFile.getAbsolutePath());
+                                    throw new IllegalArgumentException("In metadata file: " + file + " provided file does not exists in repo: " + linkFile.getAbsolutePath());
+                                }
+                            } else {
+                                try {
+                                    // from http://stackoverflow.com/questions/4177864/checking-a-url-exist-or-not
+                                    URL url = new URL(uri);
+                                    url.openStream();
+                                } catch (Exception ex) {
+                                    throw new IllegalArgumentException("In metadata file: " + file + " provided link does not resolve: " + uri);
                                 }
                             }
-                            // TODO check http
+
                         }
                     });
         });
