@@ -11,13 +11,17 @@ import org.aksw.rdfunit.sources.SchemaSource;
 import org.aksw.rdfunit.tests.generators.ShaclTestGenerator;
 import org.aksw.rdfunit.validate.wrappers.RDFUnitStaticValidator;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 import java.io.File;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.aksw.rdfunit.io.reader.RdfReaderFactory.createResourceReader;
 import static org.aksw.rdfunit.sources.SchemaSourceFactory.createSchemaSourceSimple;
-import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
+import static org.dbpedia.links.LinksUtils.*;
 
 
 /**
@@ -28,19 +32,21 @@ public class ValidateRepo {
 
     public static void main(String[] args) throws Exception {
 
-        File f = new File("../");  // hard code this for now
+        File f = new File(Paths.get(".").toAbsolutePath().normalize().toString()).getParentFile();  // hard code this for now
         List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
 
-        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".nt"));
-        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".ttl"));
-        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".n3"));
+        checkRdfSyntax(filterFileWithEndsWith(allFilesInRepo, ".nt"));
+        checkRdfSyntax(filterFileWithEndsWith(allFilesInRepo, ".ttl"));
+        checkRdfSyntax(filterFileWithEndsWith(allFilesInRepo, ".n3"));
 
-        checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.nt"));
-        checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
+        checkDBpediaAsSubject(filterFileWithEndsWith(allFilesInRepo, "links.nt"));
+        checkDBpediaAsSubject(filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
 
         checkFolderStructure(allFilesInRepo);
 
-        checkMetadataFilesWithRdfUnit(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
+        checkMetadataFilesWithRdfUnit(filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
+
+        checkMetadataLinks(filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 
     }
 
@@ -52,7 +58,7 @@ public class ValidateRepo {
             try {
                 reader.read();
             } catch (RdfReaderException e) {
-                throw new RuntimeException("Syntax error in file:" + fileName, e);
+                throw new IllegalArgumentException("Syntax error in file:" + fileName, e);
 
                 //Syntax error reading file...
             }
@@ -69,11 +75,11 @@ public class ValidateRepo {
                 model.listSubjects()
                         .forEachRemaining( subject -> {
                             if (!subject.toString().contains("dbpedia.org/")) {
-                                throw new RuntimeException("File " + fileName + " does not have a dbpedia URI as subject");
+                                throw new IllegalArgumentException("File " + fileName + " does not have a dbpedia URI as subject");
                             }
                         });
             } catch (RdfReaderException e) {
-                throw new RuntimeException("Syntax error in file:" + fileName, e);
+                throw new IllegalArgumentException("Syntax error in file:" + fileName, e);
 
                 //Syntax error reading file...
             }
@@ -130,7 +136,7 @@ public class ValidateRepo {
                         throw new IllegalArgumentException("In file: " + fileName + " resource: "  + result.getTestCaseUri() + " failed with message: " + result.getMessage());
                     });
                 } catch (RdfReaderException e) {
-                    throw new RuntimeException("Syntax error in file:" + fileName, e);
+                    throw new IllegalArgumentException("Syntax error in file:" + fileName, e);
 
                     //Syntax error reading file...
                 }
@@ -138,6 +144,35 @@ public class ValidateRepo {
             }
 
         });
+    }
+
+    private static void checkMetadataLinks(List<File> filesList) {
+        filesList.stream().forEach(file -> {
+            String fileName = file.getAbsolutePath();
+
+            getModelFromFile(file).listStatements()
+                    .forEachRemaining( statement -> {
+                        if (getLinkProperties().contains(statement.getPredicate())) {
+                            String uri = statement.getObject().asResource().toString();
+                            if (uri.startsWith("file://")) {
+                                File linkFile = new File(uri.substring(6)); // remove "file://"
+                                if (!linkFile.exists()) {
+                                    throw new IllegalArgumentException("In metadata file: " + fileName + " provided file does not exists in repo: " + linkFile.getAbsolutePath());
+                                }
+                            }
+                            // TODO check http
+                        }
+                    });
+        });
+    }
+
+    private static List<Property> getLinkProperties() {
+        return Arrays.asList(
+                ResourceFactory.createProperty("http://dbpedia.org/property/script"),
+                ResourceFactory.createProperty("http://dbpedia.org/property/linkConf"),
+                ResourceFactory.createProperty("http://dbpedia.org/property/approvedPatch"),
+                ResourceFactory.createProperty("http://dbpedia.org/property/optionalPatch")
+        );
     }
 
     private static TestSuite createTestSuiteWithShacl(String schemaSource) {

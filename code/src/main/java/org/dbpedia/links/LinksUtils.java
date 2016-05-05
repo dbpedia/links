@@ -1,5 +1,10 @@
 package org.dbpedia.links;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,5 +50,12 @@ public final class LinksUtils {
         return files.stream()
                 .filter( f -> f.getAbsolutePath().endsWith(endsWith) )
                 .collect(Collectors.toList());
+    }
+
+    public static Model getModelFromFile(File file) {
+        Model model = ModelFactory.createDefaultModel();
+        RDFDataMgr.read(model, file.toURI().toString(), file.getParentFile().toURI().toString(), Lang.TURTLE);
+
+        return model;
     }
 }
