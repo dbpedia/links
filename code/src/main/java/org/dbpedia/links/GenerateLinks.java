@@ -1,22 +1,20 @@
 package org.dbpedia.links;
 
-import org.aksw.rdfunit.io.reader.RdfReader;
-import org.aksw.rdfunit.io.reader.RdfReaderException;
-import org.aksw.rdfunit.io.reader.RdfStreamReader;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 
+import static org.dbpedia.links.LinksUtils.filterFileWithEndsWith;
 import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
 
 /**
@@ -29,81 +27,73 @@ public class GenerateLinks {
 
     public static void main(String[] args) throws Exception {
 
-        File f = new File("../");  // hard code this for now
+        File f = new File(Paths.get(".").toAbsolutePath().normalize().toString()).getParentFile();  // hard code this for now
         List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
 
-        //ExecuteShellScriptsFromFolders(allFilesInRepo);
+        //ExecuteShellScriptsFromFolders(filterFileWithEndsWith(allFilesInRepo, ".sh"));
         // alternative to above but uses only scripts defined in metadata.ttl filesvn
-        ExecuteShellScriptsFromAllMetadataFiles(allFilesInRepo);
+        ExecuteShellScriptsFromAllMetadataFiles(filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 
 
     }
 
     private static void ExecuteShellScriptsFromFolders(List<File> filesList){
         filesList.stream().forEach(file -> {
-            String fileName = file.getAbsolutePath();
-            if (fileName.endsWith(".sh")) {
 
             	executeShellScript(file);
-
-            }
 
         });
     }
 
     private static void ExecuteShellScriptsFromAllMetadataFiles(List<File> filesList){
         filesList.stream().forEach(file -> {
-            String fileName = file.getName();
-            String filePath = FilenameUtils.normalize(file.getAbsolutePath());
 
-            if (fileName.equals("metadata.ttl")) {
+            L.info("Processing " + file);
+            Model model = LinksUtils.getModelFromFile(file);
+            model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/script"))
+                .forEachRemaining( node -> {
 
-                L.info("Process       " + filePath);
+                    String scriptFilePath = null;
+                    try {
+                        scriptFilePath = FilenameUtils.normalize(new URI(node.asResource().getURI()).getPath());
+                    } catch (URISyntaxException e) {
+                        L.error(e);
+                    }
 
-                Model model = RDFDataMgr.loadModel(filePath);
+                    L.info("  Script   " + scriptFilePath);
+                    File scriptFile = new File(scriptFilePath);
+                    if (scriptFile.exists()) {
+                        executeShellScript(scriptFile);
+                    } else {
+                        L.warn("  No file           " + scriptFilePath);
+                    }
+                });
 
-                //RdfReader reader = new RdfStreamReader(filePath);
-                try {
-                    model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/script"))
-                        .forEachRemaining( node -> {
-                            String scriptFilePath = null;
-                            try {
-                                scriptFilePath = FilenameUtils.normalize(new URI(node.asResource().getURI()).getPath());
-                            } catch (URISyntaxException e) {
-                                L.error(e);
-                            }
 
-                            L.info("  Script            " + scriptFilePath);
-
-                            File scriptFile = new File(scriptFilePath);
-                            if (scriptFile.exists()) {
-                                L.info("  Going to execute " + scriptFilePath);
-                                executeShellScript(scriptFile);
-                            } else {
-                                L.warn("  No file           " + scriptFilePath);
-                            }
-                        });
-
-                } catch (Exception e) {
-                    L.error(e);
-                }
-            }
         });
     }
 
     private static void executeShellScript(File file) {
-        L.info("  Execute           " + file.getAbsolutePath());
+        L.info(" Executing " + file.getAbsolutePath());
 
         Process p = null;
         try {
-        	String[] cmd = {"/bin/bash","-c","cd "+ file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() };
+        	String[] cmd = {"/bin/bash","-c"," ( cd "+ file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) "};
 //        	System.out.println(" bash -c cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ");
 //            p = Runtime.getRuntime().exec(" bash -c ( cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) ");
             p = Runtime.getRuntime().exec(cmd);
-            p.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("CAnnot execute script: " + file.getAbsolutePath(), e);
+            BufferedReader read = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            try {
+                p.waitFor();
+
+            } catch (InterruptedException e) {
+                throw new IllegalArgumentException("Cannot execute script: " + file.getAbsolutePath(), e);
+            }
+            while (read.ready()) {
+                System.out.println(read.readLine());
+            }
+        } catch (IOException  e) {
+            throw new IllegalArgumentException("Cannot execute script: " + file.getAbsolutePath(), e);
         }
     }
 }
