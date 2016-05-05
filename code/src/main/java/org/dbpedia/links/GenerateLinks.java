@@ -44,7 +44,7 @@ public class GenerateLinks {
             String fileName = file.getAbsolutePath();
             if (fileName.endsWith(".sh")) {
 
-                executeShellScript(file);
+            	executeShellScript(file);
 
             }
 
@@ -96,7 +96,10 @@ public class GenerateLinks {
 
         Process p = null;
         try {
-            p = Runtime.getRuntime().exec(" bash -c ( cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) ");
+        	String[] cmd = {"/bin/bash","-c","cd "+ file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() };
+//        	System.out.println(" bash -c cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ");
+//            p = Runtime.getRuntime().exec(" bash -c ( cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) ");
+            p = Runtime.getRuntime().exec(cmd);
             p.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
