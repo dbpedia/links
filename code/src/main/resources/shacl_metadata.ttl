@@ -75,4 +75,12 @@ ex:MyShape
         sh:nodeKind sh:IRI ;
     ] ;
 
+    # update frequency
+
+    sh:property [
+        sh:predicate dbp:updateFrequencyInDays ;
+        sh:maxCount 1;
+        sh:nodeKind sh:Literal ;
+        sh:nodeKind xsd:integer ;
+    ] ;
 .
