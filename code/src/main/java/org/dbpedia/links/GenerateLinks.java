@@ -49,10 +49,26 @@ public class GenerateLinks {
         });
     }
     
-    public int daysBetween(Date d1, Date d2)
-    {
-       return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
-    }
+    
+    /*
+     * - get frequency
+     * - read xxx_links.nt file
+     * - if does not exist, then we need to load it via 1) script, 2) download link, 3) SPARQL query, 
+     * 
+     * 1) if exists script:
+     *  -- option 1: if file does not exist, exec script
+     *  -- option 2: check last modified and compare with frequency (now - last modified)
+     *  -- if needed, re-generate the files 
+     *  
+     * 2) if download link exist
+     *  -- option 1: if file does not exist, download file
+     *  -- option 2: if file exist, compare with header and download if needed
+     *  
+     * 2) if SPARQL query exist
+     *  -- option 1: if file does not exist, exec SPARQL query
+     *  -- option 2: check last modified and compare with frequency (now - last modified)
+     *  -- if needed, re-generate the files 
+     */
 
     private static void ExecuteShellScriptsFromAllMetadataFiles(List<File> filesList){
         filesList.stream().forEach(file -> {
@@ -61,7 +77,7 @@ public class GenerateLinks {
             Model model = LinksUtils.getModelFromFile(file);
             
             // check frequency property
-            int frequency = -1;
+            int frequency = 10; // default value is 10 days
             if(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays")).hasNext()){
             	frequency = model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays")).next().asLiteral().getInt();
             	System.out.println(frequency);
