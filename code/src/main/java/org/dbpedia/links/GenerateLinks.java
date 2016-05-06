@@ -12,11 +12,15 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.dbpedia.links.LinksUtils.filterFileWithEndsWith;
 import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
 
+import java.text.SimpleDateFormat;
 /**
  * @author Dimitris Kontokostas
  * @since 29/4/2016 3:59 μμ
@@ -44,12 +48,40 @@ public class GenerateLinks {
 
         });
     }
+    
+    public int daysBetween(Date d1, Date d2)
+    {
+       return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    }
 
     private static void ExecuteShellScriptsFromAllMetadataFiles(List<File> filesList){
         filesList.stream().forEach(file -> {
 
             L.info("Processing " + file);
             Model model = LinksUtils.getModelFromFile(file);
+            
+            // check frequency property
+            int frequency = -1;
+            if(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays")).hasNext()){
+            	frequency = model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays")).next().asLiteral().getInt();
+            	System.out.println(frequency);
+            }
+            
+            File linksFile = new File(file.getParent()+"/ocd_links.nt");
+            System.out.println(file.getParent());
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            
+            Date linksFileDate = new Date(linksFile.lastModified());
+            Calendar cal = new java.util.GregorianCalendar();
+            Date nowDate = cal.getTime();
+            
+            long diff = nowDate.getTime() - linksFileDate.getTime();
+            System.out.println ("Days: " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
+            
+            System.out.println("Links date : " + sdf.format(linksFile.lastModified()));
+            System.out.println("Now date : " + sdf.format(nowDate));
+            
+            
             model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/script"))
                 .forEachRemaining( node -> {
 
@@ -63,7 +95,7 @@ public class GenerateLinks {
                     L.info("  Script   " + scriptFilePath);
                     File scriptFile = new File(scriptFilePath);
                     if (scriptFile.exists()) {
-                        executeShellScript(scriptFile);
+                        //executeShellScript(scriptFile);
                     } else {
                         L.warn("  No file           " + scriptFilePath);
                     }
