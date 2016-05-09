@@ -7,7 +7,9 @@ import org.apache.jena.riot.RDFDataMgr;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
@@ -57,5 +59,13 @@ public final class LinksUtils {
         RDFDataMgr.read(model, file.toURI().toString(), file.getParentFile().toURI().toString(), Lang.TURTLE);
 
         return model;
+    }
+    
+    /*
+     * Returns diff in days between today and other previous date
+     */
+    public static int diffInDays(Date f1, Date f2) {
+        long diff = f1.getTime() - f2.getTime();
+        return (int)TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 }

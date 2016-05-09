@@ -4,10 +4,10 @@
 @prefix dbp:		<http://dbpedia.org/property/> .
 
 <#1> a void:Linkset ;
-	dbp:script <scripts/ocd_get_and_sort.sh> ; 
+	#dbp:script <scripts/ocd_get_and_sort.sh> ; 
 	dbp:endpoint <http://dati.camera.it/sparql> ;
 	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o owl:sameAs ?b. FILTER(REGEX(STR(?b),'http://dbpedia.org')) }" ;
-	dbp:ntriplefilelocation <ocd_links.nt> ;
+	dbp:ntriplefilelocation <http://lobid.org/download/dumps/DE-605/enrich/2dbpedia.ttl> ;
 	dbp:outputFile <out1.nt> ;
 	void:objectsTarget <https://datahub.io/dataset/dati-camera-it> ;
 	dc:author <https://github.com/dvcama> ;
