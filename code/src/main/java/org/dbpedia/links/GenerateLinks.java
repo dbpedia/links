@@ -1,7 +1,12 @@
 package org.dbpedia.links;
 
+import org.aksw.rdfunit.io.writer.RdfFileWriter;
+import org.aksw.rdfunit.io.writer.RdfWriterException;
+import org.aksw.rdfunit.sources.TestSource;
+import org.aksw.rdfunit.sources.TestSourceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.log4j.Logger;
@@ -13,21 +18,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static java.util.Arrays.stream;
 import static org.dbpedia.links.LinksUtils.filterFileWithEndsWith;
 import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
-
-import java.text.SimpleDateFormat;
 /**
  * @author Dimitris Kontokostas
  * @since 29/4/2016 3:59 μμ
@@ -220,7 +220,7 @@ public class GenerateLinks {
 
         });
     }
-    
+
     /*
      * Executes shell script from a given location
      */
@@ -285,5 +285,24 @@ public class GenerateLinks {
     private static void executeSPARQLQuery(String query, String endpoint, String outputFileName) {
         L.info("Fetching data from SPARQL endpoint");
         // TODO: Dimitris
+        TestSource testSource = new TestSourceBuilder()
+                .setEndpoint(endpoint, Collections.emptyList())
+                .setPagination(500)
+                .setQueryDelay(50)
+                .build();
+
+        try ( QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query) ) {
+
+            Model model = qe.execConstruct();
+            new RdfFileWriter(outputFileName).write(model);
+
+
+        } catch (RdfWriterException e) {
+            L.error("Error writing results from construct query in file " + outputFileName, e);
+        } catch (Exception e) {
+            L.error("Error Executing SPARQL query in endpoint " + outputFileName + "\n query: " + query, e);
+        }
+
+
     }
 }
