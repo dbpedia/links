@@ -286,6 +286,8 @@ public class GenerateLinks {
         L.info("Fetching data from SPARQL endpoint");
         // TODO: Dimitris
         TestSource testSource = new TestSourceBuilder()
+				.setPrefixUri("links", "http://links.dbpedia.org")
+				.setReferenceSchemata(Collections.emptyList())
                 .setEndpoint(endpoint, Collections.emptyList())
                 .setPagination(500)
                 .setQueryDelay(50)
@@ -294,7 +296,10 @@ public class GenerateLinks {
         try ( QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query) ) {
 
             Model model = qe.execConstruct();
-            new RdfFileWriter(outputFileName).write(model);
+			if (outputFileName.startsWith("file://")) {
+				outputFileName = FilenameUtils.normalize(new URI(outputFileName).getPath());
+			}
+            new RdfFileWriter(outputFileName, "NTriples").write(model);
 
 
         } catch (RdfWriterException e) {
