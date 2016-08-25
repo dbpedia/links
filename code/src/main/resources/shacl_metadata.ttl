@@ -81,6 +81,6 @@ ex:MyShape
         sh:predicate dbp:updateFrequencyInDays ;
         sh:maxCount 1;
         sh:nodeKind sh:Literal ;
-        sh:nodeKind xsd:integer ;
+        sh:datatype xsd:integer ;
     ] ;
 .
