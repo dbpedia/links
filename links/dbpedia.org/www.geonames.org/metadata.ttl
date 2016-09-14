@@ -1,6 +1,17 @@
-# test
-<https://github.com/dbpedia/dbpedia-links/blob/master/datasets/dbpedia.org/www.geonames.org/geonames_links.nt> 
-	<http://example.org/vocab/uncompressedturtlefile> "datasets/dbpedia.org/www.geonames.org/geonames_links.nt" ;
-	<http://example.org/vocab/createdby> "Peter Griffin" .
-	
+@prefix dcterms:	<http://purl.org/dc/terms/> .
+@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
+@prefix void: 		<http://rdfs.org/ns/void#> .
+@prefix dbp:		<http://dbpedia.org/property/linkConf> .
 
+<http://dbpedia.org/links/www.geoname.org> a void:Linkset ;
+	dbp:linkConf "link-specs/dbpedia-geonames-airport.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-city.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-island.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-lake.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-mountain.xml" ;
+	dbp:linkConf "link-specs/dbpedia-geonames-mountainRange.xml" ;
+	dc:author <http://example.org/Peter-Griffin> ;
+	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dcterms:description "[Some description]" .
+
+#still under discussion

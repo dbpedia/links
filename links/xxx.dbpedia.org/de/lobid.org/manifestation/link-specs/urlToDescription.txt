@@ -1,1 +1,0 @@
-https://github.com/lobid/silk-xml-configs/tree/master/de-dbpedia

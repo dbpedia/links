@@ -1,0 +1,10 @@
+@prefix dcterms:	<http://purl.org/dc/terms/> .
+@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
+@prefix void: 		<http://rdfs.org/ns/void#> .
+
+<http://dbpedia.org/links/gadm.geovocab.org> a void:Linkset ;
+	dc:author <http://example.org/Robin-Murphy> ;
+	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dcterms:description "BBC Things provides a single reference for a growing collection of the things that matter to the BBC and their audiences." .
+
+#still under discussion

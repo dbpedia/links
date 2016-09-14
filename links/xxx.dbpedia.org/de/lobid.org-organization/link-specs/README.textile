@@ -1,0 +1,7 @@
+The source of the data is a mix of:
+
+1. extracting the ISIL entry of the infobox from the wikipedia entry. You can "download that extraction":http://ws.gbv.de/wpextract/dewiki-isil.beacon.
+2. simple title matching
+
+The first approach does not give (yet) much links (around 150) but is very reliable, while the second approach generates ten times more links of which some may be incorrect.
+
