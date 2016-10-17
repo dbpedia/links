@@ -8,9 +8,6 @@ Links are the key enabler for retrieval of related information on the Web of Dat
 
 In this README, we will include descriptions on how to download and use the links, run all available tools as well as pointers to the most important documentation. if questions remain please use the [GitHub Issue tracker](http://github.com/dbpedia/dbpedia-links/issues). If you want to give us more feedback, feel free to use the [DBpedia Discussion mailinglist](http://lists.sourceforge.net/lists/listinfo/dbpedia-discussion).
 
-# License
-All data is provided as CC-0. All software is provided under Apache 2.0 License.
-
 # Why contribute
 
 If you have a large dataset, contributing to DBpedia-Links might prove useful. 
@@ -27,6 +24,9 @@ Furthermore it is planned to put a frontend in place in which the correctness of
 ## How to contribute links
 
 If you're interested in contributing links and to learn more about the project, please visit the [how to wiki page](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) for more detailed informations. 
+
+# License
+All data is provided as CC-0. All software is provided under Apache 2.0 License.
 
 # Contributors (alphabetically)
 
