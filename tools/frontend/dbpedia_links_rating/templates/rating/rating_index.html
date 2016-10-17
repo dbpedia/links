@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+      {% if request.user.is_authenticated %}
+        {% if not link %}
+            <p>Seems like you've managed to rate all links in our Database (or our Database is broken) please come back later!</p>
+        {% else %}
+            <br>
+        <div class="container">
+          <form action="{% url 'rating:rating' %}" method="post">
+            {% csrf_token %}
+              <div class="row margin-bottom-10">
+                <div class="col-md-4 col-sm-6">
+                    <a href="{{ link.subject }}" target="_blank">
+                    <div class="servive-block servive-block-grey hvr-reveal">
+                        <i class="icon-2x color-light fa fa-bell-o"></i>
+                        <h2 class="heading-md">Subject</h2>
+                        <p>{{ link.subject }}</p>
+                    </div>
+                    </A>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="{{ link.predicate }}" target="_blank">
+                    <div class="servive-block servive-block-dark-blue hvr-reveal">
+                        <i class="icon-2x color-light fa fa-envelope"></i>
+                        <h2 class="heading-md">Predicate</h2>
+                        <p>{{ link.predicate }}</p>
+                    </div>
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="{{ link.object }}" target="_blank">
+                    <div class="servive-block servive-block-yellow hvr-reveal">
+                        <i class="icon-2x color-light fa fa-gift"></i>
+                        <h2 class="heading-md">Object</h2>
+                        <p>{{ link.object }}</p>
+                    </div>
+                    </a>
+                </div>
+            </div>
+            <div class="maxl">
+              {% for radio in form.rating %}
+                <label class="radio inline hvr-pulse">
+                    {{ radio.tag }}
+                    <span>{{ radio.choice_label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+            <input type="hidden" name="return_url" value="{% url 'rating:rating' %}">
+            <input type="hidden" name="link_id" value="{{ link.id }}">
+            <div class="servive-block servive-block-orange hvr-reveal">
+            <input type="submit" value="Submit"/>
+            </div>
+          </form>
+          {% endif %}
+      {% else %}
+        <p>Please log yourself in first.</p>
+
+      {% endif %}
+
+
+    </div> <!-- /container -->
+{% endblock content %}
