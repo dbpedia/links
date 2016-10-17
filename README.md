@@ -18,10 +18,6 @@ Furthermore it is planned to put a frontend in place in which the correctness of
 
 If you're interested in contributing links and to learn more about the project, please visit the [wiki](https://github.com/dbpedia/links/wiki) for more detailed informations. 
 
-# Installation
-
-
-
 # Contributors (alphabetically)
 
 - Sarven Capadisli, AKSW, Uni Leipzig (Csarven)
