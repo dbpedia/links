@@ -12,7 +12,7 @@ branches:
     - coverity_scan
 install: /bin/true
 script:
-  - "cd code"
+  - "cd tools/backend"
   - "mvn clean install"
   - "bin/validate.sh"
   - "cd .."

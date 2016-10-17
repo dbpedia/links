@@ -1,0 +1,11 @@
+ 889564  http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+ 437797  http://dbpedia.org/property/wordnet_type
+ 330620  http://www.w3.org/2002/07/owl#sameAs
+  11970  http://www.w3.org/2000/01/rdf-schema#seeAlso
+  11970  http://rdvocab.info/RDARelationshipsWEMI/manifestationOfWork
+  10089  http://purl.org/dc/terms/publisher
+   9273  http://www.w3.org/2004/02/skos/core#closeMatch
+   5107  http://umbel.org/umbel#isLike
+   2081  http://www.w3.org/2004/02/skos/core#exactMatch
+    312  http://dbpedia.org/ontology/spokenIn
+      1 
