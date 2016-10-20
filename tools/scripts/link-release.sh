@@ -49,7 +49,10 @@ done
 #        done
 #done
 
-      #Git update
+#Create softlink
+ln -s $backup <define folder path here>/$DATE
+
+#Git update
 cd $origin
 git checkout master
 git pull origin master
