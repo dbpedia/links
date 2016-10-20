@@ -22,7 +22,18 @@
         <rdfunit-version>0.8</rdfunit-version>
         <slf4j-version>1.7.19</slf4j-version>
     </properties>
-
+    <build>
+        <plugins>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+    	     	 <artifactId>maven-compiler-plugin</artifactId>
+             	 <version>3.5.1</version>
+             	 <configuration>
+                     <encoding>UTF-8</encoding>
+                 </configuration>
+             </plugin>
+        </plugins>
+    </build>
     <dependencies>
 
         <dependency>
