@@ -1,5 +1,5 @@
-from rdflib import Graph, URIRef, OWL
-from os import walk, path, getcwd, listdir, chdir
+from rdflib import Graph, OWL
+from os import getcwd
 from pathlib import Path
 
 class BackLinks:
@@ -30,20 +30,16 @@ class BackLinks:
         return graphs
 
     def matchBacklinks(self, graphs):
-        f = open(str(self.mainDir) + '/backlinks.nt', 'w', encoding="utf-8")
         mainGraphs = []
         backlinks = Graph()
         for linkset in sorted(self.mainDir.glob('*.nt')):
             mainGraphs.append(Graph().parse(str(linkset), format='nt'))
         for mainGraph in mainGraphs:
-            for s,p,o in mainGraph:
+            for s,p,o in mainGraph.triples( (None, OWL.sameAs, None) ):
                 for graph in graphs:
-                    for s1,p1,o1 in graph:
-                        if s == s1 and p == p1:
-                            backlinks.add( (o, OWL.sameAs, o1) )
-                            #f.write('<' + o + '> <' +  p + '> <' + o1 + '> .\n')
-        f.write(backlinks.serialize(format='nt'))
-        f.close()
+                    for s1,p1,o1 in graph.triples( (s,p,None) ):
+                        backlinks.add( (o1, OWL.sameAs, o) )
+        backlinks.serialize(destination=str(self.mainDir) + '/backlinks.nt', format='nt')
 
 def main():
     backlinks = BackLinks(input('Insert full path to linkset directory: '))
