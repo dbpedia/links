@@ -17,7 +17,7 @@ All data in the repository is provided as CC-0. All software is provided under A
 # How to contribute links to DBpedia?
 If you're interested in contributing links and to learn more about the project, please visit the [how to wiki page](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) for more detailed informations. 
 
-You can read more in our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf):
+You can read more in our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf) (bibtex can be found [here](http://downloads.dbpedia.org/links/resources/bibdata.bib))
 
 # How to download the monthly link release
 If you want to download the current, or older, releases of the given links, please go [here](http://downloads.dbpedia.org/links/) and click at the corresponding month.
