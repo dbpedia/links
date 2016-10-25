@@ -17,7 +17,15 @@ All data in the repository is provided as CC-0. All software is provided under A
 # How to contribute links to DBpedia?
 If you're interested in contributing links and to learn more about the project, please visit the [how to wiki page](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) for more detailed informations. 
 
-You can read more in our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf) (bibtex can be found [here](http://downloads.dbpedia.org/links/resources/bibdata.bib))
+You can read more in our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf) :
+```
+@inproceedings{DojchinovskiDBpediaLinks,
+  author = {Dojchinovski, Milan and Kontokostas, Dimitris and R{\"o}ßling, Robert and Knuth, Magnus and Hellmann, Sebastian},
+  booktitle = {Proceedings of the SEMANTiCS 2016 Conference (SEMANTiCS 2016)},
+  title = {DBpedia Links: The Hub of Links for the Web of Data},
+  year = 2016
+}
+```
 
 # How to download the monthly link release
 If you want to download the current, or older, releases of the given links, please go [here](http://downloads.dbpedia.org/links/) and click at the corresponding month.
