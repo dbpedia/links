@@ -17,7 +17,7 @@ All data in the repository is provided as CC-0. All software is provided under A
 # How to contribute links to DBpedia?
 If you're interested in contributing links and to learn more about the project, please visit the [how to wiki page](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) for more detailed informations. 
 
-You can read more in our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf) :
+Please cite our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf) :
 ```
 @inproceedings{DojchinovskiDBpediaLinks,
   author = {Dojchinovski, Milan and Kontokostas, Dimitris and R{\"o}ßling, Robert and Knuth, Magnus and Hellmann, Sebastian},
