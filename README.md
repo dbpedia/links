@@ -77,7 +77,7 @@ All tools are being kept in the `tools` folder and have their own respective Rea
 
 Within the `tools` folder there is also a `script` folder which contains several smaller scripts:
 
-* `backlinks.py` This script can be executed via python 3 (please note that [rdflib](https://github.com/RDFLib/rdflib) needs to be installed. On start it will prompt for a full folder path, please insert the full path to the linkset destinated main folder. All n-triple files will be read in there and compared to every other linkset within the `links` folder and check if certain subjects within the given linkset are contained in other linksets. All the triples will be stored within a `backlinks.nt` file
+* `backlinks.py` This script can be executed via python 3 (please note that [rdflib](https://github.com/RDFLib/rdflib) needs to be installed). On start it will prompt for a full folder path, please insert the full path to the linkset destinated main folder. All n-triple files will be read in there and compared to every other linkset within the `links` folder and check if certain subjects within the given linkset are contained in other linksets. All the triples will be stored within a `backlinks.nt` file
 
 * `link-release.sh` This script has been mentioned and explained [here](https://github.com/dbpedia/links#how-to-download-the-monthly-link-release)
 
