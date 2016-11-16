@@ -1,8 +1,12 @@
-@prefix dct: 		<http://purl.org/dc/terms/> .
-@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
-@prefix void: 		<http://rdfs.org/ns/void#> .
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
 
-<http://dbpedia.org/links/geonames.jp> a void:Linkset ;
-	dc:author <http://example.org/author> ;
-	dct:description "[insert description]" ;
-	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> .
+<#1> a void:Linkset ;
+	dc:author <https://github.com/indigo-lab> ;
+	dbp:ntriplefilelocation <geonamesjp_links.nt> ;
+	void:objectsTarget <http://geonames.jp/resource/> ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dct:description "These links link DBpedia with the GeoNames.jp dataset." .
+

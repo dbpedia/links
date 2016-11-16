@@ -3,10 +3,11 @@
 @prefix void: 		<http://rdfs.org/ns/void#> .
 @prefix dbp:		<http://dbpedia.org/property/> .
 
-<http://dbpedia.org/links/lobid.org/manifestation> a void:Linkset ;
-	dbp:script <scripts/makeLinks.sh> ;
-	dbp:linkConf <https://github.com/lobid/silk-xml-configs/tree/master/de-dbpedia> ;
-	void:objectsTarget <http://datahub.io/dataset/lobid-resources> ;
+<#1> a void:Linkset ;
+	dbp:script <scripts/makeManifestationLinks.sh> ; 
+	dbp:ntriplefilelocation <manifestation_links.nt> ;
+	dbp:linkConf <link-specs/lobid_dbpedia_Title.xml> ;
+	void:objectsTarget <https://datahub.io/dataset/lobid-resources> ;
 	dc:author <http://lobid.org/person/pc> ;
-	dct:description "These links are used in the LOD service of the hbz. The data is also described at the datahub." ;
-	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> .
+	dct:description "lobid-resources is a service which offers access to metadata in RDF about bibliographic resources (books, articles, pdfs etc.) with more than 19 million frbr:manifestations with more than 40 million frbr:items. These links maps to libraries, museums and archives. They are used in the LOD service of the hbz. The data is also described at the datahub. This dataset provides the manifestation links." ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	.
