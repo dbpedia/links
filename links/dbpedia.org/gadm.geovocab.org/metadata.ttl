@@ -8,5 +8,5 @@
 	dbp:ntriplefilelocation <gadm_links.nt> ;
 	void:objectsTarget <http://gadm.geovocab.org/> ;
 	dct:description "An RDF spatial representation of all the administrative regions in the world." ;
-	dc:author <http://example.org/gadm-author> ;
+	dc:author <http://gadm.org/about> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	.

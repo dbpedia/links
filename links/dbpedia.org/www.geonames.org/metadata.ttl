@@ -1,17 +1,19 @@
-@prefix dcterms:	<http://purl.org/dc/terms/> .
-@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
-@prefix void: 		<http://rdfs.org/ns/void#> .
-@prefix dbp:		<http://dbpedia.org/property/linkConf> .
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/linkConf> .
 
 <http://dbpedia.org/links/www.geoname.org> a void:Linkset ;
-	dbp:linkConf "link-specs/dbpedia-geonames-airport.xml" ;
-	dbp:linkConf "link-specs/dbpedia-geonames-city.xml" ;
-	dbp:linkConf "link-specs/dbpedia-geonames-island.xml" ;
-	dbp:linkConf "link-specs/dbpedia-geonames-lake.xml" ;
-	dbp:linkConf "link-specs/dbpedia-geonames-mountain.xml" ;
-	dbp:linkConf "link-specs/dbpedia-geonames-mountainRange.xml" ;
-	dc:author <http://example.org/Peter-Griffin> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-airport.xml> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-airport-verify.xml> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-city.xml> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-country.xml> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-island.xml> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-lake.xml> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-mountain.xml> ;
+	dbp:linkConf <link-specs/dbpedia-geonames-mountainRange.xml> ;
+	dbp:ntriplefilelocation <geonames_links.nt> ;
+	void:objectsTarget <http://sws.geonames.org/> ;
+	dc:author <http://www.geonames.org/about.html> ;
 	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dcterms:description "[Some description]" .
-
-#still under discussion
+	dcterms:description "The dataset contains over 10 million geographical names and consists of over 9 million unique features whereof 2.8 million populated places and 5.5 million alternate names. " .

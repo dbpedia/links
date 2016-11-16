@@ -1,10 +1,11 @@
-@prefix dcterms:	<http://purl.org/dc/terms/> .
-@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
-@prefix void: 		<http://rdfs.org/ns/void#> .
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
 
-<http://dbpedia.org/links/learning-provider.data.ac.uk> a void:Linkset ;
-	dc:author <http://example.org/learning-author> ;
-	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dcterms:description "[Some description]" .
-
-#still under discussion
+<#1> a void:Linkset ;
+	dbp:ntriplefilelocation <uk-university-links.nt> ;
+	void:objectsTarget <http://id.learning-provider.data.ac.uk/> ;
+	dc:author <http://www.data.ac.uk/get-in-touch/> ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dct:description "This dataset provides open linked data about UK Learning Providers." .

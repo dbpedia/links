@@ -1,10 +1,12 @@
-@prefix dcterms:	<http://purl.org/dc/terms/> .
-@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
-@prefix void: 		<http://rdfs.org/ns/void#> .
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
 
-<http://dbpedia.org/links/worldbank.270a.info> a void:Linkset ;
-	dc:author <http://example.org/worldbank-author> ;
-	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dcterms:description "[Some description]" .
-
-#still under discussion
+<#1> a void:Linkset ;
+	dbp:endpoint <http://worldbank.270a.info/sparql> ;
+	dbp:ntriplefilelocation <worldbank_links.nt> ;
+	void:objectsTarget <http://worldbank.270a.info/> ;
+	dc:author <csarven.ca/#is> ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dct:description "The data that is collected from The World Bank is composed of World Bank Indicators, World Bank Finances, World Bank Projects and Operations, and World Bank Climate Change data." .

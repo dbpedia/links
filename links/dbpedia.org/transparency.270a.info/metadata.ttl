@@ -1,10 +1,13 @@
-@prefix dcterms:	<http://purl.org/dc/terms/> .
-@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
-@prefix void: 		<http://rdfs.org/ns/void#> .
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
 
-<http://dbpedia.org/links/transparency.270a.info> a void:Linkset ;
-	dc:author <http://example.org/transparency-author> ;
-	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dcterms:description "[Some description]" .
+<#1> a void:Linkset ;
+	dbp:ntriplefilelocation <transparency_links.nt> ;
+	dbp:endpoint <http://transparency.270a.info/sparql> ;
+	void:objectsTarget <http://transparency.270a.info/> ;
+	dc:author <http://csarven.ca/#i> ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dct:description "The data that is collected from Transparency International is composed of Corruption Perceptions Index data." .
 
-#still under discussion

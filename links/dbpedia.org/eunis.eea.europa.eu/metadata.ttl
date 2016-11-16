@@ -1,10 +1,11 @@
-@prefix dcterms:	<http://purl.org/dc/terms/> .
-@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
-@prefix void: 		<http://rdfs.org/ns/void#> .
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
 
-<http://dbpedia.org/links/eunis.eea.europa.eu> a void:Linkset ;
-	dc:author <http://example.org/myURI> ;
-	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dcterms:description "[Some description]" .
-
-#still under discussion
+<#1> a void:Linkset ;
+	dbp:ntriplefilelocation <eunis_links.nt> ;
+	void:objectsTarget <http://eunis.eea.europa.eu/>
+	dc:author <http://www.eea.europa.eu/help/contact-info> ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dct:description "The European nature information system, EUNIS, brings together European data from several databases and organisations into three interlinked modules on sites, species and habitat types." .
