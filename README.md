@@ -44,17 +44,24 @@ For more information regarding the validating, generating and patching aspects c
 # Overview of current linksets
 
 ## dbpedia.org
+* [data.linkedmdb.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/data.linkedmdb.org)
 * [dati.camera.it](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/dati.camera.it)
+* [dbtune.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/dbtune.org)
 * [eunis.eea.europa.eu](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/eunis.eea.europa.eu)
+* [eurostat.linked-statistics.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/eurostat.linked-statistics.org)
 * [gadm.geovocab.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/gadm.geovocab.org)
 * [learning-provider.data.ac.uk](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/learning-provider.data.ac.uk)
+* [linkedgeodata.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/linkedgeodata.org)
 * [lobid.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/lobid.org)
+* [openei.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/openei.org)
 * [rdfdata.eionet.europa.eu](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/rdfdata.eionet.europa.eu)
 * [transparency.270a.info](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/transparency.270a.info)
 * [viaf.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/viaf.org)
 * [worldbank.270a.info](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/worldbank.270a.info)
+* [www.bbc.co.uk](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/www.bbc.co.uk)
 * [www.bbc.co.uk:things](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/www.bbc.co.uk:things)
 * [www.geonames.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/www.geonames.org)
+* [www.w3.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/www.w3.org)
 * [www4.wiwiss.fu-berlin.de](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/www4.wiwiss.fu-berlin.de)
 
 ## xxx.dbpedia.org
