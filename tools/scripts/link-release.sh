@@ -7,7 +7,6 @@ origin=<insert folder path here>
 #Predefine subpaths
 dbp=$origin/links/dbpedia.org
 xdbp=$origin/links/xxx.dbpedia.org
-uncl=$origin/links/unclaimed
 
 #Define date for new backup
 DATE=`date +%Y-%m-%d`
@@ -17,37 +16,16 @@ mkdir $backup
 #Clean Directory / File-names
 find $origin/links/ -depth -name "* *" -execdir rename 's/ /_/g' "{}" \;
 
-#Create backup for dbpedia.org
 mkdir $backup/dbpedia.org
-for dir1 in $dbp/*; do
-        dbpsub=$(basename $dir1)
-        cd $backup/dbpedia.org
-        zip -r $dbpsub.zip $dir1
-done
+find $dbp -type f -name "*.nt" -exec cp {} $backup/dbpedia.org \;
+find $dbp -type f -name "*.nt.bz2" -exec cp {} $backup/dbpedia.org \;
 
-#Create backup for xxx.dbpedia.org
 mkdir $backup/xxx.dbpedia.org
-for dir2 in $xdbp/*; do
-        xdbpsub=$(basename $dir2)
-        mkdir $backup/xxx.dbpedia.org/$xdbpsub
-        for subdir2 in $dir2/*; do
-                xdbpsub2=$(basename $subdir2)
-                cd $backup/xxx.dbpedia.org/$xdbpsub
-                zip -r $xdbpsub2.zip $subdir2
-        done
-done
+find $xdbp -type f -name "*.nt" -exec cp {} $backup/xxx.dbpedia.org \;
+find $xdbp -type f -name "*.nt.bz2" -exec cp {} $backup/xxx.dbpedia.org \;
 
-#Create backup for unclaimed
-#mkdir $backup/unclaimed
-#for dir3 in $uncl/*; do
-#        unclsub=$(basename $dir3)
-#        mkdir $backup/unclaimed/$unclsub
-#        for subdir3 in $dir3/*; do
-#                unclsub3=$(basename $subdir3)
-#                cd $backup/unclaimed/$unclsub
-#                zip -r $unclsub3.zip $subdir3
-#        done
-#done
+find $backup -type f -name "*.nt" -exec bzip2 -z {} \;
+
 
 #Create softlink
 ln -s $backup <define folder path here>/$DATE
