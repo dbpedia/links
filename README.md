@@ -14,9 +14,6 @@ All links you are contributing will be loaded (after a quality check) into the m
 # Repository license
 All data in the repository is provided as CC-0. All software is provided under Apache 2.0 License.
 
-# How to contribute links to DBpedia?
-If you're interested in contributing links and to learn more about the project, please visit the [how to wiki page](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) for more detailed informations. 
-
 Please cite our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf) :
 ```
 @inproceedings{DojchinovskiDBpediaLinks,
@@ -27,6 +24,10 @@ Please cite our [paper](http://ceur-ws.org/Vol-1695/paper21.pdf) :
 }
 ```
 
+# How to contribute links to DBpedia?
+If you're interested in contributing links and to learn more about the project, please visit the [how to wiki page](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) for more detailed informations. 
+
+
 # How to download the monthly link release
 If you want to download the current, or older, releases of the given links, please go [here](http://downloads.dbpedia.org/links/) and click at the corresponding month.
 
@@ -35,7 +36,7 @@ The publishing process is automated via a cronjob which will run all given scrip
 Please check out the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia#automated-process) for more informations regarding the automated process, how to set it up, run it and customize it.
 
 # How to update links for one dataset
-If you want to update links for one dataset, either create a new pullrequest to update the old linkset or follow the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) to learn more about how to create a patch for the dataset which will be applied automatically on the next release.
+If you want to update links for one dataset, either create a new pull request to update the old linkset or follow the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) to learn more about how to create a patch for the dataset which will be applied automatically on the next release.
 
 To make sure that your dataset is following proper conventions as mentioned in the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia), you can run the `validate.sh` script in `tools/backend/bin/`.
 
