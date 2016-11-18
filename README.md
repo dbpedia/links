@@ -46,6 +46,7 @@ For more information regarding the validating, generating and patching aspects c
 
 ## dbpedia.org
 * [data.linkedmdb.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/data.linkedmdb.org)
+* [data.logainm.ie](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/data.logainm.ie)
 * [dati.camera.it](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/dati.camera.it)
 * [dbtune.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/dbtune.org)
 * [eunis.eea.europa.eu](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/eunis.eea.europa.eu)
