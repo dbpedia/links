@@ -21,8 +21,12 @@ find $dbp -type f -name "*.nt" -exec cp {} $backup/dbpedia.org \;
 find $dbp -type f -name "*.nt.bz2" -exec cp {} $backup/dbpedia.org \;
 
 mkdir $backup/xxx.dbpedia.org
-find $xdbp -type f -name "*.nt" -exec cp {} $backup/xxx.dbpedia.org \;
-find $xdbp -type f -name "*.nt.bz2" -exec cp {} $backup/xxx.dbpedia.org \;
+for subdir in $xdbp/*/; do
+        xdbpsub=$(basename $subdir)
+        mkdir $backup/xxx.dbpedia.org/$xdbpsub
+        find $xdbp/$xdbpsub -type f -name "*.nt" -exec cp {} $backup/xxx.dbpedia.org/$xdbpsub \;
+        find $xdbp/$xdbpsub -type f -name "*.nt.bz2" -exec cp {} $backup/xxx.dbpedia.org/$xdbpsub \;
+done
 
 find $backup -type f -name "*.nt" -exec bzip2 -z {} \;
 
