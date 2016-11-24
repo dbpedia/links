@@ -33,6 +33,10 @@ find $backup -type f -name "*.nt" -exec bzip2 -z {} \;
 
 #Create softlink
 ln -s $backup <define folder path here>/$DATE
+ln -s $backup <define folder path here>/current
+
+#Create backlinks
+python3.4 $origin/tools/scripts/backlinks.py $origin <define folder path here>
 
 #Git update
 cd $origin
