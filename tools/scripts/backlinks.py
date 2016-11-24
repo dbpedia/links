@@ -78,7 +78,6 @@ class BackLinks:
         <thead>
           <tr>
             <th>Contributer</th>
-            <th>Compressed File</th>
             <th>Backlink</th>
           </tr>
         </thead>
