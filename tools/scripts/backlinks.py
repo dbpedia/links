@@ -52,8 +52,7 @@ class BackLinks:
                     for g in graph[1]:
                         for s1,p1,o1 in g.triples( (s, p, None) ):
                             backlinks.add( (o1, OWL.sameAs, o) )
-        print(maingraphs[0], path.dirname(maingraphs[0]))
-        backlinks.serialize(destination=target + path.dirname(maingraphs[0]) + '_backlinks.nt', format='nt')
+        backlinks.serialize(destination=target + maingraphs[0].name + '_backlinks.nt', format='nt')
 
     def allBacklinks(self, target):
         graphs = []
@@ -76,7 +75,6 @@ class BackLinks:
                 graphs.append([subdir, tmpGraphs[:]])
 
         #generate Backlinks
-        print(graphs)
         for i, maingraphs in enumerate(graphs):
             self.matchAllBacklinks(maingraphs, graphs[:i] + graphs[i+1:], target)
 
