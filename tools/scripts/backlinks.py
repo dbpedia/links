@@ -78,6 +78,7 @@ class BackLinks:
         <thead>
           <tr>
             <th>Contributer</th>
+            <th>Compressed File</th>
             <th>Backlink</th>
           </tr>
         </thead>
@@ -85,7 +86,7 @@ class BackLinks:
         """
         for graph in graphs:
             table += '<tr><td><a href="' + str(graph[2]) + '">' + graph[0].name +'</td>'
-            table += '<td><a href="' + target + graph[0].name + '_backlinks.nt">backlink</td></tr>'
+            table += '<td><a href="http://downloads.dbpedia.org/links/backlinks/' + graph[0].name + '_backlinks.nt">backlink</td></tr>'
         table +="""
         </tbody>
       </table>
