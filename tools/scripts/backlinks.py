@@ -54,17 +54,61 @@ class BackLinks:
                             backlinks.add( (o1, OWL.sameAs, o) )
         backlinks.serialize(destination=target + maingraphs[0].name + '_backlinks.nt', format='nt')
 
+    def createHTMLTable(self, graphs, target):
+        table = """
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+  </head>
+
+  <body>
+    <div class="container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Contributer</th>
+            <th>Backlink</th>
+          </tr>
+        </thead>
+        <tbody>
+        """
+        for graph in graphs:
+            table += '<tr><td><a href="' + str(graph[2]) + '">' + graph[0].name +'</td>'
+            table += '<td><a href="' + target + graph[0].name + '_backlinks.nt">backlink</td></tr>'
+        table +="""
+        </tbody>
+      </table>
+    </div>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+  </body>
+</html>
+        """
+        with open(target + 'table.html', 'w') as f:
+            f.write(table)
+
     def allBacklinks(self, target):
         graphs = []
         origin = Path(str(self.mainDir) + '/links')
+        repolink = 'https://github.com/dbpedia/links/tree/master/links'
 
         #readDirs part
-        # dbpedia.org part
+        #dbpedia.org part
         for dir in Path(str(origin) + '/dbpedia.org').iterdir():
             tmpGraphs = []
             for linkset in sorted(dir.glob('*.nt')):
                 tmpGraphs.append(Graph().parse(str(linkset), format='nt'))
-            graphs.append([dir, tmpGraphs[:]])
+            graphs.append([dir, tmpGraphs[:], repolink + '/dbpedia.org/' + dir.name])
 
         # xxx.dbpedia.org part
         for xdir in Path(str(origin) + '/xxx.dbpedia.org').iterdir():
@@ -72,12 +116,13 @@ class BackLinks:
                 tmpGraphs = []
                 for linkset in sorted(subdir.glob('*.nt')):
                     tmpGraphs.append(Graph().parse(str(linkset), format='nt'))
-                graphs.append([subdir, tmpGraphs[:]])
+                graphs.append([subdir, tmpGraphs[:], repolink + '/xxx.dbpedia.org/' + xdir.name + '/' + subdir.name])
 
         #generate Backlinks
         for i, maingraphs in enumerate(graphs):
             self.matchAllBacklinks(maingraphs, graphs[:i] + graphs[i+1:], target)
 
+        self.createHTMLTable(graphs, target)
 
 
 def main():
