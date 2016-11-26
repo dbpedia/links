@@ -75,7 +75,6 @@ For more information regarding the validating, generating and patching aspects c
     * [vocabulary.wolterskluwer.de-courts](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/de/vocabulary.wolterskluwer.de-courts)
 * it
     * [dati.camera.it](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/it/dati.camera.it)
-    * [dati.isprambiente.it](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/it/dati.isprambiente.it)
 * ja
     * [geonames.jp](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/ja/geonames.jp)
 * nl
