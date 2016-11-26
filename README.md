@@ -48,6 +48,7 @@ For more information regarding the validating, generating and patching aspects c
 * [data.linkedmdb.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/data.linkedmdb.org)
 * [data.logainm.ie](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/data.logainm.ie)
 * [dati.camera.it](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/dati.camera.it)
+* [dati.isprambiente.it](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/dati.isprambiente.it)
 * [dbtune.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/dbtune.org)
 * [eunis.eea.europa.eu](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/eunis.eea.europa.eu)
 * [eurostat.linked-statistics.org](https://github.com/dbpedia/links/tree/master/links/dbpedia.org/eurostat.linked-statistics.org)
@@ -74,6 +75,7 @@ For more information regarding the validating, generating and patching aspects c
     * [vocabulary.wolterskluwer.de-courts](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/de/vocabulary.wolterskluwer.de-courts)
 * it
     * [dati.camera.it](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/it/dati.camera.it)
+    * [dati.isprambiente.it](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/it/dati.isprambiente.it)
 * ja
     * [geonames.jp](https://github.com/dbpedia/links/tree/master/links/xxx.dbpedia.org/ja/geonames.jp)
 * nl
