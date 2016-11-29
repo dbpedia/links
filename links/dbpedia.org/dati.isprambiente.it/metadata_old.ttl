@@ -1,0 +1,14 @@
+@prefix dct: 		<http://purl.org/dc/terms/> .
+@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
+@prefix void: 		<http://rdfs.org/ns/void#> .
+@prefix dbp:		<http://dbpedia.org/property/> .
+
+<#1> a void:Linkset ;
+	#dbp:script <scripts/ispra-core_get_and_sort.sh> ; 
+	dbp:endpoint <http://dati.isprambiente.it/sparql> ;
+	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o <http://www.w3.org/2002/07/owl#sameAs> ?b. FILTER(REGEX(STR(?b),'http://dbpedia.org')) }" ;
+	void:objectsTarget <https://datahub.io/dataset/ispra-lod-place> ;
+	dc:author <https://github.com/dvcama> ;
+	dct:description "dati.isprambiente.it - ISPRA Linked Open Data - The administrative divisions of Italy (regions/provinces/municipalities) + shape of municipalities + link to istat + link to geoname/dbpedia" ;
+	dbp:updateFrequencyInDays 30;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	.
