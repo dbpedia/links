@@ -106,7 +106,7 @@ class BackLinks:
   </body>
 </html>
         """
-        with open(target + 'table.html', 'w') as f:
+        with open(target + 'index.html', 'w') as f:
             f.write(table)
 
     def allBacklinks(self, target):
