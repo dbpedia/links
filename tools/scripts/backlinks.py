@@ -70,11 +70,12 @@ class BackLinks:
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
   </head>
 
   <body>
     <div class="container">
-      <table class="table">
+      <table id="table" class="display" width="100%">
         <thead>
           <tr>
             <th>Contributer</th>
@@ -85,12 +86,23 @@ class BackLinks:
         """
         for graph in graphs:
             table += '<tr><td><a href="' + str(graph[2]) + '">' + graph[0].name +'</td>'
-            table += '<td><a href="http://downloads.dbpedia.org/links/backlinks/' + graph[0].name + '_backlinks.nt">backlink</td></tr>'
+            table += '<td><a href="http://downloads.dbpedia.org/links/backlinks/' + graph[0].name + '_backlinks.nt">Download</td></tr>'
         table +="""
         </tbody>
       </table>
     </div>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+    <script
+			  src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+			  integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc="
+			  crossorigin="anonymous"></script>
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+	<script>
+	  $(document).ready(function() {
+        $('#table').DataTable();
+      } );
+	</script>
   </body>
 </html>
         """
