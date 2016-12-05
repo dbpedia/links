@@ -54,7 +54,7 @@ class BackLinks:
                             backlinks.add( (o1, OWL.sameAs, o) )
         if len(backlinks) > 0:
             backlinks.serialize(destination=target + maingraphs[0].name + '_backlinks.nt', format='nt')
-            result = [maingraphs[0].name, str(maingraphs[2])]
+            result = [maingraphs[0].name, maingraphs[2]]
             return result
 
     def createHTMLTable(self, results, target):
@@ -91,8 +91,9 @@ class BackLinks:
         <tbody class="list">
         """
         for result in results:
-            table += '<tr><td class="name"><a href="' + result[1] + '">' + result[0] +'</td>'
-            table += '<td class="link"><a href="/links/backlinks/' + result[0] + '_backlinks.nt.bz2">Download</td></tr>'
+            print(result)
+            table += '<tr><td class="name"><a href="' + str(result[1]) + '">' + str(result[0]) +'</td>'
+            table += '<td class="link"><a href="/links/backlinks/' + str(result[0]) + '_backlinks.nt.bz2">Download</td></tr>'
         table +="""
         </tbody>
       </table>
@@ -136,7 +137,9 @@ class BackLinks:
 
         #generate Backlinks
         for i, maingraphs in enumerate(graphs):
-            results.append(self.matchAllBacklinks(maingraphs, graphs[:i] + graphs[i+1:], target))
+            result = self.matchAllBacklinks(maingraphs, graphs[:i] + graphs[i+1:], target)
+            if not result == None:
+                results.append(result)
 
         self.createHTMLTable(results, target)
 
