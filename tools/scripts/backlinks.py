@@ -55,7 +55,7 @@ class BackLinks:
         if len(backlinks) > 0:
             backlinks.serialize(destination=target + maingraphs[0].name + '_backlinks.nt', format='nt')
             result = [maingraphs[0].name, str(maingraphs[2])]
-        return result
+            return result
 
     def createHTMLTable(self, results, target):
         table = """
