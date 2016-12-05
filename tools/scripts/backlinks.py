@@ -74,6 +74,10 @@ class BackLinks:
 
   <body>
     <div id="users" class="container" padding-top="100px">
+    <input class="search" placeholder="Search" />
+    <button class="sort" data-sort="name">
+      Sort by name
+    </button>
       <table id="table" class="table">
         <thead>
           <tr>
@@ -84,8 +88,9 @@ class BackLinks:
         <tbody class="list">
         """
         for graph in graphs:
-            table += '<tr><td class="name"><a href="' + str(graph[2]) + '">' + graph[0].name +'</td>'
-            table += '<td class="link"><a href="http://downloads.dbpedia.org/links/backlinks/' + graph[0].name + '_backlinks.nt">Download</td></tr>'
+            if len(graph[1]) > 0:
+                table += '<tr><td class="name"><a href="' + str(graph[2]) + '">' + graph[0].name +'</td>'
+                table += '<td class="link"><a href="/' + graph[0].name + '_backlinks.nt.bz2">Download</td></tr>'
         table +="""
         </tbody>
       </table>
