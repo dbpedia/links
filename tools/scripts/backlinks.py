@@ -52,9 +52,12 @@ class BackLinks:
                     for g in graph[1]:
                         for s1,p1,o1 in g.triples( (s, p, None) ):
                             backlinks.add( (o1, OWL.sameAs, o) )
-        backlinks.serialize(destination=target + maingraphs[0].name + '_backlinks.nt', format='nt')
+        if len(backlinks) > 0:
+            backlinks.serialize(destination=target + maingraphs[0].name + '_backlinks.nt', format='nt')
+            result = [maingraphs[0].name, str(maingraphs[2])]
+        return result
 
-    def createHTMLTable(self, graphs, target):
+    def createHTMLTable(self, results, target):
         table = """
 <!DOCTYPE html>
 <html lang="en">
@@ -87,10 +90,9 @@ class BackLinks:
         </thead>
         <tbody class="list">
         """
-        for graph in graphs:
-            if len(graph[1]) > 0:
-                table += '<tr><td class="name"><a href="' + str(graph[2]) + '">' + graph[0].name +'</td>'
-                table += '<td class="link"><a href="/' + graph[0].name + '_backlinks.nt.bz2">Download</td></tr>'
+        for result in results:
+            table += '<tr><td class="name"><a href="' + result[1] + '">' + result[0] +'</td>'
+            table += '<td class="link"><a href="/links/backlinks/' + result[0] + '_backlinks.nt.bz2">Download</td></tr>'
         table +="""
         </tbody>
       </table>
@@ -114,6 +116,7 @@ class BackLinks:
         graphs = []
         origin = Path(str(self.mainDir) + '/links')
         repolink = 'https://github.com/dbpedia/links/tree/master/links'
+        results = []
 
         #readDirs part
         #dbpedia.org part
@@ -133,9 +136,9 @@ class BackLinks:
 
         #generate Backlinks
         for i, maingraphs in enumerate(graphs):
-            self.matchAllBacklinks(maingraphs, graphs[:i] + graphs[i+1:], target)
+            results.append(self.matchAllBacklinks(maingraphs, graphs[:i] + graphs[i+1:], target))
 
-        self.createHTMLTable(graphs, target)
+        self.createHTMLTable(results, target)
 
 
 def main():
