@@ -30,13 +30,46 @@ done
 
 find $backup -type f -name "*.nt" -exec bzip2 -z {} \;
 
-
 #Create softlink
 ln -s $backup <define folder path here>/$DATE
 ln -s $backup <define folder path here>/current
 
 #Create backlinks
 python3.4 $origin/tools/scripts/backlinks.py $origin <define folder path here>
+find <define folder path here> -type f -name "*.nt.bz2" -exec rm {} \;
+find <define folder path here> -type f -name "*.nt" -exec bzip2 -z {} \;
+
+#Fix redirects and convert URI to IRI
+alldbpFilenames=""
+alldbpRecodedFilenames=""
+
+for file in $backup/dbpedia.org/*nt.bz2; do
+        filename=$(basename "$file")
+        filename="${filename%%.*}"
+        alldbpFilenames="$filename,$alldbpFilenames"
+        alldbpRecodedFilenames="$filename-recoded,$alldbpRecodedFilenames"
+done
+cd <define folder path here>
+../run RecodeUris $backup/dbpedia.org .nt.bz2 -recoded.nt.bz2 true ${alldbpFilenames%?}
+../run MapSubjectUris <define folder path here> transitive-redirects .ttl.bz2 ${alldbpRecodedFilenames%?} -redirected .nt.bz2 @external $backup/dbpedia.org
+
+find $backup/dbpedia.org/ -type f ! -name "*-recoded-redirected.nt.bz2" -exec rm {} \;
+
+for subdir in $backup/xxx.dbpedia.org/*; do
+        allsubFilenames=""
+        allsubRecodedFilenames=""
+        for file in $subdir/*nt.bz2; do
+                filename=$(basename "$file")
+                filename="${filename%%.*}"
+                allsubFilenames="$filename,$allsubFilenames"
+                allsubRecodedFilenames="$filename-recoded,$allsubRecodedFilenames"
+        done
+        tmp=$(basename $subdir)
+        ../run RecodeUris $backup/xxx.dbpedia.org/$tmp .nt.bz2 -recoded.nt.bz2 true ${allsubFilenames%?}
+        ../run MapSubjectUris <define folder path here> transitive-redirects .ttl.bz2 ${allsubRecodedFilenames%?} -redirected .nt.bz2 @external $backup/xxx.dbpedia.org/$tmp
+
+        find $backup/xxx.dbpedia.org/$tmp -type f ! -name "*-recoded-redirected.nt.bz2" -exec rm {} \;
+done
 
 #Git update
 cd $origin
