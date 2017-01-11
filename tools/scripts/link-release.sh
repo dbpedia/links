@@ -71,6 +71,10 @@ for subdir in $backup/xxx.dbpedia.org/*; do
         find $backup/xxx.dbpedia.org/$tmp -type f ! -name "*-recoded-redirected.nt.bz2" -exec rm {} \;
 done
 
+#Zipping Subdirs and Parent directory
+cd $backup
+zip -r links.zip .
+
 #Git update
 cd $origin
 git checkout master
