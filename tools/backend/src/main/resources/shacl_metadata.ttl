@@ -1,0 +1,86 @@
+@prefix ex: <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+@prefix dbp: <http://dbpedia.org/property/> .
+
+ex:MyShape
+    a sh:Shape ;
+    sh:scopeClass void:Linkset ;
+
+    # metadata
+    sh:property [
+        sh:predicate dc:author ;
+        sh:minCount 1;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    sh:property [
+        sh:predicate dct:description ;
+        sh:minCount 1;
+        sh:nodeKind sh:Literal ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:predicate dct:license ;
+        sh:minCount 1;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    # script
+    sh:property [
+        sh:predicate dbp:script ;
+        sh:maxCount 1;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    sh:property [
+        sh:predicate dbp:linkConf ;
+        sh:maxCount 1;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    sh:property [
+        sh:predicate dbp:ntriplefilelocation ;
+        sh:maxCount 1;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    sh:property [
+        sh:predicate dbp:endpoint ;
+        sh:maxCount 1;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    sh:property [
+        sh:predicate dbp:constructQuery ;
+        sh:maxCount 1;
+        sh:nodeKind sh:Literal ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:predicate dbp:approvedPatch ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    sh:property [
+        sh:predicate dbp:optionalPatch ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+
+    # update frequency
+
+    sh:property [
+        sh:predicate dbp:updateFrequencyInDays ;
+        sh:maxCount 1;
+        sh:nodeKind sh:Literal ;
+        sh:datatype xsd:integer ;
+    ] ;
+.

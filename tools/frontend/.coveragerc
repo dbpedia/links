@@ -1,0 +1,5 @@
+[run]
+include = dbpedia_links_rating/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin

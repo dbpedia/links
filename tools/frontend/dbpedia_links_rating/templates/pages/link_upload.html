@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+    <div class="container">
+
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+    {% block content %}
+      {% if request.user.is_superuser %}
+
+        <p>Upload the links here.</p>
+      {% else %}
+        <p>This site is for admins only!</p>
+
+      {% endif %}
+    {% endblock content %}
+
+    </div> <!-- /container -->
