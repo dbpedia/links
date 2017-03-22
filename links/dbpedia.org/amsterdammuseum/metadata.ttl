@@ -1,0 +1,11 @@
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
+
+<#1> a void:Linkset ;
+	dc:author <amit> ;
+	dbp:ntriplefilelocation <amsterdammuseum.nt.bz2> ;
+	void:objectsTarget <http://purl.org/> ;
+#	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dct:description "amsterdammuseum information copied statically" .
