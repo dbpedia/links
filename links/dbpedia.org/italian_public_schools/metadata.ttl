@@ -5,6 +5,6 @@
 
 <#1> a void:Linkset ;
 	dc:author <amit> ;
-	dbp:ntriplefilelocation <amsterdammuseum.nt.bz2> ;
-	void:objectsTarget <http://purl.org/> ;
-	dct:description "amsterdammuseum information copied statically" .
+	dbp:ntriplefilelocation <italian_public_schools.nt.bz2> ;
+	void:objectsTarget <http://data.linkedopendata.it/> ;
+	dct:description "italian_public_schools information copied statically" .

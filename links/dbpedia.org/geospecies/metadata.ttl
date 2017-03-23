@@ -5,6 +5,6 @@
 
 <#1> a void:Linkset ;
 	dc:author <amit> ;
-	dbp:ntriplefilelocation <amsterdammuseum.nt.bz2> ;
-	void:objectsTarget <http://purl.org/> ;
-	dct:description "amsterdammuseum information copied statically" .
+	dbp:ntriplefilelocation <geospecies.nt.bz2> ;
+	void:objectsTarget <http://lod.geospecies.org/> ;
+	dct:description "geospecies information copied statically" .
