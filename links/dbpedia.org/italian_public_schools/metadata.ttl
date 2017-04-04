@@ -5,6 +5,6 @@
 
 <#1> a void:Linkset ;
 	dc:author <amit> ;
-	dbp:ntriplefilelocation <italian_public_schools.nt.bz2> ;
+	dbp:ntriplefilelocation <http://downloads.dbpedia.org/2016-04/links/italian_public_schools_links_fixed.nt.bz2> ;
 	void:objectsTarget <http://data.linkedopendata.it/> ;
-	dct:description "italian_public_schools information copied statically" .
+	dct:description "italian_public_schools information copied statically as legacy links from old releases. So far there has been no maintainer for this linkset. Do you have a better description? Can you contribute better links? Then have a look at the how-to wiki page: https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia " .

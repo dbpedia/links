@@ -1,0 +1,10 @@
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
+
+<#1> a void:Linkset ;
+	dc:author <amit> ;
+	dbp:ntriplefilelocation <http://downloads.dbpedia.org/2016-04/links/jrc_names_links_fixed.nt.bz2> ;
+	void:objectsTarget <http://data.europa.eu/> ;
+	dct:description "jrc_names information copied statically as legacy links from old releases. So far there has been no maintainer for this linkset. Do you have a better description? Can you contribute better links? Then have a look at the how-to wiki page: https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia " .
