@@ -18,4 +18,5 @@ Should you use the Linked Web APIs dataset, pleace cite our most recent Semantic
 M. Dojchinovski and Tomas Vitvar: Linked Web APIs Dataset: Web APIs meet Linked Data (Preprint), Semantic Web Journal, IOS Press, 2017
 ``
 
-Author and maintainer: Milan Dojchinovski (dojcinovski.milan@gmail.com)
+#### Author and maintainer:
+Milan Dojchinovski (dojcinovski.milan@gmail.com)
