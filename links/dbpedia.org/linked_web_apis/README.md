@@ -15,7 +15,7 @@ More information about the links might be found [here](http://linked-web-apis.fi
 Should you use the Linked Web APIs dataset, pleace cite our most recent Semantic Web Journal [paper](https://drive.google.com/file/d/0BxeQvF3BluZUS3c2SjViRjNDVUk/edit) entitled "Linked Web APIs Dataset: Web APIs meet Linked Data"
 
 ``
-M. Dojchinovski and Tomas Vitvar: Linked Web APIs Dataset: Web APIs meet Linked Data (Preprint), Semantic Web Journal, IOS Press, 2016
+M. Dojchinovski and Tomas Vitvar: Linked Web APIs Dataset: Web APIs meet Linked Data (Preprint), Semantic Web Journal, IOS Press, 2017
 ``
 
 Author and maintainer: Milan Dojchinovski (dojcinovski.milan@gmail.com)
