@@ -1,0 +1,13 @@
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
+
+<#1> a void:Linkset ;
+	dc:author <amit> ;
+	dbp:ntriplefilelocation <de_dnb-wikidata-links.nt.bz2> ;
+	void:objectsTarget <https://portal.dnb.de/opac.htm> ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dct:description "Links German-DBpedia with the Deutsche Nationalbibliothek GND dataset, constructed via Wikidata-GND links ." .
+
+
