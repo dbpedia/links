@@ -34,7 +34,7 @@ function onLoad()
               
                 d3.selectAll(".viz").remove();
 
-		 $.when(loadMetadata(d)).done(function()
+		 $.when(loadMetadata(d)).always(function()
 		{
       
                 var viz = d3.select("#line-" + d.name)
