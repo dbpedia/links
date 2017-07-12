@@ -184,7 +184,18 @@ function onLoad()
 
 function loadMetadata(name)
 {
-	return;
+	return $.ajax({
+        url: "././links/dbpedia.org/" + name + "/metadata.ttl",
+        async: true,
+        crossDomain: false,
+        success: function (data){
+
+            alert("Metadata loaded!");
+        },
+        error: function(data) {
+            alert("Unable to load metadata!");
+        }
+    });
 }
 
 function parseData(file)
