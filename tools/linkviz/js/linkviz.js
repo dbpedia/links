@@ -194,7 +194,7 @@ function loadMetadata(linkSet)
 		linkSet.metadata = data;
         },
         error: function(data) {
-            alert("Unable to load metadata!");
+            linkSet.metadata = "[missing]";
         }
     });
 }
