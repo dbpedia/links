@@ -34,7 +34,8 @@ function onLoad()
               
                 d3.selectAll(".viz").remove();
 
-
+		 $.when(loadMetadata(d.name)).done(function()
+		{
       
                 var viz = d3.select("#line-" + d.name)
                 .append("div")
@@ -125,7 +126,9 @@ function onLoad()
                             .transition()
                             .style("width", function(d) { return Math.max(2, Math.floor(60 * d.count / d.linkSet.max)) + "%" })
 
-                    })
+                    });
+			 
+		 });
               }
 
         });
@@ -177,6 +180,11 @@ function onLoad()
 
 
     });
+}
+
+function loadMetadata(name)
+{
+	return;
 }
 
 function parseData(file)
