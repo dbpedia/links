@@ -34,7 +34,8 @@ function onLoad()
               
                 d3.selectAll(".viz").remove();
 
-
+		 $.when(loadMetadata(d)).always(function()
+		{
       
                 var viz = d3.select("#line-" + d.name)
                 .append("div")
@@ -106,6 +107,8 @@ function onLoad()
                     .text(function(d) { return "Number of links in current version: " + d.current; });
                 infoBox.append("div")
                     .text(function(d) { return "Number of links in previous version: " + d.previous; });
+		infoBox.append("div")
+                    .text(function(d) { return "Metadata: " + d.metadata; });
 
 
                 
@@ -125,7 +128,9 @@ function onLoad()
                             .transition()
                             .style("width", function(d) { return Math.max(2, Math.floor(60 * d.count / d.linkSet.max)) + "%" })
 
-                    })
+                    });
+			 
+		 });
               }
 
         });
@@ -179,6 +184,21 @@ function onLoad()
     });
 }
 
+function loadMetadata(linkSet)
+{
+	return $.ajax({
+        url: "../../links/dbpedia.org/" + linkSet.name + "/metadata.ttl",
+        async: true,
+        crossDomain: false,
+        success: function (data){
+		linkSet.metadata = data;
+        },
+        error: function(data) {
+            linkSet.metadata = "[missing]";
+        }
+    });
+}
+
 function parseData(file)
 {
 	return $.ajax({
@@ -211,7 +231,7 @@ function parseData(file)
                     }
 
                     // Create a new linkset
-                    currentSet = { name : setName, revisions : [], average : 0, current : 0, previous : 0, preprevious : 0, max : 0, issues : [] }
+                    currentSet = { name : setName, revisions : [], average : 0, current : 0, previous : 0, preprevious : 0, max : 0, issues : [], metadata : "" }
 
                     linkSets.push(currentSet);
                 }
