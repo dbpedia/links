@@ -4,6 +4,7 @@
 @prefix dbp:	<http://dbpedia.org/property/> .
 
 <#1> a void:Linkset ;
+	rdfs:label "Deutsche Nationalbibliothek" ;
 	dc:author <amit> ;
 	dbp:ntriplefilelocation <dnb-wikidata-links.nt.bz2> ;
 	void:objectsTarget <https://portal.dnb.de/opac.htm> ;
