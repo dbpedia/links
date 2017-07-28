@@ -1,15 +1,23 @@
 package org.dbpedia.links;
 
+
 import org.aksw.rdfunit.io.writer.RdfFileWriter;
 import org.aksw.rdfunit.io.writer.RdfWriterException;
 import org.aksw.rdfunit.sources.TestSource;
 import org.aksw.rdfunit.sources.TestSourceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.log4j.Logger;
+
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,13 +26,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 
 import static org.dbpedia.links.LinksUtils.filterFileWithEndsWith;
 import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
@@ -32,194 +44,244 @@ import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
  * @author Dimitris Kontokostas
  * @since 29/4/2016 3:59 μμ
  */
-public class GenerateLinks {
+public class GenerateLinks
+{
+	
+   private static Logger L = Logger.getLogger(GenerateLinks.class);
 
-    private static Logger L = Logger.getLogger(GenerateLinks.class);
-    private static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+   public static void main(String[] args) throws Exception
+   {
 
-    public static void main(String[] args) throws Exception {
-
-        File f = new File(Paths.get(".").toAbsolutePath().normalize().toString()).getParentFile();  // hard code this for now
+	   OptionParser parser =  getCLIParser();
+	   OptionSet options = null;
+		
+		try
+		{
+			options = parser.parse(args);
+		
+		}
+		
+		catch(OptionException oe)
+		{
+			parser.printHelpOn(System.err);
+			System.out.println("Error:\t"+oe.getMessage());
+			System.exit(1);
+		}	
+			
+		if(options.hasArgument("help"))
+		{
+			parser.printHelpOn(System.out);
+			System.exit(0);
+		}  
+	   
+	           
+		String basedir = (String)options.valueOf("basedir");
+		File f = new File(Paths.get(basedir).toAbsolutePath().normalize().toString()).getAbsoluteFile(); 
         List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
-
-        //ExecuteShellScriptsFromFolders(filterFileWithEndsWith(allFilesInRepo, ".sh"));
-        // alternative to above but uses only scripts defined in metadata.ttl filesvn
-        ExecuteShellScriptsFromAllMetadataFiles(filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
+        
+        generate(filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 
 
     }
-
-    private static void ExecuteShellScriptsFromFolders(List<File> filesList){
-        filesList.stream().forEach(file -> {
-
-            	executeShellScript(file);
-
-        });
-    }
-    
-    
-    /*
-     * - get frequency
-     * - read xxx_links.nt file
-     * - if does not exist, then we need to load it via 1) script, 2) download link, 3) SPARQL query, 
-     * 
-     * 1) if exists script:
-     *  -- option 1: if file does not exist, exec script
-     *  -- option 2: check last modified and compare with frequency (now - last modified)
-     *  -- if needed, re-generate the files 
+      
+    /**
+     * Generates linksets, as needed, according to the metadata provided in their repository
+     * entries. 
      *  
-     * 2) if download link exist
-     *  -- option 1: if file does not exist, download file
-     *  -- option 2: if file exist, compare with header and download if needed
-     *  
-     * 2) if SPARQL query exist
-     *  -- option 1: if file does not exist, exec SPARQL query
-     *  -- option 2: check last modified and compare with frequency (now - last modified)
-     *  -- if needed, re-generate the files 
+     * @param metadataFileList list of metadata files to be examined
      */
-
-    private static void ExecuteShellScriptsFromAllMetadataFiles(List<File> filesList){
-        filesList.stream().forEach(file -> {
-
-            L.info("Processing " + file);
-            L.info("Root metadata folder " + file.getParent());
+    private static void  generate(List<File> metadataFileList)
+    
+    {
+    	metadataFileList.stream().forEach(metadataFile -> {
+    		try
+    		{
+				processFile(metadataFile);
+			} 
+    		catch (Exception e) {
+			
+				e.printStackTrace();
+			}
             
-            Model model = LinksUtils.getModelFromFile(file);
-            
-            // check frequency property
-            int frequency = 10; // default value is 10 days
-            if(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays")).hasNext()){
-            	frequency = model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays")).next().asLiteral().getInt();
-//            	L.info(frequency);
-            }
+    	}
+    	
+    	);
 
-            boolean regenerate = false;
-            String downloadURL = null;
-    		String downloadLoc = null;
-            
-            // checking if the linkset is provided via URL or localfile
-    		// check if it should be regenerated according to the frequency specified, or the last modified HTTP header
-            File linksetFile = null;
-            if(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/ntriplefilelocation")).hasNext()){
-        		String linksetFilePath;
-				try {
-					linksetFilePath = model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/ntriplefilelocation")).next().asResource().getURI();
-	        		
-        			// its download URL
-	        		if(linksetFilePath.startsWith("http://")) {
-//	        			L.info("its download URL: " + linksetFilePath);
-	        			downloadURL = linksetFilePath;
-	        			regenerate = true;
-					}
-					// its local file
-	        		else if (linksetFilePath.startsWith("file://")){
-//	        			L.info("Its local file: " + linksetFilePath);
-	            		linksetFilePath = FilenameUtils.normalize(new URI(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/ntriplefilelocation")).next().asResource().getURI()).getPath());
-//	        			L.info("its local file pointer" + linksetFilePath);
-	        			linksetFile = new File(linksetFilePath);
-	        			if(linksetFile.exists()) {
-	        				// linkset file exists
-		        			Date linksFileDate = new Date(linksetFile.lastModified());
-				            Calendar cal = new java.util.GregorianCalendar();
-				            Date nowDate = cal.getTime();
-//				            L.info(linksetFile.getAbsolutePath());
-//				            L.info("Linkset file was last generated at: " + sdf.format(linksetFile.lastModified()));
-//				            L.info("Today date is: " + sdf.format(nowDate));
-//				            L.info("Diff days: " + LinksUtils.diffInDays(nowDate, linksFileDate));
-				            if(frequency <= LinksUtils.diffInDays(nowDate, linksFileDate)) {
-				            	regenerate = true;
-//				            	L.info("Should be regenerated - " + LinksUtils.diffInDays(nowDate, linksFileDate) + " days diff");
-				            } else {
-				            	regenerate = false;
-//				            	L.info("No need for regeneration - " + LinksUtils.diffInDays(nowDate, linksFileDate) + " days diff");
-				            }
-	        			} else {
-	        				// linkset file does not exist
-	        				regenerate = true;
-//		        			L.info("does not exist");
-	        			}
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-            
-            // check if there is script and execute if needed
-            if(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/script")).hasNext() 
-            		&& regenerate) {
-            	try {
-            		String scriptFilePath = FilenameUtils.normalize(new URI(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/script")).next().asResource().getURI()).getPath());
-					if(regenerate) {
-						File scriptFile = new File(scriptFilePath);
-	                    if (scriptFile.exists()) {
-	                        executeShellScript(scriptFile);
-	                    } else {
-	                        L.warn("No valid link for script file " + scriptFilePath);
-	                    }
-					}
-					regenerate = false;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-
-            // check if there is download link and execute if needed (no script)
-            if(downloadURL != null 
-            		&& regenerate
-            		){
-        			try {
-	        			downloadLoc = file.getParent()+"/"+downloadURL.substring(downloadURL.lastIndexOf('/') + 1);
-	                    File locLinksetFile = new File(downloadLoc);
-	                    if(locLinksetFile.exists()) {
-	                    	Date locLinksetFileDate = new Date(locLinksetFile.lastModified());
-//	                    	L.info(locLinksetFileDate);
-//	                    	L.info(getLastModifiedForURL(downloadURL));
-	                    	if(locLinksetFileDate.after(getLastModifiedForURL(downloadURL))) {
-//	                    		L.info("no need to update");
-	                    	} else {
-	    						downloadDump(new URL(downloadURL), downloadLoc);
-//	                    		L.info("newer dump exists");
-	                    	}
-	                    } else {
-    						downloadDump(new URL(downloadURL), downloadLoc);
-	                    }
-						regenerate=false;
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-            	try {
-            		
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-            
-            // check if there is: 1) construct query, 2) endpoint and 3) outputFile specified
-            // execute if needed (no script)
-            if(model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/endpoint")).hasNext() 
-            		&& model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/constructquery")).hasNext()
-            		&& model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/outputFile")).hasNext()
-            		&& regenerate
-            		){
-            	try {
-            		String constructQuery = model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/constructquery")).next().asLiteral().getString();
-            		String endpoint = model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/endpoint")).next().asResource().getURI();
-            		String outputFileName = model.listObjectsOfProperty(ResourceFactory.createProperty("http://dbpedia.org/property/outputFile")).next().asResource().getURI();
-            		executeSPARQLQuery(constructQuery, endpoint, outputFileName);
-					regenerate = false;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-
-        });
     }
+    
+    /**
+     * Generates repository linksets, as needed, according to the provided metadata.
+     * A linkset is generated based on examining the metadata properties of its location and
+     * update rate.
+     * The generation itself is performed by one of the following methods (even though more than one
+     * might appear in the metadata file):
+     * 1. script, 
+     * 2. SPRAQL CONSTRUCT query,
+     * 3. download a dump file.
+     * 
+     * The method givies preference to dynamic methods (script, SPRAQL CONSTRUCT
+     * query) over static dumps.    
+     * 
+     * @param metadataFile a metadata file for a given repository.
+     * @throws URISyntaxException
+     * @throws MalformedURLException
+     */
+    private static void processFile(File metadataFile) throws URISyntaxException, MalformedURLException
+    {
+    	L.info("Processing " + metadataFile);
+        L.info("Root metadata folder " + metadataFile.getParent());
+        
+        Model model = LinksUtils.getModelFromFile(metadataFile);
+        Property ntriplelocationProperty = ResourceFactory.createProperty("http://dbpedia.org/property/ntriplefilelocation");
+        
+        Pair<String,String> ntriplelocations
+        	= getNTripleLocations(model, ntriplelocationProperty, metadataFile.getParent());
+        String originalLinksLocation = ntriplelocations.getLeft();//either  http:// or file://
+        String localLinksLocation = ntriplelocations.getRight(); 
+        
+        boolean shouldRegenerate = shouldRegenerate(model, ntriplelocations);
+        L.info("should regenerate "+shouldRegenerate);
+        if (!shouldRegenerate) return;
+        
+        //metadata properties relevant for update
+        Property scriptProperty = ResourceFactory.createProperty("http://dbpedia.org/property/script");
+        Property endpointProperty = ResourceFactory.createProperty("http://dbpedia.org/property/endpoint");
+        Property constructqueryProperty = ResourceFactory.createProperty("http://dbpedia.org/property/constructquery");
+        Property outputFileProperty = ResourceFactory.createProperty("http://dbpedia.org/property/outputFile");
+       
+        
+             
+        //script
+        if(model.listObjectsOfProperty(scriptProperty).hasNext())
+        {
+            String scriptFilePath =
+            		FilenameUtils.normalize(new URI(model.listObjectsOfProperty(scriptProperty)
+					.next().asResource().getURI()).getPath());
+            File scriptFile = new File(scriptFilePath);
+            executeShellScript(scriptFile);
+        	
+        }
+        //construct query
+        else if (model.listObjectsOfProperty(endpointProperty).hasNext() &&
+        	     model.listObjectsOfProperty(constructqueryProperty).hasNext())
+        {
+        	String endpoint = model.listObjectsOfProperty(endpointProperty).next().asResource().getURI();	
+        	String constructQuery = model.listObjectsOfProperty(constructqueryProperty).next().asLiteral().getString();
+        
+        	//TODO check the purpose of having an output file, compared to overriding the actual local triple file
+        	String outputFileName = (model.listObjectsOfProperty(outputFileProperty).hasNext())?
+        						 model.listObjectsOfProperty(outputFileProperty).next().asResource().getURI():
+        						 ntriplelocations.getRight(); //local ntriple file
+        
+        	executeSPARQLQuery(constructQuery, endpoint, outputFileName);
+        
+        }
+        //download from external link
+        else if (originalLinksLocation.startsWith("http://"))
+        {
+        	downloadDump(new URL(originalLinksLocation), localLinksLocation);
+        }	
+            
+        
+    }
+    
+  
+    /**
+     * Returns whether a linkset should be regenerated 
+     * 
+     * @param model used to access the update rate of this linkset.
+     * @param ntriplelocations a <code>Pair</code> containing the locations of the ntriple links
+     * 			file: the one which is referred in the metadata file, and the one which may exist
+     * 			in the file system.
+     * @return whether the linkset should be regenerated
+     */
+    private static boolean shouldRegenerate(Model model, Pair<String,String> ntriplelocations)
+    {
+    	boolean shouldRegenerate = false;
+    	int frequency = 10; //default update frequency (days).
+    	
+    	Property updateFrequencyInDaysProperty =
+        		ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays");
+        if(model.listObjectsOfProperty(updateFrequencyInDaysProperty).hasNext())
+        {
+        	frequency = model.listObjectsOfProperty(updateFrequencyInDaysProperty).next()
+        				.asLiteral().getInt();
+        	
+        	if (frequency <= 0) return false;
+        }
+		
+		Date localLinksFileDate  = null;
+        
+		
+		String originalLinksFileLocation = ntriplelocations.getLeft();
+		String localLinksFileLocation = ntriplelocations.getRight();
+		
+        
+		
+		if(originalLinksFileLocation == null) return true; //if property doesn't exist in metatada
+        
+		File localLinksFile = new File(localLinksFileLocation);
+		if(!localLinksFile.exists()) return true; // if linkset was not generated yet
+        
+
+		if(originalLinksFileLocation.startsWith("http://")) //external file
+    	  {
+    		
+    		//TODO change to LocalDate
+        	localLinksFileDate = new Date(localLinksFile.lastModified());
+        	shouldRegenerate = (getLastModifiedForURL(originalLinksFileLocation).after(localLinksFileDate));
+    		
+    		
+  		}
+        else if (originalLinksFileLocation.startsWith("file://")) 
+    	{
+    		
+            
+        	localLinksFileDate = new Date(localLinksFile.lastModified());
+    		LocalDate linksetDateModified = Instant.ofEpochMilli(localLinksFile.lastModified())
+							.atZone(ZoneId.systemDefault())
+							.toLocalDate();
+    				    				
+    		LocalDate now = LocalDate.now();
+    		shouldRegenerate = (!now.minusDays(frequency).isBefore(linksetDateModified));
+        }
+    	return shouldRegenerate;
+    }
+
+
+    /*
+     * return the original and local file paths of the linkset, if exist.
+     */
+    private static Pair<String,String> getNTripleLocations(Model m, Property ntriplelocationProperty, String parentDirPath) throws URISyntaxException 
+    {
+    	
+    	String originalLocationPath = null;
+    	String localLocationPath = null;
+ 
+    	if(m.listObjectsOfProperty(ntriplelocationProperty).hasNext())
+    	{
+    		originalLocationPath =m.listObjectsOfProperty(ntriplelocationProperty).next().asResource().getURI();
+    		if(originalLocationPath.startsWith("http://"))
+    		{
+    			localLocationPath = parentDirPath+"/"+originalLocationPath.substring(originalLocationPath.lastIndexOf('/')+1);
+    		}
+    		else if (originalLocationPath.startsWith("file://"))
+    		{
+    				localLocationPath = 
+							FilenameUtils
+							.normalize(new URI(originalLocationPath).getPath());
+				 
+    			
+    		}
+    			
+    	}
+    	
+    	return Pair.of(originalLocationPath, localLocationPath);
+	    
+    } 
+    
+ 
+        
 
     /*
      * Executes shell script from a given location
@@ -228,21 +290,29 @@ public class GenerateLinks {
         L.info("Executing script " + file.getAbsolutePath());
 
         Process p = null;
-        try {
-        	String[] cmd = {"/bin/bash","-c"," ( cd "+ file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) "};
-//        	System.out.println(" bash -c cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ");
-//            p = Runtime.getRuntime().exec(" bash -c ( cd " + file.getParentFile().getAbsolutePath() + " && sh " + file.getAbsolutePath() + " ) ");
-            p = Runtime.getRuntime().exec(cmd);
+        try
+        {
+        	ProcessBuilder pb = new ProcessBuilder("bash", "-c", " ( cd "+ file.getParentFile().getAbsolutePath().replace("\\", "/") + " &&  ./" + file.getName() + " ) ", System.getenv("PATH")); 
+        	
+        	pb.inheritIO();
+        	
+        	p=pb.start();
+        	        	
             BufferedReader read = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            try {
+            try
+            {
                 p.waitFor();
 
-            } catch (InterruptedException e) {
+            } 
+            catch (InterruptedException e) {
                 throw new IllegalArgumentException("Cannot execute script: " + file.getAbsolutePath(), e);
             }
-            while (read.ready()) {
-                System.out.println(read.readLine());
+           	while (read.ready())
+           	{
+                  System.out.println(read.readLine());
             }
+            
+            
         } catch (IOException  e) {
             throw new IllegalArgumentException("Cannot execute script: " + file.getAbsolutePath(), e);
         }
@@ -268,21 +338,27 @@ public class GenerateLinks {
     private static Date getLastModifiedForURL(String downloadLink) {
         HttpURLConnection.setFollowRedirects(true);
         HttpURLConnection con;
-		try {
+		try 
+		{
 			con = (HttpURLConnection) new URL(downloadLink).openConnection();
 	        con.setRequestMethod("HEAD");
-	        return new Date(con.getLastModified());
-		} catch (MalformedURLException e) {
+	        Date d = new Date(con.getLastModified()); 
+	        return d;
+		} 
+		catch (MalformedURLException e )
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;    	
     }
     
-    private static void executeSPARQLQuery(String query, String endpoint, String outputFileName) {
+    private static void executeSPARQLQuery(String query, String endpoint, String outputFileName)
+    {
         L.info("Fetching data from SPARQL endpoint");
         // TODO: Dimitris
         TestSource testSource = new TestSourceBuilder()
@@ -293,21 +369,43 @@ public class GenerateLinks {
                 .setQueryDelay(50)
                 .build();
 
-        try ( QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query) ) {
+        try ( QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query) )
+        {
 
             Model model = qe.execConstruct();
-			if (outputFileName.startsWith("file://")) {
+			if (outputFileName.startsWith("file://"))
+			{
 				outputFileName = FilenameUtils.normalize(new URI(outputFileName).getPath());
 			}
             new RdfFileWriter(outputFileName, "NTriples").write(model);
 
 
-        } catch (RdfWriterException e) {
+        } 
+        catch (RdfWriterException e)
+        {
             L.error("Error writing results from construct query in file " + outputFileName, e);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             L.error("Error Executing SPARQL query in endpoint " + outputFileName + "\n query: " + query, e);
         }
-
-
+        
     }
+    
+
+    /*
+     * 
+     */
+    private static OptionParser getCLIParser()
+	{
+    	
+    	OptionParser parser = new OptionParser();
+    	
+    	parser.accepts("basedir","Path to the directory under which repositroies would be searched; defaults to '.'")
+    		.withRequiredArg().ofType(String.class)
+    		.defaultsTo(".");
+    	parser.accepts("help","prints help information");
+		        	
+		return parser;
+	}
 }
