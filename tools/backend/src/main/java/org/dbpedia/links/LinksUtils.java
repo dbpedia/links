@@ -1,11 +1,17 @@
 package org.dbpedia.links;
 
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,10 +62,31 @@ public final class LinksUtils {
 
     public static Model getModelFromFile(File file) {
         Model model = ModelFactory.createDefaultModel();
+        
         RDFDataMgr.read(model, file.toURI().toString(), file.getParentFile().toURI().toString(), Lang.TURTLE);
 
         return model;
     }
+    
+    /**
+     * supported compression formats: gzip, bz2, xz, lzma, Pack200, DEFLATE, Z. 
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     * @throws CompressorException
+     */
+  	
+    public static Model getModelFromCompressedFile(File file) throws FileNotFoundException, CompressorException {
+        Model model = ModelFactory.createDefaultModel();
+        BufferedInputStream bis;
+        bis = new BufferedInputStream(new FileInputStream(file));
+		CompressorInputStream cis = new  CompressorStreamFactory().createCompressorInputStream(bis);
+        //RDFDataMgr.read(model, file.toURI().toString(), file.getParentFile().toURI().toString(), Lang.TURTLE);
+        RDFDataMgr.read(model,cis, file.getParentFile().toURI().toString(), Lang.TURTLE);
+        return model;
+    }
+    
+    
     
     /*
      * Returns diff in days between today and other previous date
