@@ -19,7 +19,7 @@ script:
 notifications:
   email:
     recipients:
-      - roessling@informatik.uni-leipzig.de
+      - amit@informatik.uni-leipzig.de
     on_success: change
     on_failure: change
 
