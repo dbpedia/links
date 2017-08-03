@@ -5,7 +5,7 @@
 
 <#1> a void:Linkset ;
 	dbp:ntriplefilelocation <eunis_links.nt> ;
-	void:objectsTarget <http://eunis.eea.europa.eu/>
+	void:objectsTarget <http://eunis.eea.europa.eu/> ;
 	dc:author <http://www.eea.europa.eu/help/contact-info> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description "The European nature information system, EUNIS, brings together European data from several databases and organisations into three interlinked modules on sites, species and habitat types." .
