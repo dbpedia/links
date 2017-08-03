@@ -282,8 +282,8 @@ public final class ValidateRepo
     
     private static void checkMetadataFilesWithRdfUnit(List<File> filesList) {
 	
-        //TestSuite testSuite = createTestSuiteWithShacl("/shacl_metadata.ttl");
-    	TestSuite testSuite = createTestSuiteWithShacl("/shacl_metadata_170712.ttl");
+        TestSuite testSuite = createTestSuiteWithShacl("/shacl_metadata.ttl");
+    	//TestSuite testSuite = createTestSuiteWithShacl("/shacl_metadata_170712.ttl");
         
         
         filesList.stream().forEach(file -> {
