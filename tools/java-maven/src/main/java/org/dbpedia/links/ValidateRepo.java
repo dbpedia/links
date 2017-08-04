@@ -21,21 +21,20 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.aksw.rdfunit.io.reader.RdfReaderFactory.createResourceReader;
-import static org.aksw.rdfunit.sources.SchemaSourceFactory.createSchemaSourceSimple;
-import static org.dbpedia.links.LinksUtils.*;
+//import static org.aksw.rdfunit.io.reader.RdfReaderFactory.createResourceReader;
+//import static org.aksw.rdfunit.sources.SchemaSourceFactory.createSchemaSourceSimple;
+//import static org.dbpedia.links.LinksUtils.*;
+
+import org.aksw.rdfunit.io.reader.RdfReaderFactory;
+import org.aksw.rdfunit.sources.SchemaSourceFactory;
+import org.dbpedia.links.LinksUtils;
+
 
 
 /**
@@ -79,30 +78,30 @@ public final class ValidateRepo
  		File f = new File(Paths.get(basedir).toAbsolutePath().normalize().toString()).getAbsoluteFile(); 
          
     		
-        List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
+        List<File> allFilesInRepo = LinksUtils.getAllFilesInFolderOrFile(f);
 
         
         
         
-        checkRdfSyntax(filterFileWithEndsWith(allFilesInRepo, ".nt"));
-        checkRdfSyntax(filterFileWithEndsWith(allFilesInRepo, ".ttl"));
-        checkRdfSyntax(filterFileWithEndsWith(allFilesInRepo, ".n3"));
+        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".nt"));
+        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".ttl"));
+        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".n3"));
 //
         
-        checkRdfSyntaxForCompressed(filterFileWithEndsWith(allFilesInRepo, ".nt.bz2"));
+        checkRdfSyntaxForCompressed(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".nt.bz2"));
      
         
-       checkDBpediaAsSubject(filterFileWithEndsWith(allFilesInRepo, "links.nt"));
-       checkDBpediaAsSubject(filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
+       checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.nt"));
+       checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
  //
-       checkDBpediaAsSubjectForCompressed(filterFileWithEndsWith(allFilesInRepo,"links.nt.bz2"));
+       checkDBpediaAsSubjectForCompressed(LinksUtils.filterFileWithEndsWith(allFilesInRepo,"links.nt.bz2"));
     
         
         checkFolderStructure(allFilesInRepo);
 //
-        checkMetadataFilesWithRdfUnit(filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));//,new File("d:/aksw-kilt/DBpedia-Links/viz/logs/linkserrors.json"));
+        checkMetadataFilesWithRdfUnit(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 //
-        checkMetadataLinks(filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
+        checkMetadataLinks(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 
         JSONArray ja = ec.toJSONArray();
         File errorLog = (File)options.valueOf("errorlog");
@@ -110,7 +109,7 @@ public final class ValidateRepo
         {
         	errorLog.getParentFile().mkdirs();
         }
-        System.out.println(ja.toJSONString());
+        //System.out.println(ja.toJSONString());
         
         try(FileWriter writer = new FileWriter(errorLog))
         {
@@ -128,7 +127,7 @@ public final class ValidateRepo
 
         filesList.stream().forEach(file ->
         {
-        	String repoName = file.getParentFile().getName();
+        	String repoName =   LinksUtils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
@@ -150,7 +149,7 @@ public final class ValidateRepo
     {
 
         filesList.stream().forEach(file -> {
-        	String repoName = file.getParentFile().getName();
+        	String repoName = LinksUtils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
@@ -161,7 +160,7 @@ public final class ValidateRepo
             }
             catch ( Exception e) 
             {
-                //throw new IllegalArgumentException("File " + file + " has syntax errors", e);
+                
             	ec.addError(repoName, fileName, e.getMessage());
             	
             	System.err.println("file:"+file+" error:"+e);
@@ -174,11 +173,11 @@ public final class ValidateRepo
         filesList.stream().forEach(file ->
         {
             
-        	String repoName = file.getParentFile().getName();
+        	String repoName = LinksUtils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
-            Model model = getModelFromFile(file);
+            Model model = LinksUtils.getModelFromFile(file);
             
             		
             model.listSubjects()
@@ -199,19 +198,21 @@ public final class ValidateRepo
     {
         filesList.stream().forEach(file -> {
             
-        	String repoName = file.getParentFile().getName();
+        	String repoName = LinksUtils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
         	Model model=null;
 			try
 			{
-				model = getModelFromCompressedFile(file);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				model = LinksUtils.getModelFromCompressedFile(file);
+			}
+			catch (Exception e)
+			{
 				e.printStackTrace();
 			}
-            model.listSubjects()
+           
+			model.listSubjects()
                     .forEachRemaining(subject ->
                     {
                         if (!subject.toString().contains("dbpedia.org/")) 
@@ -245,7 +246,7 @@ public final class ValidateRepo
                 .forEach(f -> {
                     boolean foundReadMe = false;
                     boolean foundMetadata = false;
-                    String repoName = f.getParentFile().getName();
+                    String repoName = LinksUtils.getRepoName(f);//f.getParentFile().getName();
                 	String fileName = f.getName();
                 	ec.addRepoFile(repoName, fileName);
                 	
@@ -283,24 +284,23 @@ public final class ValidateRepo
     private static void checkMetadataFilesWithRdfUnit(List<File> filesList) {
 	
         TestSuite testSuite = createTestSuiteWithShacl("/shacl_metadata.ttl");
-    	//TestSuite testSuite = createTestSuiteWithShacl("/shacl_metadata_170712.ttl");
-        
         
         filesList.stream().forEach(file -> {
             String fileName = file.getName();
             if (fileName.endsWith("metadata.ttl")) {
             	
-            	String repoName = file.getAbsoluteFile().getParentFile().getName();
+            	String repoName = LinksUtils.getRepoName(file);//file.getAbsoluteFile().getParentFile().getName();
             	
-            	Model model = getModelFromFile(file);
+            	Model model = LinksUtils.getModelFromFile(file);
                 TestExecution te = RDFUnitStaticValidator.validate(TestCaseExecutionType.shaclFullTestCaseResult, model, testSuite);
 
-                te.getTestCaseResults().stream().forEach(result -> {
+                te.getTestCaseResults()
+                  .stream()
+                  .forEach(result ->
+                  {
                     System.err.println("fileName:"+fileName+" message:"+result.getMessage()+" severity:"+result.getSeverity());
-                	
-                	
                 	ec.addError(repoName, fileName, result.getMessage());
-                });
+                  });
             }
         });
         
@@ -310,32 +310,34 @@ public final class ValidateRepo
 
     private static void checkMetadataLinks(List<File> filesList) {
         filesList.stream().forEach(file -> {
-            getModelFromFile(file).listStatements()
+            LinksUtils.getModelFromFile(file).listStatements()
                     .forEachRemaining(statement -> {
                         if (getLinkProperties().contains(statement.getPredicate())) {
                             String uri = statement.getObject().asResource().toString();
-                            String repoName = file.getParentFile().getName();
+                            String repoName = LinksUtils.getRepoName(file);//file.getParentFile().getName();
                             String fileName = file.getName();
                             
-                            if (uri.startsWith("file://")) {
+                            if (uri.startsWith("file://"))
+                            {
                                 File linkFile = new File(uri.substring(6)); // remove "file://"
-                                if (!linkFile.exists()) {
+                                if (!linkFile.exists())
+                                {
                                     
                                 	ec.addError(repoName,fileName, linkFile.getName()+": file does not exist in repo");
-                                			
-                                	//throw new IllegalArgumentException("In metadata file: " + file + " provided file does not exists in repo: " + linkFile.getAbsolutePath());
                                 }
-                            } else {
-                                try {
+                            }
+                            else
+                            {
+                                try
+                                {
                                     // from http://stackoverflow.com/questions/4177864/checking-a-url-exist-or-not
                                     URL url = new URL(uri);
                                     url.openStream();
-                                } catch (Exception ex) 
+                                }
+                                catch (Exception ex) 
                                 {
-                                   
+                                 
                                 	ec.addError(repoName, fileName, uri+": provided link does not resolve");
-                                	
-                                	//throw new IllegalArgumentException("In metadata file: " + file + " provided link does not resolve: " + uri);
                                 }
                             }
 
@@ -356,11 +358,11 @@ public final class ValidateRepo
     private static TestSuite createTestSuiteWithShacl(String schemaSource) {
         RdfReader ontologyShaclReader = null;
         try {
-            ontologyShaclReader = new RdfModelReader(createResourceReader(schemaSource).read());
+            ontologyShaclReader = new RdfModelReader(RdfReaderFactory.createResourceReader(schemaSource).read());
         } catch (RdfReaderException e) {
             throw new IllegalArgumentException(e);
         }
-        SchemaSource ontologyShaclSource = createSchemaSourceSimple("tests", "http://rdfunit.aksw.org", ontologyShaclReader);
+        SchemaSource ontologyShaclSource = SchemaSourceFactory.createSchemaSourceSimple("tests", "http://rdfunit.aksw.org", ontologyShaclReader);
         return new TestSuite(new ShaclTestGenerator().generate(ontologyShaclSource));
     }
     

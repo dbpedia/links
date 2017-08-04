@@ -12,6 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,4 +96,34 @@ public final class LinksUtils {
         long diff = f1.getTime() - f2.getTime();
         return (int)TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
+    
+    
+    
+    public static String getRepoName(File file)
+	{
+		File parentDir = file.getAbsoluteFile().getParentFile();
+		ArrayDeque<String> pathElements = new ArrayDeque<String>();
+		File currentDir;
+		
+		while(!parentDir.getParentFile().getName().contains("dbpedia"))
+		{
+			currentDir = parentDir;
+			parentDir = parentDir.getParentFile();
+			if(parentDir.getParentFile().getName().contains("xxx.dbpedia"))
+			{
+				pathElements.push(currentDir.getName());
+				pathElements.push("!");
+			}
+			
+		}
+		pathElements.push(parentDir.getName());
+		
+		
+		StringBuilder repoNameSB = new StringBuilder();
+		for(String pe : pathElements)
+		{
+			repoNameSB.append(pe);
+		}
+		return repoNameSB.toString();
+	}
 }
