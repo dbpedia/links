@@ -38,9 +38,9 @@ Please check out the [how to](https://github.com/dbpedia/links/wiki/How-To-Contr
 # How to update links for one dataset
 If you want to update links for one dataset, either create a new pull request to update the old linkset or follow the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia) to learn more about how to create a patch for the dataset which will be applied automatically on the next release.
 
-To make sure that your dataset is following proper conventions as mentioned in the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia), you can run the `validate.sh` script in `tools/backend/bin/`.
+To make sure that your dataset is following proper conventions as mentioned in the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia), you can run the `validate.sh` script in `tools/java-maven/bin/`.
 
-For more information regarding the validating, generating and patching aspects check out the README from the [backend](https://github.com/dbpedia/links/tree/master/tools/backend)
+For more information regarding the validating, generating and patching aspects check out the README from the [java-maven](https://github.com/dbpedia/links/tree/master/tools/java-maven)
 
 # Overview of current linksets
 
@@ -83,7 +83,7 @@ For more information regarding the validating, generating and patching aspects c
 
 # description of further tools in the repo and how to access/execute them
 All tools are being kept in the `tools` folder and have their own respective Readme to explain what their use is and how to use them. Currently there the following tools available: 
-* [Backend](https://github.com/dbpedia/links/blob/master/tools/backend/)
+* [Java-maven](https://github.com/dbpedia/links/blob/master/tools/java-maven/)
 * [Frontend](https://github.com/dbpedia/links/tree/master/tools/frontend)
 
 Within the `tools` folder there is also a `script` folder which contains several smaller scripts:
