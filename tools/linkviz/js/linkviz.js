@@ -148,7 +148,7 @@ function onLoad()
 
         trs.append("div")
             .attr("class", "column")
-            .text(function(d) { return d.revisions[d.revisions.length - 2].count; });
+            .text(function(d) { if (d.revisions.length >1) { return d.revisions[d.revisions.length - 2].count;} else {return "N/A";} });
 
         trs.append("div")
             .attr("class", "column")
@@ -204,14 +204,15 @@ function parseData(file)
 	return $.ajax({
         url: "data/dbpedia-count-links_bydataset.txt",
         async: true,
-        crossDomain: false,
+        crossDomain: true,
         success: function (data){
 
             var lines = data.split("\n"); 
 
             var currentSet = null;
 
-            for(var i = 0; i < lines.length; i++)
+			//TODO Hey Jan, ich hab mal -1 drangehangen und eine leere Zeile ans Ende gefuegt, aber es waere sauberer einfach leere Zeilen zu skippen.
+            for(var i = 0; i < lines.length-1; i++)
             {
                 // 0 : name, 1 : revision, 2 : link count
                 var entries = lines[i].split("\t");
@@ -237,7 +238,9 @@ function parseData(file)
                 }
 
                 // Create a new revision for the line entry
-                currentSet.revisions.push({ date : setRevision, count : setCount, linkSet : currentSet });
+                // SH: I removed the linkSet as this only creates a circular dependency
+                currentSet.revisions.push({ date : setRevision, count : setCount}); 
+				//currentSet.revisions.push({ date : setRevision, count : setCount, linkSet : currentSet });
 
                 // Precalculate some stuff
                 currentSet.preprevious = currentSet.previous;
