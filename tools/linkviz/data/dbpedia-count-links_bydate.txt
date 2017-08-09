@@ -477,7 +477,7 @@
 2017-07-01	factbook	0
 2017-07-01	gadm	38793
 2017-07-01	geonames	86547
-2017-07-01	geospecies.nt.bz2	0
+2017-07-01	geospecies	0
 2017-07-01	gho	0
 2017-07-01	gutenberg	0
 2017-07-01	ispra-core	6861

@@ -226,8 +226,8 @@ geospecies	2017-04-01	15972
 geospecies	2017-05-01	15972
 geospecies	2017-06-01	15972
 geospecies	2017-06-13	0
+geospecies	2017-07-01	0
 geospecies	2017-08-08	0
-geospecies.nt.bz2	2017-07-01	0
 gho	2016-11-18	0
 gho	2016-12-01	0
 gho	2017-01-05	0
