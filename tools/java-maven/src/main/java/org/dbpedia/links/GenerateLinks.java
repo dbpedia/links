@@ -10,6 +10,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.log4j.Logger;
@@ -96,7 +97,7 @@ public class GenerateLinks
     	metadataFileList.stream().forEach(metadataFile -> {
     		try
     		{
-				processFile(metadataFile);
+				processMetadataFile(metadataFile);
 			} 
     		catch (Exception e) {
 			
@@ -126,16 +127,16 @@ public class GenerateLinks
      * @throws URISyntaxException
      * @throws MalformedURLException
      */
-    private static void processFile(File metadataFile) throws URISyntaxException, MalformedURLException
+    private static void processMetadataFile(File metadataFile) throws URISyntaxException, MalformedURLException
     {
     	L.info("Processing " + metadataFile);
         L.info("Root metadata folder " + metadataFile.getParent());
         
         Model model = LinksUtils.getModelFromFile(metadataFile);
-        Property ntriplelocationProperty = ResourceFactory.createProperty("http://dbpedia.org/property/ntriplefilelocation");
+       
         
         Pair<String,String> ntriplelocations
-        	= getNTripleLocations(model, ntriplelocationProperty, metadataFile.getParent());
+        	= getNTripleLocations(model, metadataFile.getParent());
         String originalLinksLocation = ntriplelocations.getLeft();//either  http:// or file://
         String localLinksLocation = ntriplelocations.getRight(); 
         
@@ -252,15 +253,18 @@ public class GenerateLinks
     /*
      * return the original and local file paths of the linkset, if exist.
      */
-    private static Pair<String,String> getNTripleLocations(Model m, Property ntriplelocationProperty, String parentDirPath) throws URISyntaxException 
+    private static Pair<String,String> getNTripleLocations(Model m, String parentDirPath) throws URISyntaxException 
     {
     	
     	String originalLocationPath = null;
     	String localLocationPath = null;
  
-    	if(m.listObjectsOfProperty(ntriplelocationProperty).hasNext())
+    	NodeIterator ntriplelocations = m.listObjectsOfProperty(m.getProperty("http://dbpedia.org/property/ntriplefilelocation"));
+    	if(ntriplelocations.hasNext())
+    	//if(m.listObjectsOfProperty(ntriplelocationProperty).hasNext())
     	{
-    		originalLocationPath =m.listObjectsOfProperty(ntriplelocationProperty).next().asResource().getURI();
+    		//originalLocationPath =m.listObjectsOfProperty(ntriplelocationProperty).next().asResource().getURI();
+    		originalLocationPath = ntriplelocations.next().asResource().getURI();
     		if(originalLocationPath.startsWith("http://"))
     		{
     			localLocationPath = parentDirPath+"/"+originalLocationPath.substring(originalLocationPath.lastIndexOf('/')+1);
