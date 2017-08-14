@@ -4,7 +4,7 @@
 @prefix dbp:		<http://dbpedia.org/property/> .
 
 <#1> a void:Linkset ;
-	dbp:script <scripts/makeManifestationLinks.sh> ; 
+	dbp:script "scripts/makeManifestationLinks.sh"^^dbp:bash ; 
 	dbp:ntriplefilelocation <manifestation_links.nt> ;
 	dbp:linkConf <link-specs/lobid_dbpedia_Title.xml> ;
 	void:objectsTarget <https://datahub.io/dataset/lobid-resources> ;

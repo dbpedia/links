@@ -4,7 +4,7 @@
 @prefix dbp:		<http://dbpedia.org/property/> .
 
 <#1> a void:Linkset ;
-	dbp:script <scripts/makeLinks.sh> ;
+	dbp:script "scripts/makeLinks.sh"^^dbp:bash ;
 	dbp:ntriplefilelocation <gadm_links.nt> ;
 	void:objectsTarget <http://gadm.geovocab.org/> ;
 	dct:description "An RDF spatial representation of all the administrative regions in the world." ;

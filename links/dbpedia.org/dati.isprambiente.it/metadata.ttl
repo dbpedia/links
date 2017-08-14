@@ -4,7 +4,7 @@
 @prefix dbp:		<http://dbpedia.org/property/> .
 
 <#1> a void:Linkset ;
-	dbp:script <scripts/ispra-core_get_and_sort.sh> ; 
+	dbp:script "scripts/ispra-core_get_and_sort.sh"^^dbp:bash ; 
 	dbp:endpoint <http://dati.isprambiente.it/sparql> ;
 	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o <http://www.w3.org/2002/07/owl#sameAs> ?b. FILTER(REGEX(STR(?b),'http://dbpedia.org')) }" ;
 	void:objectsTarget <https://datahub.io/dataset/ispra-lod-place> ;

@@ -1,4 +1,4 @@
-package org.dbpedia.links;
+package org.dbpedia.links.lib;
 
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
@@ -7,6 +7,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -25,12 +26,51 @@ import static java.util.Arrays.stream;
  * @author Dimitris Kontokostas
  * @since 29/4/2016 4:00 μμ
  */
-public final class LinksUtils {
-    private LinksUtils(){}
+public final class Utils {
+    private static Logger L = Logger.getLogger(Utils.class);
+
+
+    /**
+     * Gets all metadata.ttl Files transitively from a root folder (input), it returns a list of files
+     */
+    public static List<File> getAllMetadataFiles (File input)
+    {
+        List<File> fileList = new ArrayList<>();
+
+        if(input.isDirectory()) {
+
+            stream(input.listFiles()).forEach(file ->  {
+
+                if (file.isDirectory()) {
+                    fileList.addAll(getAllMetadataFiles(file));
+                } else if (file.getName().toString().endsWith("metadata.ttl")){
+                    L.debug("found: "+file);
+                    fileList.add(file);
+                }
+            });
+        }else  if(input.isFile())
+        {
+            fileList.add(input);
+        }
+
+
+        return fileList;
+    }
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Gets all File transitively from a root folder (input), it returns both files and directories
      */
+    @Deprecated
     public static List<File> getAllFilesInFolderOrFile (File input)
     {
         List<File> fileList = new ArrayList<>();
@@ -55,12 +95,14 @@ public final class LinksUtils {
         return fileList;
     }
 
+    @Deprecated
     public static List<File> filterFileWithEndsWith(List<File> files, String endsWith) {
         return files.stream()
                 .filter( f -> f.getAbsolutePath().endsWith(endsWith) )
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     public static Model getModelFromFile(File file) {
         Model model = ModelFactory.createDefaultModel();
         
@@ -98,7 +140,7 @@ public final class LinksUtils {
     }
     
     
-    
+    @Deprecated
     public static String getRepoName(File file)
 	{
 		File parentDir = file.getAbsoluteFile().getParentFile();

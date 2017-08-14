@@ -4,7 +4,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<http://dbpedia.org/links/www.geoname.org> a void:Linkset ;
+<#1> a void:Linkset ;
 	dbp:linkConf <link-specs/dbpedia-geonames-airport.xml> ;
 	dbp:linkConf <link-specs/dbpedia-geonames-airport-verify.xml> ;
 	dbp:linkConf <link-specs/dbpedia-geonames-city.xml> ;

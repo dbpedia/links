@@ -4,7 +4,7 @@
 @prefix dbp:	<http://dbpedia.org/property/> .
 
 <#1> a void:Linkset ;
-	dbp:script <scripts/makeLinks.sh> ;
+	dbp:script "scripts/makeLinks.sh"^^dbp:bash ;
 	dbp:ntriplefilelocation <viaf2dbpedia.nt> ;
 	void:objectsTarget <http://viaf.org/viaf/> ;
 	dc:author <http://www.oclc.org/contacts.en.html> ;

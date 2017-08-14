@@ -6,7 +6,7 @@
 <#1> a void:Linkset ;
 	dc:author <http://data.linkedmdb.org/> ;
 	dbp:ntriplefilelocation <linkedmdb_links.nt.bz2> ;
-	dbp:endpoint "http://data.linkedmdb.org/sparql" ;
+	dbp:endpoint <http://data.linkedmdb.org/sparql> ;
 	void:objectsTarget <http://data.linkedmdb.org/resource/> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description "These links link DBpedia with the LinkedMDB dataset." .

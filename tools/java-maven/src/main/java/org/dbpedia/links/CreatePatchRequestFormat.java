@@ -12,10 +12,9 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.dbpedia.links.LinksUtils.getAllFilesInFolderOrFile;
+import static org.dbpedia.links.lib.Utils.getAllFilesInFolderOrFile;
 
 /**
  * Created by magnus on 04.05.16.

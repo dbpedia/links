@@ -13,8 +13,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.RiotException;
+import org.dbpedia.links.lib.Utils;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
@@ -29,12 +29,10 @@ import java.util.List;
 
 //import static org.aksw.rdfunit.io.reader.RdfReaderFactory.createResourceReader;
 //import static org.aksw.rdfunit.sources.SchemaSourceFactory.createSchemaSourceSimple;
-//import static org.dbpedia.links.LinksUtils.*;
+//import static org.dbpedia.links.lib.Utils.*;
 
 import org.aksw.rdfunit.io.reader.RdfReaderFactory;
 import org.aksw.rdfunit.sources.SchemaSourceFactory;
-import org.dbpedia.links.LinksUtils;
-
 
 
 /**
@@ -78,30 +76,30 @@ public final class ValidateRepo
  		File f = new File(Paths.get(basedir).toAbsolutePath().normalize().toString()).getAbsoluteFile(); 
          
     		
-        List<File> allFilesInRepo = LinksUtils.getAllFilesInFolderOrFile(f);
+        List<File> allFilesInRepo = Utils.getAllFilesInFolderOrFile(f);
 
         
         
         
-        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".nt"));
-        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".ttl"));
-        checkRdfSyntax(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".n3"));
+        checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".nt"));
+        checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".ttl"));
+        checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".n3"));
 //
         
-        checkRdfSyntaxForCompressed(LinksUtils.filterFileWithEndsWith(allFilesInRepo, ".nt.bz2"));
+        checkRdfSyntaxForCompressed(Utils.filterFileWithEndsWith(allFilesInRepo, ".nt.bz2"));
      
         
-       checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.nt"));
-       checkDBpediaAsSubject(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
+       checkDBpediaAsSubject(Utils.filterFileWithEndsWith(allFilesInRepo, "links.nt"));
+       checkDBpediaAsSubject(Utils.filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
  //
-       checkDBpediaAsSubjectForCompressed(LinksUtils.filterFileWithEndsWith(allFilesInRepo,"links.nt.bz2"));
+       checkDBpediaAsSubjectForCompressed(Utils.filterFileWithEndsWith(allFilesInRepo,"links.nt.bz2"));
     
         
         checkFolderStructure(allFilesInRepo);
 //
-        checkMetadataFilesWithRdfUnit(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
+        checkMetadataFilesWithRdfUnit(Utils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 //
-        checkMetadataLinks(LinksUtils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
+        checkMetadataLinks(Utils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 
         JSONArray ja = ec.toJSONArray();
         File errorLog = (File)options.valueOf("errorlog");
@@ -127,13 +125,13 @@ public final class ValidateRepo
 
         filesList.stream().forEach(file ->
         {
-        	String repoName =   LinksUtils.getRepoName(file);
+        	String repoName =   Utils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
         	try 
         	{
-                LinksUtils.getModelFromFile(file);
+                Utils.getModelFromFile(file);
             }
         	catch (RiotException e)
         	{
@@ -149,14 +147,14 @@ public final class ValidateRepo
     {
 
         filesList.stream().forEach(file -> {
-        	String repoName = LinksUtils.getRepoName(file);
+        	String repoName = Utils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
         	Model m = null;
         	try
             {
-                m = LinksUtils.getModelFromCompressedFile(file);
+                m = Utils.getModelFromCompressedFile(file);
             }
             catch ( Exception e) 
             {
@@ -173,11 +171,11 @@ public final class ValidateRepo
         filesList.stream().forEach(file ->
         {
             
-        	String repoName = LinksUtils.getRepoName(file);
+        	String repoName = Utils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
-            Model model = LinksUtils.getModelFromFile(file);
+            Model model = Utils.getModelFromFile(file);
             
             		
             model.listSubjects()
@@ -198,14 +196,14 @@ public final class ValidateRepo
     {
         filesList.stream().forEach(file -> {
             
-        	String repoName = LinksUtils.getRepoName(file);
+        	String repoName = Utils.getRepoName(file);
         	String fileName = file.getName();
         	ec.addRepoFile(repoName, fileName);
         	
         	Model model=null;
 			try
 			{
-				model = LinksUtils.getModelFromCompressedFile(file);
+				model = Utils.getModelFromCompressedFile(file);
 			}
 			catch (Exception e)
 			{
@@ -246,7 +244,7 @@ public final class ValidateRepo
                 .forEach(f -> {
                     boolean foundReadMe = false;
                     boolean foundMetadata = false;
-                    String repoName = LinksUtils.getRepoName(f);//f.getParentFile().getName();
+                    String repoName = Utils.getRepoName(f);//f.getParentFile().getName();
                 	String fileName = f.getName();
                 	ec.addRepoFile(repoName, fileName);
                 	
@@ -289,9 +287,9 @@ public final class ValidateRepo
             String fileName = file.getName();
             if (fileName.endsWith("metadata.ttl")) {
             	
-            	String repoName = LinksUtils.getRepoName(file);//file.getAbsoluteFile().getParentFile().getName();
+            	String repoName = Utils.getRepoName(file);//file.getAbsoluteFile().getParentFile().getName();
             	
-            	Model model = LinksUtils.getModelFromFile(file);
+            	Model model = Utils.getModelFromFile(file);
                 TestExecution te = RDFUnitStaticValidator.validate(TestCaseExecutionType.shaclFullTestCaseResult, model, testSuite);
 
                 te.getTestCaseResults()
@@ -310,11 +308,11 @@ public final class ValidateRepo
 
     private static void checkMetadataLinks(List<File> filesList) {
         filesList.stream().forEach(file -> {
-            LinksUtils.getModelFromFile(file).listStatements()
+            Utils.getModelFromFile(file).listStatements()
                     .forEachRemaining(statement -> {
                         if (getLinkProperties().contains(statement.getPredicate())) {
                             String uri = statement.getObject().asResource().toString();
-                            String repoName = LinksUtils.getRepoName(file);//file.getParentFile().getName();
+                            String repoName = Utils.getRepoName(file);//file.getParentFile().getName();
                             String fileName = file.getName();
                             
                             if (uri.startsWith("file://"))
@@ -366,7 +364,7 @@ public final class ValidateRepo
         return new TestSuite(new ShaclTestGenerator().generate(ontologyShaclSource));
     }
     
-    
+    @Deprecated
     private static OptionParser getCLIParser()
 	{
     	

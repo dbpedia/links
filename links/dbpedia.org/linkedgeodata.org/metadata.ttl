@@ -6,7 +6,7 @@
 <#1> a void:Linkset ;
 	dc:author <http://aksw.org> ;
 	dbp:ntriplefilelocation <linkedgeodata_links.nt.bz2> ;
-	dbp:endpoint "http://linkedgeodata.org/sparql" ;
+	dbp:endpoint <http://linkedgeodata.org/sparql> ;
 	void:objectsTarget <http://linkedgeodata.org/triplify/> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description "Links DBpedia with the LinkedGeoData.org dataset." .

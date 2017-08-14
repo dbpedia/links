@@ -5,7 +5,7 @@
 @prefix conf:		<[LIMES / SILK configuration namespace]>
 
 <http://dbpedia.org/links/lobid.org> a void:Linkset ;
-	dbp:script "scripts/makeManifestationLinks.sh"^^dbp:shell ;
+	dbp:script "scripts/makeManifestationLinks.sh"^^dbp:bash ;
 	conf:silkConf <https://github.com/lobid/silk-xml-configs/tree/master/international-dbpedia> ; 
 	void:objectsTarget <http://datahub.io/dataset/lobid-resources> ;
 	dct:author "http://lobid.org/person/pc" ;
@@ -14,7 +14,7 @@
  
 
 <http://dbpedia.org/links/lobid.org> a void:Linkset ;
-	dbp:script "scripts/makeOrganisationLinks.sh"^^dbp:shell ;
+	dbp:script "scripts/makeOrganisationLinks.sh"^^dbp:bash ;
 	conf:silkConf <https://github.com/lobid/silk-xml-configs/tree/master/international-dbpedia> ; 
 	void:objectsTarget <http://datahub.io/dataset/lobid-organisations> ;
 	dct:author "http://lobid.org/person/pc" ;
