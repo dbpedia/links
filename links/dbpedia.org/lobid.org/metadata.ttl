@@ -3,7 +3,7 @@
 @prefix void: 		<http://rdfs.org/ns/void#> .
 @prefix dbp:		<http://dbpedia.org/property/> .
 
-<#1> a void:Linkset ;
+<ls1> a void:Linkset ;
 	dbp:script "scripts/makeManifestationLinks.sh"^^dbp:bash ; 
 	dbp:ntriplefilelocation <manifestation_links.nt> ;
 	dbp:linkConf <link-specs/lobid_dbpedia_Title.xml> ;
@@ -12,7 +12,7 @@
 	dct:description "lobid-resources is a service which offers access to metadata in RDF about bibliographic resources (books, articles, pdfs etc.) with more than 19 million frbr:manifestations with more than 40 million frbr:items. These links maps to libraries, museums and archives. They are used in the LOD service of the hbz. The data is also described at the datahub. This dataset provides the manifestation links." ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	.
 
-<#2> a void:Linkset ;
+<ls2> a void:Linkset ;
 	dbp:script "scripts/makeOrganisationLinks.sh"^^dbp:bash ;
 	dbp:ntriplefilelocation <organisation_links.nt> ;
 	dbp:linkConf <link-specs/lobid_dbpedia_Title.xml> ;

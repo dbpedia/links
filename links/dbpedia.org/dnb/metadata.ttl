@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-<#1> a void:Linkset ;
+<ls1> a void:Linkset ;
 	rdfs:label "Deutsche Nationalbibliothek" ;
 	dc:author <amit> ;
 	dbp:ntriplefilelocation <dnb-extended-links.nt.bz2> ;
@@ -11,7 +11,7 @@
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description "Links DBpedia with the Deutsche Nationalbibliothek GND dataset, constructed via external GND links ." .
 
-<#2> a void:Linkset ;
+<ls2> a void:Linkset ;
 	dc:author <amit> ;
 	dbp:ntriplefilelocation <dnb-links.nt.bz2> ;
 	void:objectsTarget <https://portal.dnb.de/opac.htm> ;

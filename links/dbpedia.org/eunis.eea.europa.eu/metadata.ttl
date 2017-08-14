@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<#1> a void:Linkset ;
+<ls1> a void:Linkset ;
 	dbp:ntriplefilelocation <eunis_links.nt> ;
 	void:objectsTarget <http://eunis.eea.europa.eu/> ;
 	dc:author <http://www.eea.europa.eu/help/contact-info> ;

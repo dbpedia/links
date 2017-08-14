@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<#1> a void:Linkset ;
+<ls1> a void:Linkset ;
 	dc:author <http://nl.dbpedia.org/wiki/index.php/Welkom> ;
 	dbp:ntriplefilelocation <MolenRijksmonument.nt> ;
 	dbp:endpoint "http://nl.dbpedia.org/sparql" ;

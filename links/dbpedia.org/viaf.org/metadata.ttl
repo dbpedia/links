@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<#1> a void:Linkset ;
+<ls1> a void:Linkset ;
 	dbp:script "scripts/makeLinks.sh"^^dbp:bash ;
 	dbp:ntriplefilelocation <viaf2dbpedia.nt> ;
 	void:objectsTarget <http://viaf.org/viaf/> ;
