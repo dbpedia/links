@@ -53,7 +53,7 @@ public class GenerateLinks {
 
                 linkSet.constructqueries.stream().forEach(constructQuery -> {
                     try {
-                        model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint));
+                        model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint, linkSet.updateFrequencyInDays));
                     } catch (Exception e) {
                         linkSet.issues.add(new Issue("ERROR", "Construct query failed: " + e.getMessage()));
                         L.error("Error Executing SPARQL query in endpoint " + linkSet.endpoint + "\n query: " + constructQuery, e);
@@ -220,26 +220,9 @@ public class GenerateLinks {
 
     }
 
-    /*
-     * For a given URL returns last modified date
-     */
-    private static Date getLastModifiedForURL(String downloadLink) {
-        HttpURLConnection.setFollowRedirects(true);
-        HttpURLConnection con;
-        try {
-            con = (HttpURLConnection) new URL(downloadLink).openConnection();
-            con.setRequestMethod("HEAD");
-            Date d = new Date(con.getLastModified());
-            return d;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
-    private Model executeSPARQLQuery(String query, String endpoint) {
+
+    private Model executeSPARQLQuery(String query, String endpoint, int updateFrequencyInDays) {
         L.info("Fetching data from SPARQL endpoint " + endpoint);
         L.debug("Query: " + query);
         TestSource testSource = new TestSourceBuilder()
@@ -248,6 +231,7 @@ public class GenerateLinks {
                 .setEndpoint(endpoint, Collections.emptyList())
                 .setPagination(500)
                 .setQueryDelay(50)
+                .setCacheTTL( updateFrequencyInDays * 24L * 60L * 60L * 1000L)
                 .build();
 
         Model model = null;
@@ -300,7 +284,7 @@ public class GenerateLinks {
 
             //TODO change to LocalDate
             localLinksFileDate = new Date(localLinksFile.lastModified());
-            shouldRegenerate = (getLastModifiedForURL(originalLinksFileLocation).after(localLinksFileDate));
+            //shouldRegenerate = (getLastModifiedForURL(originalLinksFileLocation).after(localLinksFileDate));
 
 
         } else if (originalLinksFileLocation.startsWith("file://")) {

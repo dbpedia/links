@@ -101,9 +101,6 @@ public class Metadata {
         }
         m.setLinkSets();
 
-        m.toJSON();
-        System.exit(0);
-
         return m;
     }
 
@@ -172,14 +169,11 @@ public class Metadata {
 
     }
 
-    public String toJSON() {
+    public void prepareJSON(){
         Gson gson = new Gson();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         model.write(baos, "RDF/JSON");
         modelasjson = gson.fromJson(new String(baos.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), JsonElement.class);
-        System.out.println(gson.toJson(this));
-        return null;
     }
-
 
 }

@@ -1,5 +1,6 @@
 package org.dbpedia.links;
 
+import com.google.gson.Gson;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -10,8 +11,10 @@ import org.dbpedia.links.lib.RDFUnitValidate;
 import org.dbpedia.links.lib.Utils;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CLI {
@@ -45,7 +48,7 @@ public class CLI {
         return defaultLogsDir;
     }
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
 
         OptionParser parser = getCLIParser();
         OptionSet options = null;
@@ -65,17 +68,17 @@ public class CLI {
         }
 
         final boolean validate;
-        if(options.has("validate")){
+        if (options.has("validate")) {
             validate = true;
-        }else {
-            validate =false;
+        } else {
+            validate = false;
         }
 
         final boolean generate;
-        if(options.has("generate")){
+        if (options.has("generate")) {
             generate = true;
-        }else {
-            generate =false;
+        } else {
+            generate = false;
         }
 
 
@@ -85,20 +88,29 @@ public class CLI {
         List<File> allFilesInRepo = Utils.getAllMetadataFiles(f);
         RDFUnitValidate rval = new RDFUnitValidate();
         GenerateLinks gl = new GenerateLinks();
+        List<Metadata> metadatas = new ArrayList<Metadata>();
 
-        allFilesInRepo.stream().forEach(one->{
+        allFilesInRepo.stream().forEach(one -> {
             try {
                 Metadata m = Metadata.create(one, validate, rval);
 
-                if(generate) {
-                    gl.generateLinkSets(m,outdir);
+                if (generate) {
+                    gl.generateLinkSets(m, outdir);
                 }
-            }catch (Exception e){
-               //e.printStackTrace();
-               L.error(e.toString());
+                metadatas.add(m);
+            } catch (Exception e) {
+                //e.printStackTrace();
+                L.error(e.toString());
             }
         });
 
+        metadatas.stream().forEach(m -> {
+            m.prepareJSON();
+        });
+        FileWriter fw = new FileWriter(outdir + File.separator + "data.json");
+        new Gson().toJson(metadatas, fw);
+        fw.close();
+        L.info("wrote json to " + outdir + File.separator + "data.json");
 
         /*checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".nt"));
         checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".ttl"));

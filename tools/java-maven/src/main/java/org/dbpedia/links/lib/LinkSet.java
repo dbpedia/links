@@ -1,10 +1,5 @@
 package org.dbpedia.links.lib;
 
-import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
-import com.google.gson.Gson;
-import org.json.simple.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +10,7 @@ public class LinkSet {
 
     String endpoint = null;
     String script = null;
-    int updateFrequencyInDays = 0;
+    int updateFrequencyInDays = 7;
     String outputFile = null;
 
     List<String> ntriplefilelocations = new ArrayList<String>();
