@@ -1,5 +1,10 @@
 package org.dbpedia.links.lib;
 
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
+import com.google.gson.Gson;
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +21,14 @@ public class LinkSet {
     List<String> ntriplefilelocations = new ArrayList<String>();
     List<String> linkConfs = new ArrayList<String>();
     List<String> constructqueries = new ArrayList<String>();
+    List<Issue> issues = new ArrayList<Issue>();
 
 
     public LinkSet(String uri) {
         this.uri = uri;
 
     }
+
 
 
     @Override

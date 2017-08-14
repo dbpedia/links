@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dc:author <amit> ;
 	dbp:ntriplefilelocation <de_dnb-wikidata-links.nt.bz2> ;
 	void:objectsTarget <https://portal.dnb.de/opac.htm> ;

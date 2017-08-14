@@ -4,7 +4,7 @@
 @prefix dbp:	<http://dbpedia.org/property/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dct:author <http://example.com/people/Milan_Dojchinovski> ;
 	dbp:ntriplefilelocation <http://downloads.dbpedia.org/2016-04/links/linked_web_apis_links_fixed.nt.bz2> ;
 	dbp:endpoint <http://linked-web-apis.fit.cvut.cz/sparql> ;

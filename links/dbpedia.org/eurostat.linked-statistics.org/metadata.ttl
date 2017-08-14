@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dc:author <http://latc-project.eu/> ;
 	dbp:ntriplefilelocation <eurostat_linkedstatistics_links.net.bz2> ;
 	dbp:endpoint <http://eurostat.linked-statistics.org/sparql> ;

@@ -3,21 +3,21 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dc:author <http://www.bizer.de/> ;
 	dbp:ntriplefilelocation <bookmashup_links.nt> ;
 	void:objectsTarget <http://www4.wiwiss.fu-berlin.de/bookmashup/> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description "Links DBpedia with the RDF Book Mashup dataset." .
 
-<ls2> a void:Linkset ;
+<#ls2> a void:Linkset ;
 	dc:author <http://www.bizer.de/> ;
 	dbp:ntriplefilelocation <diseasome_links.nt> ;
 	void:objectsTarget <http://www4.wiwiss.fu-berlin.de/diseasome/> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description "Links DBpedia with the Diseasome dataset." .
 
-<ls3> a void:Linkset ;
+<#ls3> a void:Linkset ;
 	dc:author <http://www.bizer.de/> ;
 	dbp:ntriplefilelocation <drugbank_links.nt> ;
 	dbp:endpoint <http://wifo5-04.informatik.uni-mannheim.de/drugbank/sparql> ;

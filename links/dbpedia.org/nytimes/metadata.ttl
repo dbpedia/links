@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dc:author <amit> ;
 	dbp:ntriplefilelocation <http://downloads.dbpedia.org/2016-04/links/nytimes_links_fixed.nt.bz2> ;
 	void:objectsTarget <http://data.nytimes.com/> ;

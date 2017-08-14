@@ -43,7 +43,7 @@ public final class Utils {
 
                 if (file.isDirectory()) {
                     fileList.addAll(getAllMetadataFiles(file));
-                } else if (file.getName().toString().endsWith("metadata.ttl")){
+                } else if (file.getName().toString().equals("metadata.ttl")){
                     L.debug("found: "+file);
                     fileList.add(file);
                 }
@@ -57,6 +57,10 @@ public final class Utils {
         return fileList;
     }
 
+
+    public static String removeFileTripleSlash(String s){
+        return s.replace("file:///","/");
+    }
 
 
     /**

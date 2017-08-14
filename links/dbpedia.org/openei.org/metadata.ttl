@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dc:author <http://openei.org/> ;
 	dbp:ntriplefilelocation <openei_links.nt.bz2> ;
 	void:objectsTarget <http://openei.org/resources/> ;

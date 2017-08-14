@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dc:author <https://github.com/jimregan> ;
 	dbp:ntriplefilelocation <logainmie_links.nt> ;
 	dbp:endpoint <http://data.logainm.ie/sparql> ;

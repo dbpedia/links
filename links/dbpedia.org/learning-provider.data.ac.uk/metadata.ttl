@@ -3,7 +3,7 @@
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
-<ls1> a void:Linkset ;
+<#ls1> a void:Linkset ;
 	dbp:ntriplefilelocation <uk-university-links.nt> ;
 	void:objectsTarget <http://id.learning-provider.data.ac.uk/> ;
 	dc:author <http://www.data.ac.uk/get-in-touch/> ;

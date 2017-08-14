@@ -1,38 +1,13 @@
 package org.dbpedia.links;
 
-import org.aksw.rdfunit.enums.TestCaseExecutionType;
-import org.aksw.rdfunit.io.reader.RdfModelReader;
-import org.aksw.rdfunit.io.reader.RdfReader;
-import org.aksw.rdfunit.io.reader.RdfReaderException;
-import org.aksw.rdfunit.model.interfaces.TestSuite;
-import org.aksw.rdfunit.model.interfaces.results.TestExecution;
-import org.aksw.rdfunit.sources.SchemaSource;
-import org.aksw.rdfunit.tests.generators.ShaclTestGenerator;
-import org.aksw.rdfunit.validate.wrappers.RDFUnitStaticValidator;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.riot.RiotException;
-import org.dbpedia.links.lib.Utils;
 import org.json.simple.JSONArray;
-
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 //import static org.aksw.rdfunit.io.reader.RdfReaderFactory.createResourceReader;
 //import static org.aksw.rdfunit.sources.SchemaSourceFactory.createSchemaSourceSimple;
 //import static org.dbpedia.links.lib.Utils.*;
-
-import org.aksw.rdfunit.io.reader.RdfReaderFactory;
-import org.aksw.rdfunit.sources.SchemaSourceFactory;
 
 
 /**
@@ -49,60 +24,9 @@ public final class ValidateRepo
     public static void main(String[] args) throws Exception
     {
     	
-       OptionParser parser =  null ;
- 	   OptionSet options = null;
- 		
- 		try
- 		{
- 			options = parser.parse(args);
- 		
- 		}
- 		
- 		catch(OptionException oe)
- 		{
- 			parser.printHelpOn(System.err);
- 			System.out.println("Error:\t"+oe.getMessage());
- 			System.exit(1);
- 		}	
- 			
- 		if(options.hasArgument("help"))
- 		{
- 			parser.printHelpOn(System.out);
- 			System.exit(0);
- 		}  
- 	   
- 	           
- 		String basedir = (String)options.valueOf("basedir");
- 		File f = new File(Paths.get(basedir).toAbsolutePath().normalize().toString()).getAbsoluteFile(); 
-         
-    		
-        List<File> allFilesInRepo = Utils.getAllFilesInFolderOrFile(f);
-
-        
-        
-        
-       // checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".nt"));
-        // checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".ttl"));
-        //checkRdfSyntax(Utils.filterFileWithEndsWith(allFilesInRepo, ".n3"));
-//
-
-        //      checkRdfSyntaxForCompressed(Utils.filterFileWithEndsWith(allFilesInRepo, ".nt.bz2"));
-
-
-        //  checkDBpediaAsSubject(Utils.filterFileWithEndsWith(allFilesInRepo, "links.nt"));
-        //checkDBpediaAsSubject(Utils.filterFileWithEndsWith(allFilesInRepo, "links.ttl"));
- //
-        //     checkDBpediaAsSubjectForCompressed(Utils.filterFileWithEndsWith(allFilesInRepo,"links.nt.bz2"));
-
-
-        //    checkFolderStructure(allFilesInRepo);
-//
-        //      checkMetadataFilesWithRdfUnit(Utils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
-//
-        //      checkMetadataLinks(Utils.filterFileWithEndsWith(allFilesInRepo, "metadata.ttl"));
 
         JSONArray ja = ec.toJSONArray();
-        File errorLog = (File)options.valueOf("errorlog");
+        File errorLog = null;//(File)options.valueOf("errorlog");
         if(!errorLog.getParentFile().exists())
         {
         	errorLog.getParentFile().mkdirs();

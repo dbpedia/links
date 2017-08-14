@@ -1,7 +1,6 @@
 package org.dbpedia.links.lib;
 
 
-import joptsimple.OptionParser;
 import org.aksw.rdfunit.io.writer.RdfFileWriter;
 import org.aksw.rdfunit.sources.TestSource;
 import org.aksw.rdfunit.sources.TestSourceBuilder;
@@ -9,22 +8,25 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.log4j.Logger;
-import org.apache.xpath.SourceTree;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * @author Dimitris Kontokostas
@@ -35,53 +37,66 @@ public class GenerateLinks {
     private static Logger L = Logger.getLogger(GenerateLinks.class);
 
 
-    public static void generateLinkSets(Metadata m) throws org.aksw.rdfunit.io.writer.RdfWriterException, MalformedURLException, IOException {
+    public void generateLinkSets(Metadata m, String baseFolder) throws org.aksw.rdfunit.io.writer.RdfWriterException, MalformedURLException, IOException {
 
         m.linkSets.stream().forEach(linkSet -> {
 
-            //outputfile
-            //folderURL
-            String folder = "current" + File.separator + m.reponame + File.separator + m.nicename + File.separator ;
-            String outputfilename = folder + File.separator + linkSet.outputFile;
-            new File(folder).mkdirs();
+            String outFolder = baseFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator;
+            String outputfilename = outFolder + File.separator + linkSet.outputFile;
+            new File(outFolder).mkdirs();
             File outputfile = new File(outputfilename);
-
 
 
             if (linkSet.endpoint != null) {
                 Model model = ModelFactory.createDefaultModel();
+                //TODO validate whether SPARQL Endpoint is active
+
                 linkSet.constructqueries.stream().forEach(constructQuery -> {
-                    model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint));
+                    try {
+                        model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint));
+                    } catch (Exception e) {
+                        linkSet.issues.add(new Issue("ERROR", "Construct query failed: " + e.getMessage()));
+                        L.error("Error Executing SPARQL query in endpoint " + linkSet.endpoint + "\n query: " + constructQuery, e);
+                    }
 
                 });
-               try {
-                   new RdfFileWriter(outputfilename, "NTriples").write(model);
-               }catch (Exception e){
-                   throw new RuntimeException(e);
-               }
+                try {
+                    new RdfFileWriter(outputfilename, "NTriples").write(model);
+                } catch (Exception e) {
+                    L.error(e.getMessage());
+                    throw new RuntimeException(e);
+                }
             } else if (!linkSet.linkConfs.isEmpty()) {
-                System.out.println("linkConfs not implemented yet");
+                L.info("linkConfs not implemented yet");
             } else if (linkSet.script != null) {
                 executeShellScript(new File(linkSet.script));
 
             } else if (!linkSet.ntriplefilelocations.isEmpty()) {
                 linkSet.ntriplefilelocations.stream().forEach(ntriplefile -> {
                     try {
-                        File tmp = retrieveNTFile(ntriplefile);
-                        L.debug("retrieved "+ntriplefile+" Size: "+ntriplefile.length());
-                        Model model = Validate.checkRDFSyntax(tmp);
-                        L.debug("syntax checked");
+                        L.info("Processing: " + ntriplefile);
 
-                        Validate.subjectsStartWith(model,"http://"+m.reponame);
+                        if (toBeUpdated(ntriplefile, outputfilename)) {
 
-                        new RdfFileWriter(outputfilename, "NTriples").write(model);
-                        L.debug("copy "+ tmp + " to "+outputfile);
+                            File tmp = retrieveNTFile(ntriplefile);
+                            L.debug("File retrieved " + tmp + ", Size: " + tmp.length());
 
-                        tmp.delete();
+                            Model model = Validate.checkRDFSyntax(tmp);
+                            L.debug("syntax checked");
+
+                            Validate.subjectsStartWith(model, m.linkNamespace, linkSet);
+
+                            new RdfFileWriter(outputfilename, "NTriples").write(model);
+                            L.info("Serialized validated file to " + outputfile);
+
+                            tmp.delete();
+                        } else {
+                            L.info("Skipping, last modified not newer than current");
+                        }
 
 
-                    }catch (Exception e){
-                       throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 });
 
@@ -95,18 +110,15 @@ public class GenerateLinks {
     /*
      * Downloads file from URL to a specific location
      */
-    private static File retrieveNTFile(String file) throws MalformedURLException, IOException {
+    private File retrieveNTFile(String file) throws MalformedURLException, IOException {
 
-
-        File temp = File.createTempFile("ntfile", "."+FilenameUtils.getExtension(file));
-        L.info("Downloading: " + file + " to "+temp);
+        File temp = File.createTempFile("ntfile", "." + FilenameUtils.getExtension(file));
 
         if (file.startsWith("http://")) {
             FileUtils.copyURLToFile(new URL(file), temp);
         } else {
-            String s = file.replace("file://","");
-            L.info(new File(s).exists() + " file exists " + s);
-            FileUtils.copyFile(new File(s), temp);
+            // String s = file.replace("file://", "");
+            FileUtils.copyFile(new File(file), temp);
         }
 
         return temp;
@@ -124,8 +136,9 @@ public class GenerateLinks {
      * <p>
      * The method givies preference to dynamic methods (script, SPRAQL CONSTRUCT
      * query) over static dumps.
+     * <p>
+     * a metadata file for a given repository.
      *
-     *  a metadata file for a given repository.
      * @throws URISyntaxException
      * @throws MalformedURLException
      */
@@ -135,8 +148,8 @@ public class GenerateLinks {
     /*
      * Executes shell script from a given location
      */
-    private static void executeShellScript(File file) {
-        L.info("Executing script " + file.getAbsolutePath());
+    private void executeShellScript(File file) {
+        L.info("Executing script " + file);
 
         Process p = null;
         try {
@@ -163,17 +176,48 @@ public class GenerateLinks {
         }
     }
 
+
     /*
-     * Downloads file from URL to a specific location
+     * For a given URL returns last modified date
      */
-    private static void downloadDump(URL downloadLink, String downloadLoc) {
-        L.info("Fetching dump");
-        File f = new File(downloadLoc);
-        try {
-            FileUtils.copyURLToFile(downloadLink, f);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private static boolean toBeUpdated(String newFile, String oldFile) {
+        //we initialise with now!
+        Date newFileDate = new Date();
+        if (newFile.startsWith("http://")) {
+            HttpURLConnection.setFollowRedirects(true);
+            HttpURLConnection con;
+
+            try {
+                con = (HttpURLConnection) new URL(newFile).openConnection();
+                con.setRequestMethod("HEAD");
+                newFileDate = new Date(con.getLastModified());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            File nf = new File(newFile);
+            if (nf.exists()) {
+                newFileDate = new Date(new File(newFile).lastModified());
+
+            } else {
+                //file does not exist, so no update necessary
+                L.error(nf + " does not exist, so lastModified can not be retrieved, so no update");
+                return false;
+            }
         }
+
+        File of = new File(oldFile);
+        if (of.exists()) {
+            Date oldFileDate = new Date(new File(oldFile).lastModified());
+            return newFileDate.after(oldFileDate);
+        } else {
+            //if old file does not exist then please update
+            return false;
+        }
+
+
     }
 
     /*
@@ -195,8 +239,9 @@ public class GenerateLinks {
         return null;
     }
 
-    private static Model executeSPARQLQuery(String query, String endpoint) {
-        L.info("Fetching data from SPARQL endpoint");
+    private Model executeSPARQLQuery(String query, String endpoint) {
+        L.info("Fetching data from SPARQL endpoint " + endpoint);
+        L.debug("Query: " + query);
         TestSource testSource = new TestSourceBuilder()
                 .setPrefixUri("links", "http://links.dbpedia.org")
                 .setReferenceSchemata(Collections.emptyList())
@@ -206,13 +251,10 @@ public class GenerateLinks {
                 .build();
 
         Model model = null;
-        try (QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query)) {
+        QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query);
+        model = qe.execConstruct();
+        L.debug("retrieved " + model.size() + " triples");
 
-            model = qe.execConstruct();
-            L.debug(query+"executed");
-        } catch (Exception e) {
-            L.error("Error Executing SPARQL query in endpoint " + endpoint + "\n query: " + query, e);
-        }
         return model;
 
     }
@@ -274,7 +316,6 @@ public class GenerateLinks {
         }
         return shouldRegenerate;
     }
-
 
 
 }

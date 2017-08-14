@@ -3,23 +3,16 @@ package org.dbpedia.links;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.aksw.rdfunit.model.interfaces.results.ShaclTestCaseResult;
-import org.aksw.rdfunit.model.interfaces.results.TestCaseResult;
-import org.aksw.rdfunit.model.interfaces.results.TestExecution;
 import org.apache.log4j.Logger;
 import org.dbpedia.links.lib.GenerateLinks;
 import org.dbpedia.links.lib.Metadata;
 import org.dbpedia.links.lib.RDFUnitValidate;
 import org.dbpedia.links.lib.Utils;
-import org.json.simple.JSONArray;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
-
-import static org.dbpedia.links.lib.GenerateLinks.generateLinkSets;
 
 public class CLI {
     private static Logger L = Logger.getLogger(CLI.class);
@@ -29,9 +22,12 @@ public class CLI {
 
         OptionParser parser = new OptionParser();
 
-        parser.accepts("basedir", "Path to the directory under which repositroies would be searched; defaults to '.'")
+        parser.accepts("basedir", "Path to the directory under which repositories would be searched; defaults to '.'")
                 .withRequiredArg().ofType(String.class)
                 .defaultsTo(".");
+        parser.accepts("outdir", "Path to the directory where results are written; defaults to 'current'")
+                .withRequiredArg().ofType(String.class)
+                .defaultsTo("current");
         parser.accepts("errorlog", "Path to error log (JSON file); defaults to " + System.getProperty("user.dir") + File.separator + "logs" + File.separator + "validaterepo_errorlog.json")
                 .withRequiredArg().ofType(File.class)
                 .defaultsTo(new File(getDefaultErrorLogDir(), "validaterepo_errorlog.json"));
@@ -84,38 +80,22 @@ public class CLI {
 
 
         String basedir = (String) options.valueOf("basedir");
+        String outdir = (String) options.valueOf("outdir");
         File f = new File(Paths.get(basedir).toAbsolutePath().normalize().toString()).getAbsoluteFile();
         List<File> allFilesInRepo = Utils.getAllMetadataFiles(f);
         RDFUnitValidate rval = new RDFUnitValidate();
+        GenerateLinks gl = new GenerateLinks();
 
         allFilesInRepo.stream().forEach(one->{
             try {
-                Metadata m = Metadata.create(one);
-
-                if(validate){
-
-                    TestExecution te = rval.checkMetadataModelWithRdfUnit(m.getModel());
-                    te.getTestCaseResults().stream().forEach(tcr->{
-                        System.out.println(tcr.getSeverity()+" "+tcr.getMessage());
-                        System.out.println(((ShaclTestCaseResult) tcr).getResultAnnotations());
-                        System.out.println(((ShaclTestCaseResult) tcr).getFailingResource());
-//
-                    });
-
-                }
-                m.init();
-
-                if(validate){
-
-                }
-
+                Metadata m = Metadata.create(one, validate, rval);
 
                 if(generate) {
-                    generateLinkSets(m);
+                    gl.generateLinkSets(m,outdir);
                 }
             }catch (Exception e){
-               e.printStackTrace();
-                // L.error(e.toString());
+               //e.printStackTrace();
+               L.error(e.toString());
             }
         });
 
