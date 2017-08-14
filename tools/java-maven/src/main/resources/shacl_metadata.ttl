@@ -41,7 +41,8 @@ ex:MyShape
     sh:property [
         	sh:predicate dbp:script ;
         	sh:maxCount 1;
-        	sh:nodeKind sh:IRI ;
+        	sh:nodeKind sh:Literal ;
+            sh:datatype dbp:bash ;
     	];
     
     #construct query and endpoint
@@ -53,9 +54,9 @@ ex:MyShape
     		
     sh:property [
         		sh:predicate dbp:constructQuery ;
-        		sh:maxCount 1;
-        	sh:nodeKind sh:Literal ;
-        	sh:datatype xsd:string ;
+        		#sh:maxCount 1;
+        	    sh:nodeKind sh:Literal ;
+        	    sh:datatype xsd:string ;
     		];
     
     
@@ -73,7 +74,7 @@ ex:MyShape
 
     sh:property [
         sh:predicate dbp:linkConf ;
-        sh:maxCount 1;
+        #sh:maxCount 1;
         sh:nodeKind sh:IRI ;
     ] ;
 

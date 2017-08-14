@@ -6,7 +6,7 @@
 <ls1> a void:Linkset ;
 	dc:author <http://nl.dbpedia.org/wiki/index.php/Welkom> ;
 	dbp:ntriplefilelocation <MolenRijksmonument.nt> ;
-	dbp:endpoint "http://nl.dbpedia.org/sparql" ;
+	dbp:endpoint <http://nl.dbpedia.org/sparql> ;
 	void:objectsTarget <http://nl.dbpedia.org/resource/> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description "Interlinking of the dutch DBpedia with various resourcelinks." .

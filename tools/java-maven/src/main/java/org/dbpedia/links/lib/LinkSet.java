@@ -8,13 +8,15 @@ public class LinkSet {
 
     String uri;
 
-    List<String> ntriplefilelocations = new ArrayList<String>();
-    List<String> linkConfs = new ArrayList<String>();
     String endpoint = null;
-    List<String> constructqueries = new ArrayList<String>();
     String script = null;
     int updateFrequencyInDays = 0;
     String outputFile = null;
+
+    List<String> ntriplefilelocations = new ArrayList<String>();
+    List<String> linkConfs = new ArrayList<String>();
+    List<String> constructqueries = new ArrayList<String>();
+
 
     public LinkSet(String uri) {
         this.uri = uri;

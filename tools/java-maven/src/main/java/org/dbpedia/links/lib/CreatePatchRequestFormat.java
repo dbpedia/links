@@ -1,4 +1,4 @@
-package org.dbpedia.links;
+package org.dbpedia.links.lib;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.rdf.model.Model;
@@ -143,11 +143,11 @@ public class CreatePatchRequestFormat {
 //                File patchFolder = new File(FilenameUtils.concat(file.getParentFile().getAbsolutePath(), "patches"));
 //
 //                if (patchFolder.exists()) {
-//                    L.info("  Patches folder");
+//                    L.info("  Patches folderURL");
 //
 //
 //                } else {
-//                    L.info("  No patches folder");
+//                    L.info("  No patches folderURL");
 //                }
             }
         });

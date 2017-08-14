@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.*;
 import org.apache.log4j.Logger;
+import org.apache.xpath.SourceTree;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,40 +35,17 @@ public class GenerateLinks {
     private static Logger L = Logger.getLogger(GenerateLinks.class);
 
 
-    /**
-     * Generates linksets, as needed, according to the metadata provided in their repository
-     * entries.
-     *
-     * @param metadataFileList list of metadata files to be examined
-     */
-    private static void generate(List<File> metadataFileList)
-
-    {
-        metadataFileList.stream().forEach(metadataFile -> {
-                    try {
-                        processMetadataFile(metadataFile);
-                    } catch (Exception e) {
-
-                        e.printStackTrace();
-                    }
-
-                }
-
-        );
-
-    }
-
-
     public static void generateLinkSets(Metadata m) throws org.aksw.rdfunit.io.writer.RdfWriterException, MalformedURLException, IOException {
 
         m.linkSets.stream().forEach(linkSet -> {
 
             //outputfile
-            //folder
+            //folderURL
             String folder = "current" + File.separator + m.reponame + File.separator + m.nicename + File.separator ;
             String outputfilename = folder + File.separator + linkSet.outputFile;
             new File(folder).mkdirs();
             File outputfile = new File(outputfilename);
+
 
 
             if (linkSet.endpoint != null) {
@@ -76,9 +54,11 @@ public class GenerateLinks {
                     model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint));
 
                 });
-                //TODO handle writing
-                //new RdfFileWriter(outputfile, "NTriples").write(model);
-
+               try {
+                   new RdfFileWriter(outputfilename, "NTriples").write(model);
+               }catch (Exception e){
+                   throw new RuntimeException(e);
+               }
             } else if (!linkSet.linkConfs.isEmpty()) {
                 System.out.println("linkConfs not implemented yet");
             } else if (linkSet.script != null) {
@@ -87,9 +67,20 @@ public class GenerateLinks {
             } else if (!linkSet.ntriplefilelocations.isEmpty()) {
                 linkSet.ntriplefilelocations.stream().forEach(ntriplefile -> {
                     try {
-                        retrieveNTFile(ntriplefile, outputfile);
+                        File tmp = retrieveNTFile(ntriplefile);
+                        L.debug("retrieved "+ntriplefile+" Size: "+ntriplefile.length());
+                        Model model = Validate.checkRDFSyntax(tmp);
+                        L.debug("syntax checked");
 
-                    }catch (IOException e){
+                        Validate.subjectsStartWith(model,"http://"+m.reponame);
+
+                        new RdfFileWriter(outputfilename, "NTriples").write(model);
+                        L.debug("copy "+ tmp + " to "+outputfile);
+
+                        tmp.delete();
+
+
+                    }catch (Exception e){
                        throw new RuntimeException(e);
                     }
                 });
@@ -104,14 +95,21 @@ public class GenerateLinks {
     /*
      * Downloads file from URL to a specific location
      */
-    private static void retrieveNTFile(String file, File outputfile) throws MalformedURLException, IOException {
+    private static File retrieveNTFile(String file) throws MalformedURLException, IOException {
+
+
+        File temp = File.createTempFile("ntfile", "."+FilenameUtils.getExtension(file));
+        L.info("Downloading: " + file + " to "+temp);
 
         if (file.startsWith("http://")) {
-            L.info("Downloading: " + file);
-            //FileUtils.copyURLToFile(new URL(file), outputfile);
+            FileUtils.copyURLToFile(new URL(file), temp);
         } else {
-            FileUtils.copyFile(new File(file), outputfile);
+            String s = file.replace("file://","");
+            L.info(new File(s).exists() + " file exists " + s);
+            FileUtils.copyFile(new File(s), temp);
         }
+
+        return temp;
     }
 
     /**
@@ -127,63 +125,11 @@ public class GenerateLinks {
      * The method givies preference to dynamic methods (script, SPRAQL CONSTRUCT
      * query) over static dumps.
      *
-     * @param metadataFile a metadata file for a given repository.
+     *  a metadata file for a given repository.
      * @throws URISyntaxException
      * @throws MalformedURLException
      */
-    private static void processMetadataFile(File metadataFile) throws URISyntaxException, MalformedURLException {
-        L.info("Processing " + metadataFile);
-        L.info("Root metadata folder " + metadataFile.getParent());
 
-        Model model = Utils.getModelFromFile(metadataFile);
-
-
-        Pair<String, String> ntriplelocations
-                = getNTripleLocations(model, metadataFile.getParent());
-        String originalLinksLocation = ntriplelocations.getLeft();//either  http:// or file://
-        String localLinksLocation = ntriplelocations.getRight();
-
-        boolean shouldRegenerate = shouldRegenerate(model, ntriplelocations);
-        L.info("should regenerate " + shouldRegenerate);
-        if (!shouldRegenerate) return;
-
-        //metadata properties relevant for update
-        Property scriptProperty = ResourceFactory.createProperty("http://dbpedia.org/property/script");
-        Property endpointProperty = ResourceFactory.createProperty("http://dbpedia.org/property/endpoint");
-        Property constructqueryProperty = ResourceFactory.createProperty("http://dbpedia.org/property/constructquery");
-        Property outputFileProperty = ResourceFactory.createProperty("http://dbpedia.org/property/outputFile");
-
-
-        //script
-        if (model.listObjectsOfProperty(scriptProperty).hasNext()) {
-            String scriptFilePath =
-                    FilenameUtils.normalize(new URI(model.listObjectsOfProperty(scriptProperty)
-                            .next().asResource().getURI()).getPath());
-            File scriptFile = new File(scriptFilePath);
-            executeShellScript(scriptFile);
-
-        }
-        //construct query
-        else if (model.listObjectsOfProperty(endpointProperty).hasNext() &&
-                model.listObjectsOfProperty(constructqueryProperty).hasNext()) {
-            String endpoint = model.listObjectsOfProperty(endpointProperty).next().asResource().getURI();
-            String constructQuery = model.listObjectsOfProperty(constructqueryProperty).next().asLiteral().getString();
-
-            //TODO check the purpose of having an output file, compared to overriding the actual local triple file
-            String outputFileName = (model.listObjectsOfProperty(outputFileProperty).hasNext()) ?
-                    model.listObjectsOfProperty(outputFileProperty).next().asResource().getURI() :
-                    ntriplelocations.getRight(); //local ntriple file
-
-            //executeSPARQLQuery(constructQuery, endpoint, outputFileName);
-
-        }
-        //download from external link
-        else if (originalLinksLocation.startsWith("http://")) {
-            downloadDump(new URL(originalLinksLocation), localLinksLocation);
-        }
-
-
-    }
 
 
     /*
@@ -251,7 +197,6 @@ public class GenerateLinks {
 
     private static Model executeSPARQLQuery(String query, String endpoint) {
         L.info("Fetching data from SPARQL endpoint");
-        // TODO: Dimitris
         TestSource testSource = new TestSourceBuilder()
                 .setPrefixUri("links", "http://links.dbpedia.org")
                 .setReferenceSchemata(Collections.emptyList())
@@ -264,18 +209,7 @@ public class GenerateLinks {
         try (QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query)) {
 
             model = qe.execConstruct();
-        /*	if (outputFileName.startsWith("file://"))
-			{
-				outputFileName = FilenameUtils.normalize(new URI(outputFileName).getPath());
-			}
-			new RdfFileWriter(outputFileName, "NTriples").write(model);
-
-
-		}
-		catch (RdfWriterException e)
-		{
-			L.error("Error writing results from construct query in file " + outputFileName, e);
-		}*/
+            L.debug(query+"executed");
         } catch (Exception e) {
             L.error("Error Executing SPARQL query in endpoint " + endpoint + "\n query: " + query, e);
         }
@@ -342,51 +276,5 @@ public class GenerateLinks {
     }
 
 
-    /*
-     * return the original and local file paths of the linkset, if exist.
-     */
-    @Deprecated
-    private static Pair<String, String> getNTripleLocations(Model m, String parentDirPath) throws URISyntaxException {
 
-        String originalLocationPath = null;
-        String localLocationPath = null;
-
-        NodeIterator ntriplelocations = m.listObjectsOfProperty(m.getProperty("http://dbpedia.org/property/ntriplefilelocation"));
-        if (ntriplelocations.hasNext())
-        //if(m.listObjectsOfProperty(ntriplelocationProperty).hasNext())
-        {
-            //originalLocationPath =m.listObjectsOfProperty(ntriplelocationProperty).next().asResource().getURI();
-            originalLocationPath = ntriplelocations.next().asResource().getURI();
-            if (originalLocationPath.startsWith("http://")) {
-                localLocationPath = parentDirPath + "/" + originalLocationPath.substring(originalLocationPath.lastIndexOf('/') + 1);
-            } else if (originalLocationPath.startsWith("file://")) {
-                localLocationPath =
-                        FilenameUtils
-                                .normalize(new URI(originalLocationPath).getPath());
-
-
-            }
-
-        }
-
-        return Pair.of(originalLocationPath, localLocationPath);
-
-    }
-
-
-    /*
-     * 
-     */
-    @Deprecated
-    private static OptionParser getCLIParser() {
-
-        OptionParser parser = new OptionParser();
-
-        parser.accepts("basedir", "Path to the directory under which repositroies would be searched; defaults to '.'")
-                .withRequiredArg().ofType(String.class)
-                .defaultsTo(".");
-        parser.accepts("help", "prints help information");
-
-        return parser;
-    }
 }

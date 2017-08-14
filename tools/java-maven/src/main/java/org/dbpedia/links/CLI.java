@@ -3,9 +3,13 @@ package org.dbpedia.links;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.aksw.rdfunit.model.interfaces.results.ShaclTestCaseResult;
+import org.aksw.rdfunit.model.interfaces.results.TestCaseResult;
+import org.aksw.rdfunit.model.interfaces.results.TestExecution;
 import org.apache.log4j.Logger;
 import org.dbpedia.links.lib.GenerateLinks;
 import org.dbpedia.links.lib.Metadata;
+import org.dbpedia.links.lib.RDFUnitValidate;
 import org.dbpedia.links.lib.Utils;
 import org.json.simple.JSONArray;
 
@@ -31,6 +35,8 @@ public class CLI {
         parser.accepts("errorlog", "Path to error log (JSON file); defaults to " + System.getProperty("user.dir") + File.separator + "logs" + File.separator + "validaterepo_errorlog.json")
                 .withRequiredArg().ofType(File.class)
                 .defaultsTo(new File(getDefaultErrorLogDir(), "validaterepo_errorlog.json"));
+        parser.accepts("validate", "enables extensive validation, i.e. with SHACL/RDFUNIT and also validation of links");
+        parser.accepts("generate", "enables the generation of links, if the option is not set, the tool will just parse all the metadata files in memory");
         parser.accepts("help", "prints help information");
 
         return parser;
@@ -62,16 +68,51 @@ public class CLI {
             System.exit(0);
         }
 
+        final boolean validate;
+        if(options.has("validate")){
+            validate = true;
+        }else {
+            validate =false;
+        }
+
+        final boolean generate;
+        if(options.has("generate")){
+            generate = true;
+        }else {
+            generate =false;
+        }
+
 
         String basedir = (String) options.valueOf("basedir");
         File f = new File(Paths.get(basedir).toAbsolutePath().normalize().toString()).getAbsoluteFile();
         List<File> allFilesInRepo = Utils.getAllMetadataFiles(f);
+        RDFUnitValidate rval = new RDFUnitValidate();
 
         allFilesInRepo.stream().forEach(one->{
             try {
-                Metadata m = new Metadata(one);
+                Metadata m = Metadata.create(one);
+
+                if(validate){
+
+                    TestExecution te = rval.checkMetadataModelWithRdfUnit(m.getModel());
+                    te.getTestCaseResults().stream().forEach(tcr->{
+                        System.out.println(tcr.getSeverity()+" "+tcr.getMessage());
+                        System.out.println(((ShaclTestCaseResult) tcr).getResultAnnotations());
+                        System.out.println(((ShaclTestCaseResult) tcr).getFailingResource());
+//
+                    });
+
+                }
                 m.init();
-                //generateLinkSets(m);
+
+                if(validate){
+
+                }
+
+
+                if(generate) {
+                    generateLinkSets(m);
+                }
             }catch (Exception e){
                e.printStackTrace();
                 // L.error(e.toString());

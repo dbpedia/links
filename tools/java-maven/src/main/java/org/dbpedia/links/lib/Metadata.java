@@ -10,28 +10,31 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Metadata {
+
     File file;
-    String folder;
+
+    //url to the folderURL
+    String folderURL;
     String baseURI;
     String nicename;
+    //either "dbpedia.org" or $lang.dbpedia.org
     String reponame;
-    OntModel model = ModelFactory.createOntologyModel();
-
+    OntModel model;
     List<LinkSet> linkSets = new ArrayList<LinkSet>();
 
 
-    public Metadata(File file) {
+    private Metadata(File file, String baseUri, OntModel model) {
         this.file = file;
+        this.baseURI = baseUri;
+        this.model = model;
     }
 
-    //TODO handle Exceptions better
-    //TODO write a test for linkset name
-    public void init() throws IOException, ResourceRequiredException {
-
+    public static Metadata create(File file) throws IOException {
         if (!file.getName().equals("metadata.ttl")) {
             // more of a dev check
             throw new RuntimeException("file not called metadata.ttl");
@@ -40,22 +43,34 @@ public class Metadata {
             throw new FileNotFoundException("metadata.ttl not found in " + file.getParent());
         }
 
+        String baseURI = file.getParentFile().getCanonicalFile().toURI().toString();
 
-        setRepoName();
+        OntModel model = ModelFactory.createOntologyModel();
         RDFDataMgr.read(model, file.toURI().toString(), baseURI, Lang.TURTLE);
 
-        setLinkSets();
-        //System.out.println(this);
-
+        return new Metadata(file, baseURI, model);
 
     }
 
 
-    /*
-     * return the original and local file paths of the linkset, if exist.
-     */
-    private void setLinkSets() throws ResourceRequiredException
-    {
+    public void init() throws IOException, ResourceRequiredException {
+
+        this.folderURL = file.getParentFile().getCanonicalFile().toURI().toString();
+        this.nicename = file.getParentFile().getName();
+
+        if (file.toString().contains("xxx.dbpedia.org")) {
+            this.reponame = file.getParentFile().getParentFile().getName() + ".dbpedia.org";
+        } else if (file.toString().contains("dbpedia.org")) {
+            this.reponame = "dbpedia.org";
+        }
+
+        setLinkSets();
+        System.out.println(this);
+
+    }
+
+
+    private void setLinkSets() throws ResourceRequiredException {
 
         ExtendedIterator linkSetIter = model.listIndividuals(model.getOntClass(Vocab.linkset));
         while (linkSetIter.hasNext()) {
@@ -66,7 +81,12 @@ public class Metadata {
 
             StmtIterator stmtiter = i.listProperties(model.getProperty(Vocab.ntriplesfilelocation));
             while (stmtiter.hasNext()) {
-                current.ntriplefilelocations.add(stmtiter.nextStatement().getObject().asResource().getURI().toString());
+                String ntriplefilelocations = stmtiter.nextStatement().getObject().asResource().toString();
+                try {
+                    System.out.println(new File (new URL(ntriplefilelocations).getFile()).exists());
+                    System.exit(0);
+                }catch (Exception e) {}
+                current.ntriplefilelocations.add(ntriplefilelocations);
             }
 
             stmtiter = i.listProperties(model.getProperty(Vocab.linkConf));
@@ -81,15 +101,15 @@ public class Metadata {
 
             s = i.getProperty(model.getProperty(Vocab.endpoint));
             if (s != null) {
-                    current.endpoint = s.getObject().asResource().getURI().toString();
+                current.endpoint = s.getObject().asResource().getURI().toString();
             }
 
             s = i.getProperty(model.getProperty(Vocab.outputFile));
             if (s != null) {
                 current.outputFile = s.getObject().asResource().getURI().toString();
-            }else {
+            } else {
                 //set default output file
-                current.outputFile= nicename+"_links_"+i.getLocalName()+".nt";
+                current.outputFile = nicename + "_links_" + i.getLocalName() + ".nt";
             }
 
             s = i.getProperty(model.getProperty(Vocab.updateFrequencyInDays));
@@ -111,29 +131,19 @@ public class Metadata {
     }
 
 
-    public void setRepoName() throws IOException {
-        this.folder = file.getParentFile().getCanonicalFile().toURI().toString();
-        this.nicename = file.getParentFile().getName();
-        this.baseURI = file.getParentFile().getCanonicalFile().toURI().toString();
 
-        if (file.toString().contains("xxx.dbpedia.org")) {
-            this.reponame = file.getParentFile().getParentFile().getName() + ".dbpedia.org";
-        } else if (file.toString().contains("dbpedia.org")) {
-            this.reponame = "dbpedia.org";
-        }
-
-
+    public OntModel getModel() {
+        return model;
     }
 
     @Override
     public String toString() {
         return "Metadata{" +
                 "\nfile=" + file +
-                "\n, folder='" + folder + '\'' +
+                "\n, folderURL='" + folderURL + '\'' +
                 "\n, baseURI='" + baseURI + '\'' +
                 "\n, nicename='" + nicename + '\'' +
                 "\n, reponame='" + reponame + '\'' +
-                "\n, model=" + model +
                 "\n, linkSets=" + linkSets +
                 '}';
     }
