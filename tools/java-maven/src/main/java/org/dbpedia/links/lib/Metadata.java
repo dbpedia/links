@@ -23,6 +23,14 @@ import java.util.List;
 import static org.dbpedia.links.lib.Utils.removeFileTripleSlash;
 
 public class Metadata {
+    public static String voclinkset = "http://rdfs.org/ns/void#Linkset";
+    public static String vocvntriplesfilelocation = "http://dbpedia.org/property/ntriplefilelocation";
+    public static String voclinkConf = "http://dbpedia.org/property/linkConf";
+    public static String vocendpoint = "http://dbpedia.org/property/endpoint";
+    public static String vocconstructquery = "http://dbpedia.org/property/constructquery";
+    public static String vocscript = "http://dbpedia.org/property/script";
+    public static String vocoutputFile = "http://dbpedia.org/property/outputFile";
+    public static String vocupdateFrequencyInDays = "http://dbpedia.org/property/updateFrequencyInDays";
 
     /**
      * the metadata file
@@ -107,7 +115,7 @@ public class Metadata {
 
     private void setLinkSets() {
 
-        ExtendedIterator linkSetIter = model.listIndividuals(model.getOntClass(Vocab.linkset));
+        ExtendedIterator linkSetIter = model.listIndividuals(model.getOntClass(voclinkset));
         while (linkSetIter.hasNext()) {
 
             Individual i = (Individual) linkSetIter.next();
@@ -122,28 +130,28 @@ public class Metadata {
                 });
             }
 
-            StmtIterator stmtiter = i.listProperties(model.getProperty(Vocab.ntriplesfilelocation));
+            StmtIterator stmtiter = i.listProperties(model.getProperty(vocvntriplesfilelocation));
             while (stmtiter.hasNext()) {
                 String ntriplefilelocations = stmtiter.nextStatement().getObject().asResource().toString();
                 current.ntriplefilelocations.add(removeFileTripleSlash(ntriplefilelocations));
             }
 
-            stmtiter = i.listProperties(model.getProperty(Vocab.linkConf));
+            stmtiter = i.listProperties(model.getProperty(voclinkConf));
             while (stmtiter.hasNext()) {
                 current.linkConfs.add(removeFileTripleSlash(stmtiter.nextStatement().getObject().asResource().getURI().toString()));
             }
 
-            Statement s = i.getProperty(model.getProperty(Vocab.script));
+            Statement s = i.getProperty(model.getProperty(vocscript));
             if (s != null) {
                 current.script = s.getLiteral().getLexicalForm();
             }
 
-            s = i.getProperty(model.getProperty(Vocab.endpoint));
+            s = i.getProperty(model.getProperty(vocendpoint));
             if (s != null) {
                 current.endpoint = s.getObject().asResource().getURI().toString();
             }
 
-            s = i.getProperty(model.getProperty(Vocab.outputFile));
+            s = i.getProperty(model.getProperty(vocoutputFile));
             if (s != null) {
                 current.outputFilePrefix = removeFileTripleSlash(s.getObject().asResource().toString());
             } else {
@@ -151,12 +159,12 @@ public class Metadata {
                 current.outputFilePrefix = i.getLocalName();
             }
 
-            s = i.getProperty(model.getProperty(Vocab.updateFrequencyInDays));
+            s = i.getProperty(model.getProperty(vocupdateFrequencyInDays));
             if (s != null) {
                 current.updateFrequencyInDays = s.getInt();
             }
 
-            stmtiter = i.listProperties(model.getProperty(Vocab.constructquery));
+            stmtiter = i.listProperties(model.getProperty(vocconstructquery));
             while (stmtiter.hasNext()) {
                 current.constructqueries.add(stmtiter.nextStatement().getLiteral().toString());
             }

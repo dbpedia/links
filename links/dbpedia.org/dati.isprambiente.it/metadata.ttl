@@ -4,9 +4,8 @@
 @prefix dbp:		<http://dbpedia.org/property/> .
 
 <#ls1> a void:Linkset ;
-	dbp:script "scripts/ispra-core_get_and_sort.sh"^^dbp:bash ; 
 	dbp:endpoint <http://dati.isprambiente.it/sparql> ;
-	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o <http://www.w3.org/2002/07/owl#sameAs> ?b. FILTER(REGEX(STR(?b),'http://dbpedia.org')) }" ;
+	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o <http://www.w3.org/2002/07/owl#sameAs> ?b. FILTER(REGEX(STR(?b),'^http://dbpedia.org')) }" ;
 	void:objectsTarget <https://datahub.io/dataset/ispra-lod-place> ;
 	dc:author <https://github.com/dvcama> ;
 	dct:description "dati.isprambiente.it - ISPRA Linked Open Data - The administrative divisions of Italy (regions/provinces/municipalities) + shape of municipalities + link to istat + link to geoname/dbpedia" ;

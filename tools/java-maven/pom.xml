@@ -100,8 +100,8 @@
 		</dependency>
 
         <dependency>
-            <groupId>org.dbpedia</groupId>
-            <artifactId>extraction</artifactId>
+            <groupId>org.dbpedia.extraction</groupId>
+            <artifactId>core</artifactId>
             <version>4.2-SNAPSHOT</version>
         </dependency>
 

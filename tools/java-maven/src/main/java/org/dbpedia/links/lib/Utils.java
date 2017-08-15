@@ -1,7 +1,6 @@
 package org.dbpedia.links.lib;
 
 import org.apache.commons.compress.compressors.CompressorException;
-import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
@@ -11,11 +10,10 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.log4j.Logger;
+import org.dbpedia.extraction.util.UriUtils$;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
@@ -59,6 +57,9 @@ public final class Utils {
 
     public static void joinFilesSpecial(File destination, Collection<String> sources) throws IOException {
 
+       // UriUtils$.MODULE$
+         UriUtils$.MODULE$.uriToIri("uri");
+        //UriUtils.uriToIri()
         SortedSet<String> ss = new TreeSet<String>();
         for (String source : sources) {
             File file = new File(source);
@@ -86,14 +87,8 @@ public final class Utils {
     }
 
     public static Model checkRDFSyntax(File file) throws FileNotFoundException, CompressorException {
-
-
-
         Model model = ModelFactory.createDefaultModel();
-
         InputStream is = getInputStreamForFile(file);
-
-
         RDFDataMgr.read(model, is, file.getParentFile().toURI().toString(), Lang.TURTLE);
         return model;
     }

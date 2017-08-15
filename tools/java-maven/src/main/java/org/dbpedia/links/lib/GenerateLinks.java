@@ -42,10 +42,12 @@ public class GenerateLinks {
 
     //Options
     boolean validate = true;
-    boolean sparql = false;
-    boolean script = false;
-    boolean linkConfs = false;
-    boolean ntripleFiles = true;
+
+    //Debug options for CLI
+    public boolean sparqlonly = false;
+    public boolean scriptonly = false;
+    public boolean linkConfsonly = false;
+    public boolean ntripleFilesonly = false;
 
 
     public void generateLinkSets(Metadata m, String baseFolder) throws IOException {
@@ -58,14 +60,27 @@ public class GenerateLinks {
         new File(outFolderData).mkdirs();
         String resultFile = outFolder + File.separator + m.nicename + "_links.nt";
 
-        m.linkSets.stream().forEach(linkSet -> {
+        int sparqlsize = 0;
+        int scriptsize = 0;
+        int linkConfSize = 0;
+        int ntripleFileSize = 0;
+        for (LinkSet linkSet : m.linkSets) {
+            if (linkSet.endpoint != null) sparqlsize++;
+            if (linkSet.script != null) scriptsize++;
+            linkConfSize += linkSet.linkConfs.size();
+            ntripleFileSize += linkSet.ntriplefilelocations.size();
+        }
+        if ((sparqlonly && sparqlsize == 0) || (scriptonly && scriptsize == 0) || (linkConfsonly && linkConfSize == 0) || (ntripleFilesonly && ntripleFileSize == 0)) {
+            return;
+        }
 
+        m.linkSets.stream().forEach(linkSet -> {
 
 
             //File outputfile = new File(outputfilename);
 
 
-            if (linkSet.endpoint != null & sparql) {
+            if (linkSet.endpoint != null) {
                 String outputFileName = outFolderData + linkSet.outputFilePrefix + "_sparql.nt";
 
                 Model model = ModelFactory.createDefaultModel();
@@ -91,14 +106,14 @@ public class GenerateLinks {
                     L.error(e.getMessage());
                     throw new RuntimeException(e);
                 }
-            } else if (!linkSet.linkConfs.isEmpty() & linkConfs) {
+            } else if (!linkSet.linkConfs.isEmpty()) {
                 L.info("linkConfs not implemented yet");
-            } else if (linkSet.script != null & script) {
+            } else if (linkSet.script != null) {
                 String outputFileName = outFolderData + linkSet.outputFilePrefix + "_script.nt";
 
-                executeShellScript(new File(linkSet.script));
+                executeShellScript(new File(linkSet.script), new File(outputFileName));
 
-            } else if (!linkSet.ntriplefilelocations.isEmpty() & ntripleFiles) {
+            } else if (!linkSet.ntriplefilelocations.isEmpty()) {
                 int count = 0;
                 for (String ntriplefile : linkSet.ntriplefilelocations) {
                     L.info("Processing: " + ntriplefile);
@@ -193,12 +208,16 @@ public class GenerateLinks {
     /*
      * Executes shell script from a given location
      */
-    private void executeShellScript(File file) {
-        L.info("Executing script " + file);
+    private void executeShellScript(File file, File destination) {
+        String path = file.getParentFile().getAbsolutePath().replace("\\", "/");
+        String cmd = "./" + file.getName() + " > " + destination.getAbsolutePath();
+        L.info("Executing script at " + path);
+        L.info("bash -c " + cmd);
+        if(true)return;
 
         Process p = null;
         try {
-            ProcessBuilder pb = new ProcessBuilder("bash", "-c", " ( cd " + file.getParentFile().getAbsolutePath().replace("\\", "/") + " &&  ./" + file.getName() + " ) ", System.getenv("PATH"));
+            ProcessBuilder pb = new ProcessBuilder("bash", "-c", " ( cd " + path + " &&  " + cmd + ") ", System.getenv("PATH"));
 
             pb.inheritIO();
 

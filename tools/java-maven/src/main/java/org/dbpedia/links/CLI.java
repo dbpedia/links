@@ -37,6 +37,12 @@ public class CLI {
         parser.accepts("validate", "enables extensive validation, i.e. with SHACL/RDFUNIT and also validation of links");
         parser.accepts("generate", "enables the generation of links, if the option is not set, the tool will just parse all the metadata files in memory");
         parser.accepts("help", "prints help information");
+        //debug flags
+        parser.accepts("sparqlonly", "processes all metadata files that contain sparql construct queries, debug flag; default false");
+        parser.accepts("scriptsonly", "processes all metadata files that contain scripts, debug flag; default false");
+        parser.accepts("ntfileonly", "processes all metadata files that contain ntriplefiles, debug flag; default false");
+        parser.accepts("linkconfonly", "processes all metadata files that contain link configurations for SILK, debug flag; default false");
+
 
         return parser;
     }
@@ -81,13 +87,18 @@ public class CLI {
             generate = false;
         }
 
+        GenerateLinks gl = new GenerateLinks();
+        gl.sparqlonly = (options.has("sparqlonly"))?true:false;
+        gl.scriptonly = (options.has("scriptonly"))?true:false;
+        gl.linkConfsonly = (options.has("linkconfonly"))?true:false;
+        gl.ntripleFilesonly = (options.has("ntfileonly"))?true:false;
 
         String basedir = (String) options.valueOf("basedir");
         String outdir = (String) options.valueOf("outdir");
         File f = new File(Paths.get(basedir).toAbsolutePath().normalize().toString()).getAbsoluteFile();
         List<File> allFilesInRepo = Utils.getAllMetadataFiles(f);
         RDFUnitValidate rval = new RDFUnitValidate();
-        GenerateLinks gl = new GenerateLinks();
+
         List<Metadata> metadatas = new ArrayList<Metadata>();
 
         allFilesInRepo.stream().forEach(one -> {
