@@ -103,14 +103,34 @@
             <groupId>org.dbpedia.extraction</groupId>
             <artifactId>core</artifactId>
             <version>4.2-SNAPSHOT</version>
-            <systemPath>${project.basedir}/src/main/resources/core-4.2-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.mapdb</groupId>
             <artifactId>mapdb</artifactId>
             <version>3.0.5</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-compress</artifactId>
+    <version>1.9</version>
+</dependency>
+
     </dependencies>
+    <repositories>
+		<repository>
+			<!--releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases-->
+			<id>YourId3</id>
+			<name>Sebastian Hellman</name>
+			<url>http://downloads.dbpedia.org/maven2</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
     
 
 </project>
