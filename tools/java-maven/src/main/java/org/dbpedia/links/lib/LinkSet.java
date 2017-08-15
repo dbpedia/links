@@ -1,7 +1,9 @@
 package org.dbpedia.links.lib;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 //todo implement patches
 public class LinkSet {
@@ -12,11 +14,14 @@ public class LinkSet {
     int updateFrequencyInDays = 7;
     String outputFilePrefix = null;
 
+    // these are all files
     List<String> ntriplefilelocations = new ArrayList<String>();
     List<String> scripts = new ArrayList<String>();
     List<String> linkConfs = new ArrayList<String>();
+    List<String> destinationFiles = new ArrayList<String>();
+
     List<String> constructqueries = new ArrayList<String>();
-    List<Issue> issues = new ArrayList<Issue>();
+    public List<Issue> issues = new ArrayList<Issue>();
     List<Revision> revisions = new ArrayList<Revision>();
 
 
@@ -26,18 +31,4 @@ public class LinkSet {
 
     }
 
-
-
-    @Override
-    public String toString() {
-        return "LinkSet{" +
-                "\nuri='" + uri + '\'' +
-                "\n, ntriplefilelocations=" + ntriplefilelocations +
-                "\n, linkConfs=" + linkConfs +
-                "\n, endpoint='" + endpoint + '\'' +
-                "\n, constructqueries=" + constructqueries +
-                "\n, updateFrequencyInDays='" + updateFrequencyInDays + '\'' +
-                "\n, outputFile='" + outputFilePrefix + '\'' +
-                '}';
-    }
 }

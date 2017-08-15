@@ -103,8 +103,13 @@
             <groupId>org.dbpedia.extraction</groupId>
             <artifactId>core</artifactId>
             <version>4.2-SNAPSHOT</version>
+            <systemPath>${project.basedir}/src/main/resources/core-4.2-SNAPSHOT.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>3.0.5</version>
+        </dependency>
     </dependencies>
     
 

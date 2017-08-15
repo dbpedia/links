@@ -14,6 +14,7 @@ import org.dbpedia.extraction.util.UriUtils$;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.util.Arrays.stream;
 
@@ -55,43 +56,80 @@ public final class Utils {
     }
 
 
-    public static void joinFilesSpecial(File destination, Collection<String> sources) throws IOException {
-
-       // UriUtils$.MODULE$
-         UriUtils$.MODULE$.uriToIri("uri");
-        //UriUtils.uriToIri()
+    public static void joinFilesSpecial(File destination, List<LinkSet> linkSets, String namespace) throws IOException {
+        ConcurrentMap<String,String> map = new RedirectReplace().getMap();
+        int sourcecount = 0;
         SortedSet<String> ss = new TreeSet<String>();
-        for (String source : sources) {
-            File file = new File(source);
-            L.debug("Merging: "+source);
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    ss.add(line);
+
+        // iterate over each linkset
+        for (LinkSet linkSet : linkSets) {
+
+            // handle each individually generated file
+            for (String source : linkSet.destinationFiles) {
+                L.debug("Merge and validate: " + source);
+                sourcecount++;
+                File file = new File(source);
+                int nodbpediacount = 0;
+                //TODO syntax check is necessary, but unsure where to put, maybe here?
+
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+
+                        // Validate whether the links have the right DBpedia namespace for the subject
+                        String ns = "<" + namespace;
+                        if (!line.startsWith(ns)) {
+                            nodbpediacount++;
+                            // remove all triples not starting with the right subject
+                            continue;
+                        }
+
+                        // splitting for special subject handling
+                        int index = line.indexOf(">");
+                        String first = line.substring(1, index);
+                        String last = line.substring(index + 1);
+
+                        // encode DBpedia URIs correctly
+                        first = UriUtils$.MODULE$.uriToIri(first);
+
+                        //replace with redirects
+                        String replace = map.get(first);
+                        if(replace!=null){
+                            first = replace;
+                        }
+
+                        //reassemble
+                        line = new StringBuilder("<").append(first).append(">").append(last).toString();
+
+                        //collect and sort
+                        ss.add(line);
+                    }
+                }
+                if (nodbpediacount > 0) {
+                    String message = "Expected " + namespace + " for subject namespace, " + nodbpediacount + " deviations found in " + source + " and excluded.";
+                    linkSet.issues.add(new Issue("ERROR", message));
+                    L.error(message);
                 }
             }
+
+            // write back to file
+            //TODO zip the files
+            FileWriter fw = new FileWriter(destination);
+            ss.stream().forEach(line -> {
+                try {
+                    fw.write(line);
+                    fw.write("\n");
+                } catch (IOException e) {
+                    L.error(e);
+                }
+            });
+            fw.close();
+
         }
-        FileWriter fw = new FileWriter(destination);
-        ss.stream().forEach(line->{
-            try {
-                fw.write(line);
-                fw.write("\n");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        fw.close();
-        L.info("merged "+sources.size()+" sources ("+ss.size()+" lines) into: "+destination );
-
+        L.info("merged " + sourcecount + " sources (" + ss.size() + " lines) into: " + destination);
 
     }
 
-    public static Model checkRDFSyntax(File file) throws FileNotFoundException, CompressorException {
-        Model model = ModelFactory.createDefaultModel();
-        InputStream is = getInputStreamForFile(file);
-        RDFDataMgr.read(model, is, file.getParentFile().toURI().toString(), Lang.TURTLE);
-        return model;
-    }
 
     public static InputStream getInputStreamForFile(File file) throws CompressorException, FileNotFoundException {
         InputStream is;
@@ -104,23 +142,15 @@ public final class Utils {
         return is;
     }
 
-    public static void subjectsStartWith(Model model, String namespace, LinkSet linkSet) {
-
-        int count = 0;
-        ResIterator ri = model.listSubjects();
-        while (ri.hasNext()) {
-            Resource r = ri.nextResource();
-            if (!r.getURI().startsWith(namespace)) {
-                count++;
-            }
-        }
-        if (count > 0) {
-            String message = "Found " + count + " subjects that do not start with " + namespace;
-            linkSet.issues.add(new Issue("ERROR", message));
-            L.error(message);
-        }
+    @Deprecated
+    public static Model checkRDFSyntax(File file) throws FileNotFoundException, CompressorException {
+        Model model = ModelFactory.createDefaultModel();
+        InputStream is = getInputStreamForFile(file);
+        RDFDataMgr.read(model, is, file.getParentFile().toURI().toString(), Lang.TURTLE);
+        return model;
     }
 
+    @Deprecated
     public static void joinFiles(File destination, Collection<String> sources)
             throws IOException {
         OutputStream output = null;
@@ -133,12 +163,12 @@ public final class Utils {
             IOUtils.closeQuietly(output);
         }
     }
-
+    @Deprecated
     private static BufferedOutputStream createAppendableStream(File destination)
             throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(destination, true));
     }
-
+    @Deprecated
     private static void appendFile(OutputStream output, File source)
             throws IOException {
         InputStream input = null;

@@ -41,23 +41,24 @@ public class GenerateLinks {
 
 
     //Options
-    boolean validate = true;
+    public boolean validate = true;
 
     //Debug options for CLI
     public boolean sparqlonly = false;
     public boolean scriptonly = false;
     public boolean linkConfsonly = false;
     public boolean ntripleFilesonly = false;
+    public boolean noscripts = true;
 
 
-    public void generateLinkSets(Metadata m, String baseFolder) throws IOException {
+    public void generateLinkSets(Metadata m, File baseOutFolder)  {
 
-        Set<String> outputFileNames = new HashSet<String>();
-        String outFolder = baseFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator;
-        new File(outFolder).mkdirs();
-        String outFolderData = baseFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator + "data" + File.separator;
-        new File(outFolderData).mkdirs();
-        String resultFile = outFolder + File.separator + m.nicename + "_links.nt";
+        //Set<String> outputFileNames = new HashSet<String>();
+        File outFolder = new File(baseOutFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator);
+        outFolder.mkdirs();
+        File outFolderData = new File(outFolder + File.separator + "data" + File.separator);
+        outFolderData.mkdirs();
+        File resultFile = new File(outFolder + File.separator + m.nicename + "_links.nt");
 
         int sparqlsize = 0;
         int scriptsize = 0;
@@ -72,100 +73,93 @@ public class GenerateLinks {
         if ((sparqlonly && sparqlsize == 0) || (scriptonly && scriptsize == 0) || (linkConfsonly && linkConfSize == 0) || (ntripleFilesonly && ntripleFileSize == 0)) {
             return;
         }
+
         L.info("Processing " + m.nicename + " with " + m.linkSets.size() + " linksets");
 
         m.linkSets.stream().forEach(linkSet -> {
 
             if (linkSet.endpoint != null) {
-                String outputFileName = outFolderData + linkSet.outputFilePrefix + "_sparql.nt";
+                File destination = new File(outFolderData + linkSet.outputFilePrefix + "_sparql.nt");
 
                 Model model = ModelFactory.createDefaultModel();
                 //TODO validate whether SPARQL Endpoint is active
 
                 linkSet.constructqueries.stream().forEach(constructQuery -> {
+                    L.info("Processing (SPARQL): " + linkSet.endpoint + " query: " + constructQuery);
+
                     try {
                         model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint, linkSet.updateFrequencyInDays));
                     } catch (Exception e) {
-                        linkSet.issues.add(new Issue("ERROR", "Construct query failed: " + e.getMessage()));
-                        L.error("Error while executing SPARQL query in endpoint " + linkSet.endpoint + "\n query: " + constructQuery, e);
+                        String message = "Construct query failed on endpoint " + linkSet.endpoint + " query: " + constructQuery + "Error: " + e.getMessage();
+                        linkSet.issues.add(new Issue("ERROR", message));
+                        L.error(message, e);
                     }
-
                 });
                 try {
 
-                    FileWriter fw = new FileWriter(outputFileName);
+                    FileWriter fw = new FileWriter(destination);
                     model.write(fw, "NTriples");
                     fw.close();
-                    outputFileNames.add(outputFileName);
+                    linkSet.destinationFiles.add(destination.toString());
 
-                } catch (Exception e) {
-                    L.error(e.getMessage());
-                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    L.error(e);
                 }
             }
 
             if (!linkSet.linkConfs.isEmpty()) {
                 L.info("linkConfs not implemented yet");
             }
-            if (!linkSet.scripts.isEmpty()) {
+            if (!linkSet.scripts.isEmpty() && !noscripts) {
                 int count = 0;
                 for (String script : linkSet.scripts) {
-                    String outputFileName = outFolderData + linkSet.outputFilePrefix + "_script"+count+".nt";
-                    File destination = new File(outputFileName);
-                    long differenceInDays = ((new Date().getTime())- (new Date (destination.lastModified()).getTime())) /  (24 * 60 * 60 * 1000);
-                    L.info("Processing " + script + " last executed "+ differenceInDays+" days ago");
+                    File destination = new File(outFolderData + linkSet.outputFilePrefix + "_script" + count + ".nt");
+                    long differenceInDays = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
+                    L.info("Processing (SCRIPT): " + script + " last executed " + differenceInDays + " days ago");
 
-                    if(differenceInDays>linkSet.updateFrequencyInDays) {
+                    if (differenceInDays > linkSet.updateFrequencyInDays) {
+                        //TODO report failure
                         executeShellScript(new File(script), destination);
                     }
+                    linkSet.destinationFiles.add(destination.toString());
                     count++;
                 }
             }
             if (!linkSet.ntriplefilelocations.isEmpty()) {
                 int count = 0;
                 for (String ntriplefile : linkSet.ntriplefilelocations) {
-                    L.info("Processing: " + ntriplefile);
-                    String outputFileName = outFolderData + linkSet.outputFilePrefix + "_ntriplefile" + count + ".nt";
-                    File destination = new File(outputFileName);
+                    L.info("Processing (NT-FILE): " + ntriplefile);
+                    File destination = new File(outFolderData + linkSet.outputFilePrefix + "_ntriplefile" + count + ".nt");
+
                     if (ntriplefile.startsWith("http://")) {
                         if (getDate(ntriplefile) == null) {
-                            //TODO add to issues
-                            L.error(ntriplefile + " was not reachable");
+                            String message = ntriplefile + " was not reachable at  " + new Date();
+                            L.warn(message);
+                            linkSet.issues.add(new Issue("WARN", message));
                         }
-                    } else if (!(new File(ntriplefile).exists())) {
-                        //TODO add to issues
-                        L.error(ntriplefile + " does not exist");
                     }
-                    try {
-                        if (toBeUpdated(ntriplefile, outputFileName)) {
-                            retrieveNTFile(ntriplefile, outputFileName);
-                            L.debug("File retrieved " + destination + ", Size: " + destination.length() + " Bytes");
-                        } else {
-                            L.info("Skipping, last modified not newer than current");
-                        }
 
-                        outputFileNames.add(outputFileName);
-                    } catch (Exception e) {
-                        //TODO add to issues
-                        throw new RuntimeException(e);
+                    if (toBeUpdated(ntriplefile, destination)) {
+                        try {
+                            retrieveNTFile(ntriplefile, destination);
+                            L.debug("File retrieved " + destination + ", Size: " + destination.length() + " Bytes");
+                        } catch (Exception e) {
+                            linkSet.issues.add(new Issue("WARN", e.getMessage()));
+                            L.error(e);
+                        }
+                    } else {
+                        L.info("Skipping " + ntriplefile + ", last modified not newer than current");
                     }
+
+                    linkSet.destinationFiles.add(destination.toString());
                     count++;
                 }
 
-            }//end else
+            }
+        });//end linkset handling
 
-            //TODO implement validation here
-             /* if (validate) {
-                            Model model = Validate.checkRDFSyntax(destination);
-                            L.debug("syntax checked");
-                            Validate.subjectsStartWith(model, m.linkNamespace, linkSet);
-                            //new RdfFileWriter(outputFileName, "NTriples").write(model);
-                            //L.info("Serialized validated file to " + outputFileName);
-                        }
-*/
-        });
         try {
-            Utils.joinFilesSpecial(new File(resultFile), outputFileNames);
+            Utils.joinFilesSpecial(resultFile, m.linkSets, m.linkNamespace);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -175,49 +169,30 @@ public class GenerateLinks {
     /*
      * Downloads file from URL to a specific location
      */
-    private File retrieveNTFile(String file, String outputFile) throws IOException, CompressorException {
+    private File retrieveNTFile(String source, File destination) throws IOException, CompressorException {
+        File temp = File.createTempFile("ntfile", "." + FilenameUtils.getExtension(source));
+        try {
+            if (source.startsWith("http://")) {
+                FileUtils.copyURLToFile(new URL(source), temp);
+            } else {
+                // String s = file.replace("file://", "");
+                FileUtils.copyFile(new File(source), temp);
+            }
+            copyInputStreamToFile(getInputStreamForFile(temp), destination);
 
-        File temp = File.createTempFile("ntfile", "." + FilenameUtils.getExtension(file));
 
-        if (file.startsWith("http://")) {
-            FileUtils.copyURLToFile(new URL(file), temp);
-        } else {
-            // String s = file.replace("file://", "");
-            FileUtils.copyFile(new File(file), temp);
+            return destination;
+        } finally {
+            temp.delete();
         }
-
-        File destination = new File(outputFile);
-        copyInputStreamToFile(getInputStreamForFile(temp), destination);
-        temp.delete();
-        return destination;
     }
-
-    /**
-     * Generates repository linksets, as needed, according to the provided metadata.
-     * A linkset is generated based on examining the metadata properties of its location and
-     * update rate.
-     * The generation itself is performed by one of the following methods (even though more than one
-     * might appear in the metadata file):
-     * 1. script,
-     * 2. SPRAQL CONSTRUCT query,
-     * 3. download a dump file.
-     * <p>
-     * The method givies preference to dynamic methods (script, SPRAQL CONSTRUCT
-     * query) over static dumps.
-     * <p>
-     * a metadata file for a given repository.
-     *
-     * @throws URISyntaxException
-     * @throws MalformedURLException
-     */
-
-
 
     /*
      * Executes shell script from a given location
      */
+    //TODO error handling
     private void executeShellScript(File file, File destination) {
-        String path = file.getParentFile().getAbsolutePath().replace("\\", "/");
+        String path = file.getParentFile().getAbsolutePath();//.replace("\\", "/");
         String cmd = "./" + file.getName() + " " + destination.getAbsolutePath();
         L.info("Executing script at " + path);
         L.info("bash -c " + cmd);
@@ -261,10 +236,10 @@ public class GenerateLinks {
                 return null;
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            L.error(e);
             return null;
         } catch (IOException e) {
-            e.printStackTrace();
+            L.error(e);
             return null;
         }
         return d;
@@ -273,7 +248,7 @@ public class GenerateLinks {
     /*
      * For a given URL returns last modified date
      */
-    private static boolean toBeUpdated(String newFile, String oldFile) {
+    private static boolean toBeUpdated(String newFile, File oldFile) {
         //we initialise with now!
         Date newFileDate = new Date();
         if (newFile.startsWith("http://")) {
@@ -290,9 +265,9 @@ public class GenerateLinks {
             }
         }
 
-        File of = new File(oldFile);
-        if (of.exists()) {
-            Date oldFileDate = new Date(new File(oldFile).lastModified());
+
+        if (oldFile.exists()) {
+            Date oldFileDate = new Date(oldFile.lastModified());
             L.debug((newFileDate.getTime() - oldFileDate.getTime()) / (24 * 60 * 60 * 1000) + " days difference");
             return newFileDate.after(oldFileDate);
         } else {
