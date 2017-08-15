@@ -98,7 +98,13 @@
     		<artifactId>jopt-simple</artifactId>
     		<version>5.0.3</version>
 		</dependency>
-    
+
+        <dependency>
+            <groupId>org.dbpedia</groupId>
+            <artifactId>extraction</artifactId>
+            <version>4.2-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
     
 

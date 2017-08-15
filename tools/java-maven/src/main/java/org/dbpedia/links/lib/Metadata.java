@@ -145,10 +145,10 @@ public class Metadata {
 
             s = i.getProperty(model.getProperty(Vocab.outputFile));
             if (s != null) {
-                current.outputFile = removeFileTripleSlash(s.getObject().asResource().toString());
+                current.outputFilePrefix = removeFileTripleSlash(s.getObject().asResource().toString());
             } else {
                 //set default output file
-                current.outputFile = nicename + "_links_" + i.getLocalName() + ".nt";
+                current.outputFilePrefix = i.getLocalName();
             }
 
             s = i.getProperty(model.getProperty(Vocab.updateFrequencyInDays));
@@ -175,5 +175,7 @@ public class Metadata {
         model.write(baos, "RDF/JSON");
         modelasjson = gson.fromJson(new String(baos.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), JsonElement.class);
     }
+
+
 
 }

@@ -14,8 +14,6 @@ import java.io.FileWriter;
 import java.net.URI;
 import java.util.List;
 
-import static org.dbpedia.links.lib.Utils.getAllFilesInFolderOrFile;
-
 /**
  * Created by magnus on 04.05.16.
  */
@@ -26,7 +24,8 @@ public class CreatePatchRequestFormat {
     public static void main(String[] args) throws Exception {
 
         File f = new File("../");  // hard code this for now
-        List<File> allFilesInRepo = getAllFilesInFolderOrFile(f);
+        //TODO
+		List<File> allFilesInRepo = null ;//getAllFilesInFolderOrFile(f);
 
         CreatePatchRequestFormatForAllMetadataFiles(allFilesInRepo);
     }

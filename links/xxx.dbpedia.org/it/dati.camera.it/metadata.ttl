@@ -8,7 +8,6 @@
 	dbp:endpoint <http://dati.camera.it/sparql> ;
 	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o <http://www.w3.org/2002/07/owl#sameAs> ?b. FILTER(REGEX(STR(?b),'http://dbpedia.org')) }" ;
 	dbp:ntriplefilelocation <http://lobid.org/download/dumps/DE-605/enrich/2dbpedia.ttl> ;
-	dbp:outputFile <out1.nt> ;
 	void:objectsTarget <https://datahub.io/dataset/dati-camera-it> ;
 	dc:author <https://github.com/dvcama> ;
 	dct:description "This is a complete catalogue of digital data and documents from the Legislature of the Kingdom of Sardinia to the fifteenth of the Republic, which supply the historical portal of the Chamber of Deputies. There are also the first datasets of Deputies, parliamentary groups and bodies of the current legislature." ;

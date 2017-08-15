@@ -19,7 +19,7 @@
 
 <#ls3> a void:Linkset ;
 	dc:author <http://www.bizer.de/> ;
-	dbp:ntriplefilelocation <drugbank_links.nt> ;
+	dbp:ntriplefilelocation <drugbank_links.nt.bz2> ;
 	dbp:endpoint <http://wifo5-04.informatik.uni-mannheim.de/drugbank/sparql> ;
 	void:objectsTarget <http://www4.wiwiss.fu-berlin.de/drugbank/> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;

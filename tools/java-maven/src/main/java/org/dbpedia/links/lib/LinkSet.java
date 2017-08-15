@@ -11,7 +11,7 @@ public class LinkSet {
     String endpoint = null;
     String script = null;
     int updateFrequencyInDays = 7;
-    String outputFile = null;
+    String outputFilePrefix = null;
 
     List<String> ntriplefilelocations = new ArrayList<String>();
     List<String> linkConfs = new ArrayList<String>();
@@ -36,7 +36,7 @@ public class LinkSet {
                 "\n, constructqueries=" + constructqueries +
                 "\n, script='" + script + '\'' +
                 "\n, updateFrequencyInDays='" + updateFrequencyInDays + '\'' +
-                "\n, outputFile='" + outputFile + '\'' +
+                "\n, outputFile='" + outputFilePrefix + '\'' +
                 '}';
     }
 }

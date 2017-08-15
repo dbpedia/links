@@ -5,7 +5,7 @@
 
 <#ls1> a void:Linkset ;
 	dc:author <http://latc-project.eu/> ;
-	dbp:ntriplefilelocation <eurostat_linkedstatistics_links.net.bz2> ;
+	dbp:ntriplefilelocation <eurostat_linkedstatistics_links.nt.bz2> ;
 	dbp:endpoint <http://eurostat.linked-statistics.org/sparql> ;
 	void:objectsTarget <http://eurostat.linked-statistics.org/dic/> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;

@@ -4,6 +4,7 @@ package org.dbpedia.links.lib;
 import org.aksw.rdfunit.io.writer.RdfFileWriter;
 import org.aksw.rdfunit.sources.TestSource;
 import org.aksw.rdfunit.sources.TestSourceBuilder;
+import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,10 +15,7 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -27,6 +25,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
+import static org.dbpedia.links.lib.Utils.getInputStreamForFile;
 
 /**
  * @author Dimitris Kontokostas
@@ -37,17 +40,34 @@ public class GenerateLinks {
     private static Logger L = Logger.getLogger(GenerateLinks.class);
 
 
-    public void generateLinkSets(Metadata m, String baseFolder) throws org.aksw.rdfunit.io.writer.RdfWriterException, MalformedURLException, IOException {
+    //Options
+    boolean validate = true;
+    boolean sparql = false;
+    boolean script = false;
+    boolean linkConfs = false;
+    boolean ntripleFiles = true;
+
+
+    public void generateLinkSets(Metadata m, String baseFolder) throws IOException {
+
+        L.info("Processing " + m.nicename + " with " + m.linkSets.size() + " linksets");
+        Set<String> outputFileNames = new HashSet<String>();
+        String outFolder = baseFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator;
+        new File(outFolder).mkdirs();
+        String outFolderData = baseFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator + "data" + File.separator;
+        new File(outFolderData).mkdirs();
+        String resultFile = outFolder + File.separator + m.nicename + "_links.nt";
 
         m.linkSets.stream().forEach(linkSet -> {
 
-            String outFolder = baseFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator;
-            String outputfilename = outFolder + File.separator + linkSet.outputFile;
-            new File(outFolder).mkdirs();
-            File outputfile = new File(outputfilename);
 
 
-            if (linkSet.endpoint != null) {
+            //File outputfile = new File(outputfilename);
+
+
+            if (linkSet.endpoint != null & sparql) {
+                String outputFileName = outFolderData + linkSet.outputFilePrefix + "_sparql.nt";
+
                 Model model = ModelFactory.createDefaultModel();
                 //TODO validate whether SPARQL Endpoint is active
 
@@ -56,61 +76,83 @@ public class GenerateLinks {
                         model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint, linkSet.updateFrequencyInDays));
                     } catch (Exception e) {
                         linkSet.issues.add(new Issue("ERROR", "Construct query failed: " + e.getMessage()));
-                        L.error("Error Executing SPARQL query in endpoint " + linkSet.endpoint + "\n query: " + constructQuery, e);
+                        L.error("Error while executing SPARQL query in endpoint " + linkSet.endpoint + "\n query: " + constructQuery, e);
                     }
 
                 });
                 try {
-                    new RdfFileWriter(outputfilename, "NTriples").write(model);
+
+                    FileWriter fw = new FileWriter(outputFileName);
+                    model.write(fw, "NTriples");
+                    fw.close();
+                    outputFileNames.add(outputFileName);
+
                 } catch (Exception e) {
                     L.error(e.getMessage());
                     throw new RuntimeException(e);
                 }
-            } else if (!linkSet.linkConfs.isEmpty()) {
+            } else if (!linkSet.linkConfs.isEmpty() & linkConfs) {
                 L.info("linkConfs not implemented yet");
-            } else if (linkSet.script != null) {
+            } else if (linkSet.script != null & script) {
+                String outputFileName = outFolderData + linkSet.outputFilePrefix + "_script.nt";
+
                 executeShellScript(new File(linkSet.script));
 
-            } else if (!linkSet.ntriplefilelocations.isEmpty()) {
-                linkSet.ntriplefilelocations.stream().forEach(ntriplefile -> {
+            } else if (!linkSet.ntriplefilelocations.isEmpty() & ntripleFiles) {
+                int count = 0;
+                for (String ntriplefile : linkSet.ntriplefilelocations) {
+                    L.info("Processing: " + ntriplefile);
+                    String outputFileName = outFolderData + linkSet.outputFilePrefix + "_ntriplefile" + count + ".nt";
+                    File destination = new File(outputFileName);
+                    if (ntriplefile.startsWith("http://")) {
+                        if (getDate(ntriplefile) == null) {
+                            //TODO add to issues
+                            L.error(ntriplefile + " was not reachable");
+                        }
+                    } else if (!(new File(ntriplefile).exists())) {
+                        //TODO add to issues
+                        L.error(ntriplefile + " does not exist");
+                    }
                     try {
-                        L.info("Processing: " + ntriplefile);
-
-                        if (toBeUpdated(ntriplefile, outputfilename)) {
-
-                            File tmp = retrieveNTFile(ntriplefile);
-                            L.debug("File retrieved " + tmp + ", Size: " + tmp.length());
-
-                            Model model = Validate.checkRDFSyntax(tmp);
-                            L.debug("syntax checked");
-
-                            Validate.subjectsStartWith(model, m.linkNamespace, linkSet);
-
-                            new RdfFileWriter(outputfilename, "NTriples").write(model);
-                            L.info("Serialized validated file to " + outputfile);
-
-                            tmp.delete();
+                        if (toBeUpdated(ntriplefile, outputFileName)) {
+                            retrieveNTFile(ntriplefile, outputFileName);
+                            L.debug("File retrieved " + destination + ", Size: " + destination.length() + " Bytes");
                         } else {
                             L.info("Skipping, last modified not newer than current");
                         }
 
-
+                        outputFileNames.add(outputFileName);
                     } catch (Exception e) {
+                        //TODO add to issues
                         throw new RuntimeException(e);
                     }
-                });
+                    count++;
+                }
 
-            }
+            }//end else
 
-
+            //TODO implement validation here
+             /* if (validate) {
+                            Model model = Validate.checkRDFSyntax(destination);
+                            L.debug("syntax checked");
+                            Validate.subjectsStartWith(model, m.linkNamespace, linkSet);
+                            //new RdfFileWriter(outputFileName, "NTriples").write(model);
+                            //L.info("Serialized validated file to " + outputFileName);
+                        }
+*/
         });
+        try {
+            Utils.joinFilesSpecial(new File(resultFile), outputFileNames);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     /*
      * Downloads file from URL to a specific location
      */
-    private File retrieveNTFile(String file) throws MalformedURLException, IOException {
+    private File retrieveNTFile(String file, String outputFile) throws IOException, CompressorException {
 
         File temp = File.createTempFile("ntfile", "." + FilenameUtils.getExtension(file));
 
@@ -121,7 +163,10 @@ public class GenerateLinks {
             FileUtils.copyFile(new File(file), temp);
         }
 
-        return temp;
+        File destination = new File(outputFile);
+        copyInputStreamToFile(getInputStreamForFile(temp), destination);
+        temp.delete();
+        return destination;
     }
 
     /**
@@ -176,6 +221,28 @@ public class GenerateLinks {
         }
     }
 
+    private static Date getDate(String url) {
+        HttpURLConnection.setFollowRedirects(true);
+        HttpURLConnection con;
+
+        Date d = null;
+        try {
+            con = (HttpURLConnection) new URL(url).openConnection();
+            con.setRequestMethod("HEAD");
+            d = new Date(con.getLastModified());
+            if (con.getResponseCode() != 200) {
+                L.error("Response Code for " + url + " was not 200, but " + con.getResponseCode());
+                return null;
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return d;
+    }
 
     /*
      * For a given URL returns last modified date
@@ -184,18 +251,7 @@ public class GenerateLinks {
         //we initialise with now!
         Date newFileDate = new Date();
         if (newFile.startsWith("http://")) {
-            HttpURLConnection.setFollowRedirects(true);
-            HttpURLConnection con;
-
-            try {
-                con = (HttpURLConnection) new URL(newFile).openConnection();
-                con.setRequestMethod("HEAD");
-                newFileDate = new Date(con.getLastModified());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            newFileDate = getDate(newFile);
         } else {
             File nf = new File(newFile);
             if (nf.exists()) {
@@ -211,15 +267,15 @@ public class GenerateLinks {
         File of = new File(oldFile);
         if (of.exists()) {
             Date oldFileDate = new Date(new File(oldFile).lastModified());
+            L.debug((newFileDate.getTime() - oldFileDate.getTime()) / (24 * 60 * 60 * 1000) + " days difference");
             return newFileDate.after(oldFileDate);
         } else {
             //if old file does not exist then please update
-            return false;
+            return true;
         }
 
 
     }
-
 
 
     private Model executeSPARQLQuery(String query, String endpoint, int updateFrequencyInDays) {
@@ -231,7 +287,7 @@ public class GenerateLinks {
                 .setEndpoint(endpoint, Collections.emptyList())
                 .setPagination(500)
                 .setQueryDelay(50)
-                .setCacheTTL( updateFrequencyInDays * 24L * 60L * 60L * 1000L)
+                .setCacheTTL(updateFrequencyInDays * 24L * 60L * 60L * 1000L)
                 .build();
 
         Model model = null;
