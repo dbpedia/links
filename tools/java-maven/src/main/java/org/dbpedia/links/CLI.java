@@ -39,7 +39,7 @@ public class CLI {
         parser.accepts("help", "prints help information");
         //debug flags
         parser.accepts("sparqlonly", "processes all metadata files that contain sparql construct queries, debug flag; default false");
-        parser.accepts("scriptsonly", "processes all metadata files that contain scripts, debug flag; default false");
+        parser.accepts("scriptonly", "processes all metadata files that contain scripts, debug flag; default false");
         parser.accepts("ntfileonly", "processes all metadata files that contain ntriplefiles, debug flag; default false");
         parser.accepts("linkconfonly", "processes all metadata files that contain link configurations for SILK, debug flag; default false");
 

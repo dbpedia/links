@@ -141,12 +141,15 @@ public class Metadata {
                 current.linkConfs.add(removeFileTripleSlash(stmtiter.nextStatement().getObject().asResource().getURI().toString()));
             }
 
-            Statement s = i.getProperty(model.getProperty(vocscript));
-            if (s != null) {
-                current.script = s.getLiteral().getLexicalForm();
+
+            stmtiter = i.listProperties(model.getProperty(vocscript));
+            while (stmtiter.hasNext()) {
+                String script = "links"+File.separator+reponame+File.separator+nicename+File.separator+ stmtiter.nextStatement().getObject().asLiteral().getLexicalForm();
+                current.scripts.add(script);
             }
 
-            s = i.getProperty(model.getProperty(vocendpoint));
+
+            Statement s = i.getProperty(model.getProperty(vocendpoint));
             if (s != null) {
                 current.endpoint = s.getObject().asResource().getURI().toString();
             }
@@ -177,13 +180,12 @@ public class Metadata {
 
     }
 
-    public void prepareJSON(){
+    public void prepareJSON() {
         Gson gson = new Gson();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         model.write(baos, "RDF/JSON");
         modelasjson = gson.fromJson(new String(baos.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), JsonElement.class);
     }
-
 
 
 }
