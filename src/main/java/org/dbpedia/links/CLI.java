@@ -27,8 +27,11 @@ public class CLI {
         parser.accepts("outdir", "Path to the directory where results are written; defaults to 'current'")
                 .withRequiredArg().ofType(String.class)
                 .defaultsTo("current");
-        parser.accepts("validate", "enables extensive validation, i.e. with SHACL/RDFUNIT and also validation of links");
+        //parser.accepts("validate", "enables extensive validation, i.e. with SHACL/RDFUNIT and also validation of links");
         parser.accepts("generate", "enables the generation of links, if the option is not set, the tool will just parse all the metadata files in memory");
+        parser.accepts("scripts", "scripts take a long time to run, they are deactivated by default, set this parameter to true to run included scripts")
+                .withRequiredArg().ofType(Boolean.class)
+                .defaultsTo(false);
         parser.accepts("help", "prints help information");
         //debug flags
         parser.accepts("sparqlonly", "processes all metadata files that contain sparql construct queries, debug flag; default false");
@@ -63,7 +66,9 @@ public class CLI {
 
         GenerateLinks gl = new GenerateLinks();
         //debugging
-        gl.validate = (options.has("validate")) ? true : false;
+        //gl.validate = (options.has("validate")) ? true : false;
+        gl.executeScripts = (Boolean) (options.valueOf("scripts")) ;
+
         gl.sparqlonly = (options.has("sparqlonly")) ? true : false;
         gl.scriptonly = (options.has("scriptonly")) ? true : false;
         gl.linkConfsonly = (options.has("linkconfonly")) ? true : false;

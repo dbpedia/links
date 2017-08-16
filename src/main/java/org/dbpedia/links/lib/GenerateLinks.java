@@ -41,14 +41,13 @@ public class GenerateLinks {
 
 
     //Options
-    public boolean validate = true;
+    public boolean executeScripts = true;
 
     //Debug options for CLI
     public boolean sparqlonly = false;
     public boolean scriptonly = false;
     public boolean linkConfsonly = false;
     public boolean ntripleFilesonly = false;
-    public boolean noscripts = true;
 
 
     public void generateLinkSets(Metadata m, File baseOutFolder)  {
@@ -110,7 +109,7 @@ public class GenerateLinks {
             if (!linkSet.linkConfs.isEmpty()) {
                 L.info("linkConfs not implemented yet");
             }
-            if (!linkSet.scripts.isEmpty() && !noscripts) {
+            if (!linkSet.scripts.isEmpty() && executeScripts ) {
                 int count = 0;
                 for (String script : linkSet.scripts) {
                     File destination = new File(outFolderData + linkSet.outputFilePrefix + "_script" + count + ".nt");

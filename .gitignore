@@ -4,5 +4,6 @@
 cache/
 target/
 current/
+org.dbpedia.data/
 links/dbpedia.org/gadm.geovocab.org/scripts/gadm-linksRaw.nt
 links/dbpedia.org/gadm.geovocab.org/scripts/logger.log

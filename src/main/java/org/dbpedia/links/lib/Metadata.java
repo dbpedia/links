@@ -103,7 +103,7 @@ public class Metadata {
         TestExecution te = rval.checkMetadataModelWithRdfUnit(model);
         Collection<TestCaseResult> tcrs = te.getTestCaseResults();
         tcrs.stream().forEach(tcr -> {
-            m.issues.add(new Issue(tcr.getSeverity().name(), tcr.getMessage()));
+            m.issues.add(new Issue(tcr.getSeverity().name(), tcr.getMessage()+" "+((ShaclTestCaseResult)tcr).getFailingResource()));
         });
         if (!tcrs.isEmpty()) {
             L.warn(tcrs.size() + " issues found by RDFUnit in " + file);

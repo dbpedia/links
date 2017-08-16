@@ -14,6 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.util.Arrays.stream;
 
@@ -56,7 +57,7 @@ public final class Utils {
 
 
     public static void joinFilesSpecial(File destination, List<LinkSet> linkSets, String namespace) throws IOException {
-        //ConcurrentMap<String,String> map = new RedirectReplace().getMap();
+        ConcurrentMap<String,String> map = new RedirectReplace().getMap();
         int sourcecount = 0;
         SortedSet<String> ss = new TreeSet<String>();
 
