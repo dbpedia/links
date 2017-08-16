@@ -81,6 +81,7 @@ public class Metadata {
             this.linkNamespace = "http://dbpedia.org/resource";
         }
         this.gitHubLink = "https://github.com/dbpedia/links/tree/master/links/"+reponame+"/"+nicename;
+
     }
 
     public static Metadata create(File file, RDFUnitValidate rval) throws IOException {
@@ -99,14 +100,14 @@ public class Metadata {
         try {
             RDFDataMgr.read(model, file.toURI().toString(), baseUri, Lang.TURTLE);
         } catch (Exception e) {
-            L.error(e);
-            m.issues.add(new Issue("ERROR", "Error when parsing " + m.reponame + "/" + m.nicename + "/metadata.ttl" + e));
+            m.issues.add( Issue.create("ERROR", "Error when parsing " + m.reponame + "/" + m.nicename + "/metadata.ttl, skipping",L,e));
+            return m;
         }
 
         TestExecution te = rval.checkMetadataModelWithRdfUnit(model);
         Collection<TestCaseResult> tcrs = te.getTestCaseResults();
         tcrs.stream().forEach(tcr -> {
-            m.issues.add(new Issue(tcr.getSeverity().name(), tcr.getMessage()+" "+((ShaclTestCaseResult)tcr).getFailingResource()));
+            m.issues.add(Issue.create(tcr.getSeverity().name(), tcr.getMessage()+" "+((ShaclTestCaseResult)tcr).getFailingResource(),L,null));
         });
         if (!tcrs.isEmpty()) {
             L.warn(tcrs.size() + " issues found by RDFUnit in " + file);
@@ -136,12 +137,10 @@ public class Metadata {
                     } catch (MalformedURLException e) {
                         String message = "URL " + ntriplefilename + " malformed, skipping";
                         L.error(message + e.getMessage());
-                        issues.add(new Issue("ERROR", message));
+                        issues.add(Issue.create("ERROR", message,L,e));
                     }
                 } else if (!new File(ntriplefilename).exists()) {
-                    String message = "Local nt-file " + ntriplefilename + " has not been found, skipping";
-                    L.error(message);
-                    issues.add(new Issue("ERROR", message));
+                    issues.add(Issue.create("ERROR", "Local nt-file " + ntriplefilename + " has not been found, skipping", L,null));
                 } else {
                     current.ntriplefilelocations.add(ntriplefilename);
                 }
@@ -152,9 +151,7 @@ public class Metadata {
 
                 String conffilename = removeFileTripleSlash(stmtiter.nextStatement().getObject().asResource().toString());
                 if (!(new File(conffilename).exists())) {
-                    String message = "SILK conf file " + conffilename + " has not been found, skipping";
-                    L.error(message);
-                    issues.add(new Issue("ERROR", message));
+                    issues.add(Issue.create("ERROR", "SILK conf file " + conffilename + " has not been found, skipping",L,null));
                 } else {
                     current.linkConfs.add(conffilename);
                 }
@@ -166,9 +163,7 @@ public class Metadata {
                 String scriptFile = "links" + File.separator + reponame + File.separator + nicename + File.separator + stmtiter.nextStatement().getObject().asLiteral().getLexicalForm();
 
                 if (!(new File(scriptFile).exists())) {
-                    String message = "Script file " + scriptFile + " has not been found, skipping";
-                    L.error(message);
-                    issues.add(new Issue("ERROR", message));
+                    issues.add(Issue.create("ERROR", "Script file " + scriptFile + " has not been found, skipping",L,null));
                 } else {
                     current.scripts.add(scriptFile);
                 }

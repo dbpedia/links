@@ -12,14 +12,12 @@ branches:
     - coverity_scan
 install: /bin/true
 script:
-  - "cd tools/java-maven"
-  - "mvn clean install"
-  - "bin/validate.sh"
-  - "cd .."
+  - "mvn clean install -Dmaven.test.skip=false"
 notifications:
   email:
     recipients:
       - amit@informatik.uni-leipzig.de
+      - hellmann@informatik.uni-leipzig.de
     on_success: change
     on_failure: change
 

@@ -6,7 +6,9 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.log4j.Logger;
 import org.dbpedia.links.lib.*;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -68,14 +70,52 @@ public class CLI {
         //debugging
         //gl.validate = (options.has("validate")) ? true : false;
         gl.executeScripts = (Boolean) (options.valueOf("scripts")) ;
-
         gl.sparqlonly = (options.has("sparqlonly")) ? true : false;
         gl.scriptonly = (options.has("scriptonly")) ? true : false;
         gl.linkConfsonly = (options.has("linkconfonly")) ? true : false;
         gl.ntripleFilesonly = (options.has("ntfileonly")) ? true : false;
-
         File basedir = new File((String) options.valueOf("basedir"));
         File outdir = new File((String) options.valueOf("outdir"));
+
+        List<Metadata> metadatas = getMetadata(generate, gl, basedir, outdir);
+
+        //JSON output
+        metadatas.stream().forEach(m -> {
+            m.prepareJSON();
+        });
+
+        getIssues(metadatas);
+
+        FileWriter fw = new FileWriter(outdir + File.separator + "data.json");
+        new Gson().toJson(metadatas, fw);
+        fw.close();
+        L.info("wrote json to " + outdir + File.separator + "data.json");
+
+
+
+    }
+
+    protected static List<Issue> getIssues(List<Metadata> metadatas){
+        List<Issue> i = new ArrayList<>();
+        //Log all issues
+        metadatas.stream().forEach(m -> {
+            m.issues.stream().forEach(mi -> {
+                i.add(mi);
+                printIssue(mi, L);
+            });
+            m.linkSets.stream().forEach(l -> {
+                l.issues.stream().forEach(li -> {
+                    i.add(li);
+                    printIssue(li, L);
+                });
+
+            });
+        });
+        return i;
+    }
+
+    @NotNull
+    protected static List<Metadata> getMetadata(boolean generate, GenerateLinks gl, File basedir, File outdir) {
         List<File> allFilesInRepo = Utils.getAllMetadataFiles(basedir);
         RDFUnitValidate rval = new RDFUnitValidate();
 
@@ -94,30 +134,11 @@ public class CLI {
             }
         });
 
-        metadatas.stream().forEach(m -> {
-            m.prepareJSON();
-        });
-
-        //JSON output
-        FileWriter fw = new FileWriter(outdir + File.separator + "data.json");
-        new Gson().toJson(metadatas, fw);
-        fw.close();
-        L.info("wrote json to " + outdir + File.separator + "data.json");
-
-        //Log all issues
-        metadatas.stream().forEach(m -> {
-            m.issues.stream().forEach(mi -> {
-                printIssue(mi, L);
-            });
-            m.linkSets.stream().forEach(l -> {
-                l.issues.stream().forEach(li -> {
-                    printIssue(li, L);
-                });
-
-            });
-        });
-
+        L.info("Finished processing all metadata.ttl files");
+        return metadatas;
     }
+
+
 
     static void printIssue(Issue i, Logger L) {
         if (i.level.equals("WARN")) {
@@ -125,7 +146,7 @@ public class CLI {
         } else if (i.level.equals("ERROR")) {
             L.error(i.message);
         } else {
-            L.warn(i.toString());
+            L.error("Level "+i.level+" not implemented in org.dbpedia.links.CLI$printIssue");
         }
     }
 

@@ -15,6 +15,7 @@ public class RedirectReplace {
     private static Logger L = Logger.getLogger(RedirectReplace.class);
 
     private static ConcurrentMap<String, String> map = null;
+    private static DB db = null;
 
     public ConcurrentMap<String, String> getMap() {
 
@@ -37,7 +38,7 @@ public class RedirectReplace {
                 }
             }
 
-            DB db = DBMaker.fileDB(dbfile.toString()).make();
+            db = DBMaker.fileDB(dbfile.toString()).make();
             map = (HTreeMap<String,String>)db.hashMap("redirects").createOrOpen();
         }
         return map;
@@ -47,11 +48,13 @@ public class RedirectReplace {
 
         Map m = new RedirectReplace().getMap();
         //System.out.println(new RedirectReplace().getMap().get("http://de.dbpedia.org/resource/Anschlussfähigkeit"));
-
+        map=null;
+        db.close();
+        db=null;
+        return;
         /**
          * UNCOMMENT AND ADAPT BELOW FOR LOADING THE DB
-         */
-        System.exit(0);
+
         DB db = DBMaker.fileDB("redirects.db").make();
         ConcurrentMap map = db.hashMap("redirects").createOrOpen();
         try {
@@ -78,7 +81,7 @@ public class RedirectReplace {
             e.printStackTrace();
         }
         db.close();
-
+         */
     }
 
 }

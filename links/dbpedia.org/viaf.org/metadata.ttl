@@ -1,6 +1,7 @@
 @prefix dct:	<http://purl.org/dc/terms/> .
 @prefix dc: 	<http://purl.org/dc/elements/1.1/> .
 @prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix xsd: 		<http://www.w3.org/2001/XMLSchema#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
 
 <#ls1> a void:Linkset ;

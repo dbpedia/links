@@ -41,7 +41,7 @@ public class GenerateLinks {
 
 
     //Options
-    public boolean executeScripts = true;
+    public boolean executeScripts = false;
 
     //Debug options for CLI
     public boolean sparqlonly = false;
@@ -89,9 +89,7 @@ public class GenerateLinks {
                     try {
                         model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint, linkSet.updateFrequencyInDays));
                     } catch (Exception e) {
-                        String message = "Construct query failed on endpoint " + linkSet.endpoint + " query: " + constructQuery + "Error: " + e.getMessage();
-                        linkSet.issues.add(new Issue("ERROR", message));
-                        L.error(message, e);
+                        linkSet.issues.add( Issue.create("ERROR", "Construct query failed on endpoint " + linkSet.endpoint + " query: " + constructQuery,L,e));
                     }
                 });
                 try {
@@ -132,9 +130,7 @@ public class GenerateLinks {
 
                     if (ntriplefile.startsWith("http://")) {
                         if (getDate(ntriplefile) == null) {
-                            String message = ntriplefile + " was not reachable at  " + new Date();
-                            L.warn(message);
-                            linkSet.issues.add(new Issue("WARN", message));
+                            linkSet.issues.add( Issue.create("WARN", ntriplefile + " was not reachable at  " + new Date(),L,null));
                         }
                     }
 
@@ -143,8 +139,7 @@ public class GenerateLinks {
                             retrieveNTFile(ntriplefile, destination);
                             L.debug("File retrieved " + destination + ", Size: " + destination.length() + " Bytes");
                         } catch (Exception e) {
-                            linkSet.issues.add(new Issue("WARN", e.getMessage()));
-                            L.error(e);
+                            linkSet.issues.add(Issue.create("WARN", "",L,e));
                         }
                     } else {
                         L.info("Skipping " + ntriplefile + ", last modified not newer than current");

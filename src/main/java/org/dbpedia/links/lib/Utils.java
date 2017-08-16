@@ -107,9 +107,7 @@ public final class Utils {
                     RDFDataMgr.read(model, sourceFile.toURI().toString(), "", Lang.NTRIPLES);
                     L.info("Syntax check passed: "+sourceFile);
                 }catch (RiotException e){
-                    String message = "Syntax check failed: " + sourceFile +", skipping - error: "+e.toString();
-                    L.error(message);
-                    linkSet.issues.add(new Issue("ERROR",message));
+                    linkSet.issues.add(Issue.create("ERROR","Syntax check failed: " + sourceFile +", skipping" , L, e ));
                     continue;
                 }
 
@@ -127,10 +125,11 @@ public final class Utils {
 
                         // splitting for special subject handling
                         int index = line.indexOf(">");
-                        String first = line.substring(1, index);
+                        String first = line.substring(1, index).replaceAll("%25","%");
                         String last = line.substring(index + 1);
 
                         // encode DBpedia URIs correctly
+                        //System.out.println(first);
                         first = UriUtils$.MODULE$.uriToIri(first);
 
                         //replace with redirects
@@ -147,9 +146,7 @@ public final class Utils {
                     }
                 }
                 if (nodbpediacount > 0) {
-                    String message = "Expected " + namespace + " for subject namespace, " + nodbpediacount + " deviations found in " + source + " and excluded.";
-                    linkSet.issues.add(new Issue("ERROR", message));
-                    L.error(message);
+                    linkSet.issues.add( Issue.create("ERROR", "Expected " + namespace + " for subject namespace, " + nodbpediacount + " deviations found in " + source + " and excluded.",L,null));
                 }
             }
 
