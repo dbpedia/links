@@ -151,7 +151,7 @@ public final class Utils {
             }
 
             //FileWriter fw = new FileWriter(destination);
-            OutputStream fout = Files.newOutputStream(Paths.get(destination.toString()+".bz2"));
+            OutputStream fout = Files.newOutputStream(Paths.get(destination.toString()));
             BufferedOutputStream bout = new BufferedOutputStream(fout);
             BZip2CompressorOutputStream bzOut = new BZip2CompressorOutputStream(bout);
             for (String line : ss){
@@ -170,18 +170,6 @@ public final class Utils {
 
         }
         L.info("merged " + sourcecount + " sources (" + ss.size() + " lines) into: " + destination);
-
-    }
-
-
-    public static void main(String... argv) {
-        final String filename = "data.ttl";
-
-        // Create a PipedRDFStream to accept input and a PipedRDFIterator to
-        // consume it
-        // You can optionally supply a buffer size here for the
-        // PipedRDFIterator, see the documentation for details about recommended
-        // buffer sizes
 
     }
 

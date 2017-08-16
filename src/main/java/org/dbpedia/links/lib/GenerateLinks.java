@@ -57,7 +57,7 @@ public class GenerateLinks {
         outFolder.mkdirs();
         File outFolderData = new File(outFolder + File.separator + "data" + File.separator);
         outFolderData.mkdirs();
-        File resultFile = new File(outFolder + File.separator + m.nicename + "_links.nt");
+        File resultFile = new File(outFolder + File.separator + m.nicename + "_links.nt.bz2");
 
         int sparqlsize = 0;
         int scriptsize = 0;

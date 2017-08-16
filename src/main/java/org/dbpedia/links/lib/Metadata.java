@@ -78,6 +78,7 @@ public class Metadata {
             this.reponame = "dbpedia.org";
             this.linkNamespace = "http://dbpedia.org/resource";
         }
+        this.gitHubLink = "https://github.com/dbpedia/links/tree/master/links/"+reponame+"/"+nicename;
     }
 
     public static Metadata create(File file, RDFUnitValidate rval) throws IOException {
