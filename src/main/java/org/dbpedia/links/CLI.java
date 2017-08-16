@@ -21,12 +21,12 @@ public class CLI {
 
         OptionParser parser = new OptionParser();
 
-        parser.accepts("basedir", "Path to the directory under which repositories would be searched; defaults to '.'")
+        parser.accepts("basedir", "Path to the directory under which repositories would be searched; defaults to 'links'")
                 .withRequiredArg().ofType(String.class)
-                .defaultsTo(".");
-        parser.accepts("outdir", "Path to the directory where results are written; defaults to 'current'")
+                .defaultsTo("links");
+        parser.accepts("outdir", "Path to the directory where results are written; defaults to 'snapshot'")
                 .withRequiredArg().ofType(String.class)
-                .defaultsTo("current");
+                .defaultsTo("snapshot");
         //parser.accepts("validate", "enables extensive validation, i.e. with SHACL/RDFUNIT and also validation of links");
         parser.accepts("generate", "enables the generation of links, if the option is not set, the tool will just parse all the metadata files in memory");
         parser.accepts("scripts", "scripts take a long time to run, they are deactivated by default, set this parameter to true to run included scripts")

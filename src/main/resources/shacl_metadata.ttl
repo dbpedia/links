@@ -9,6 +9,17 @@
 @prefix rlog: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/rlog#> .
 @prefix dbp: <http://dbpedia.org/property/> .
 
+ex:IfScriptThenUpdateFrequencyInDays
+	a sh:NodeShape ;
+	sh:targetSubjectsOf dbp:script ;
+        sh:property [
+            sh:predicate dbp:updateFrequencyInDays ;
+            sh:minCount 1;
+            sh:nodeKind xsd:integer ;
+            sh:severity rlog:ERROR ;
+        ] .
+
+
 ex:MyShape
     a sh:Shape ;
     sh:scopeClass void:Linkset ;

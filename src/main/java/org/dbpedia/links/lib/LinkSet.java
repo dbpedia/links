@@ -22,12 +22,10 @@ public class LinkSet {
 
     List<String> constructqueries = new ArrayList<String>();
     public List<Issue> issues = new ArrayList<Issue>();
-    List<Revision> revisions = new ArrayList<Revision>();
 
 
     public LinkSet(String uri) {
         this.uri = uri;
-        revisions.add(new Revision());
 
     }
 

@@ -13,6 +13,9 @@ import org.dbpedia.extraction.util.UriUtils$;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
@@ -56,13 +59,13 @@ public final class Utils {
     }
 
 
-    public static void joinFilesSpecial(File destination, List<LinkSet> linkSets, String namespace) throws IOException {
+    public static void joinFilesSpecial(File destination, Metadata metadata, String namespace) throws IOException {
         ConcurrentMap<String,String> map = new RedirectReplace().getMap();
         int sourcecount = 0;
         SortedSet<String> ss = new TreeSet<String>();
 
         // iterate over each linkset
-        for (LinkSet linkSet : linkSets) {
+        for (LinkSet linkSet : metadata.linkSets) {
 
             // handle each individually generated file
             for (String source : linkSet.destinationFiles) {
@@ -72,7 +75,7 @@ public final class Utils {
                 int nodbpediacount = 0;
 
                 //TODO syntax check is necessary, but unsure where to put, maybe here?
-                //TODO file is read twice, but could only be read once...
+                //TODO file is read twice, but could only be read once... problem is that the code below needs a higher jena version
                 //taken from https://github.com/apache/jena/blob/master/jena-arq/src-examples/arq/examples/riot/ExRIOT_6.java
                 /*PipedRDFIterator<Triple> iter = new PipedRDFIterator<>(50000);
                 final PipedRDFStream<Triple> inputStream = new PipedTriplesStream(iter);
@@ -169,6 +172,36 @@ public final class Utils {
             //fw.close();
 
         }
+        //TODO add 10 revisions
+
+        double r = Math.random();
+        int triplecount = ss.size();
+        if (r < 0.25){ // stagnant
+            for (int i=0;i<10;i++){
+                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+            }
+
+        }else if(r<0.50){ //increasing
+            for (int i=0;i<10;i++){
+                triplecount *=1.2;
+                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+            }
+
+        }else if(r<0.75){ //regressing
+            for (int i=0;i<10;i++){
+                triplecount *=0.6;
+                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+            }
+
+        }else { // failing
+            for (int i=0;i<10;i++){
+                if(i>=7) {
+                    triplecount = 0;
+                }
+                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+            }
+        }
+
         L.info("merged " + sourcecount + " sources (" + ss.size() + " lines) into: " + destination);
 
     }

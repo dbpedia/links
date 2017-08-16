@@ -158,7 +158,7 @@ public class GenerateLinks {
         });//end linkset handling
 
         try {
-            Utils.joinFilesSpecial(resultFile, m.linkSets, m.linkNamespace);
+            Utils.joinFilesSpecial(resultFile, m, m.linkNamespace);
         } catch (IOException e) {
             e.printStackTrace();
         }

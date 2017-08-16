@@ -60,6 +60,8 @@ public class Metadata {
     JsonElement modelasjson;
     public List<LinkSet> linkSets = new ArrayList<LinkSet>();
     public List<Issue> issues = new ArrayList<Issue>();
+    List<Revision> revisions = new ArrayList<Revision>();
+
 
 
     private transient OntModel model;

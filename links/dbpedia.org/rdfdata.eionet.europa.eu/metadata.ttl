@@ -9,5 +9,5 @@
 	void:objectsTarget <http://rdfdata.eionet.europa.eu/> ;
 	dc:author <http://www.eionet.europa.eu/about> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
-	dct:description "This linkset links DBpedie with the European Environment Information and Observation Network database." .
+	dct:description "This linkset links DBpedia with the European Environment Information and Observation Network database." .
 

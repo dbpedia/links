@@ -8,6 +8,7 @@ import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 
 import java.io.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 public class RedirectReplace {
@@ -27,7 +28,7 @@ public class RedirectReplace {
                 try {
                     L.info("\n***************************************************\n" +
                             "org.dbpedia.data is extracting database from Jar file\n"+
-                            "in this case 2TB. This needs to be done only once, but will take a while\n"+
+                            "in this case 2GB. This needs to be done only once, but will take a while\n"+
                             "***************************************************\n" );
                     FileUtils.copyInputStreamToFile(dbfileStream, dbfile);
 
@@ -44,7 +45,8 @@ public class RedirectReplace {
 
     public static void main(String[] args) {
 
-        System.out.println(new RedirectReplace().getMap().get("http://de.dbpedia.org/resource/Anschlussfähigkeit"));
+        Map m = new RedirectReplace().getMap();
+        //System.out.println(new RedirectReplace().getMap().get("http://de.dbpedia.org/resource/Anschlussfähigkeit"));
 
         /**
          * UNCOMMENT AND ADAPT BELOW FOR LOADING THE DB

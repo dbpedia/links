@@ -1,6 +1,11 @@
 package org.dbpedia.links.lib;
 
 public class Revision {
-    String time = "not finished yet";
-    String size = "not finished yet";
+    String time ;
+    int tripleCount ;
+
+    public Revision(String time, int tripleCount) {
+        this.time = time;
+        this.tripleCount = tripleCount;
+    }
 }
