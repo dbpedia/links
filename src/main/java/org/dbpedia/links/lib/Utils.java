@@ -2,17 +2,18 @@ package org.dbpedia.links.lib;
 
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.ResIterator;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.*;
 import org.apache.log4j.Logger;
+import org.dbpedia.data.redirects.RedirectReplace;
 import org.dbpedia.extraction.util.UriUtils$;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
@@ -57,7 +58,7 @@ public final class Utils {
 
 
     public static void joinFilesSpecial(File destination, List<LinkSet> linkSets, String namespace) throws IOException {
-        ConcurrentMap<String,String> map = new RedirectReplace().getMap();
+        //ConcurrentMap<String,String> map = new RedirectReplace().getMap();
         int sourcecount = 0;
         SortedSet<String> ss = new TreeSet<String>();
 
@@ -68,11 +69,49 @@ public final class Utils {
             for (String source : linkSet.destinationFiles) {
                 L.debug("Merge and validate: " + source);
                 sourcecount++;
-                File file = new File(source);
+                File sourceFile = new File(source);
                 int nodbpediacount = 0;
-                //TODO syntax check is necessary, but unsure where to put, maybe here?
 
-                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                //TODO syntax check is necessary, but unsure where to put, maybe here?
+                //TODO file is read twice, but could only be read once...
+                //taken from https://github.com/apache/jena/blob/master/jena-arq/src-examples/arq/examples/riot/ExRIOT_6.java
+                /*PipedRDFIterator<Triple> iter = new PipedRDFIterator<>(50000);
+                final PipedRDFStream<Triple> inputStream = new PipedTriplesStream(iter);
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Runnable parser = new Runnable() {
+                    @Override
+                    public void run() {
+                        RDFParser.create()
+                                .source(source)
+                                .lang(RDFLanguages.NT)
+                                .errorHandler(ErrorHandlerFactory.errorHandlerStrict)
+                                .base("http://example/base")
+                                .parse(inputStream);
+                    }
+                };
+                executor.submit(parser);
+                try{
+                while (iter.hasNext()) {
+                    Triple next = iter.next();
+                    // Validate whether the links have the right DBpedia namespace for the subject
+                    if (!next.getSubject().toString().startsWith(namespace)) {
+                        nodbpediacount++;
+                        // remove all triples not starting with the right subject
+                        continue;
+                    }
+                }*/
+                try{
+                    Model model = ModelFactory.createDefaultModel();
+                    RDFDataMgr.read(model, sourceFile.toURI().toString(), "", Lang.NTRIPLES);
+                    L.info("Syntax check passed: "+sourceFile);
+                }catch (RiotException e){
+                    String message = "Syntax check failed: " + sourceFile +", skipping - error: "+e.toString();
+                    L.error(message);
+                    linkSet.issues.add(new Issue("ERROR",message));
+                    continue;
+                }
+
+                try (BufferedReader br = new BufferedReader(new FileReader(sourceFile))) {
                     String line;
                     while ((line = br.readLine()) != null) {
 
@@ -93,7 +132,7 @@ public final class Utils {
                         first = UriUtils$.MODULE$.uriToIri(first);
 
                         //replace with redirects
-                        String replace = map.get(first);
+                        String replace = null;// map.get(first);
                         if(replace!=null){
                             first = replace;
                         }
@@ -112,24 +151,43 @@ public final class Utils {
                 }
             }
 
-            // write back to file
+
             //TODO zip the files
-            FileWriter fw = new FileWriter(destination);
-            ss.stream().forEach(line -> {
+
+            //FileWriter fw = new FileWriter(destination);
+            OutputStream fout = Files.newOutputStream(Paths.get(destination.toString()+".bz2"));
+            BufferedOutputStream bout = new BufferedOutputStream(fout);
+            BZip2CompressorOutputStream bzOut = new BZip2CompressorOutputStream(bout);
+            for (String line : ss){
                 try {
-                    fw.write(line);
-                    fw.write("\n");
+
+                    bzOut.write(line.getBytes());
+
+                    //fw.write(line);
+                    //fw.write("\n");
                 } catch (IOException e) {
                     L.error(e);
                 }
-            });
-            fw.close();
+            }
+            bzOut.close();
+            //fw.close();
 
         }
         L.info("merged " + sourcecount + " sources (" + ss.size() + " lines) into: " + destination);
 
     }
 
+
+    public static void main(String... argv) {
+        final String filename = "data.ttl";
+
+        // Create a PipedRDFStream to accept input and a PipedRDFIterator to
+        // consume it
+        // You can optionally supply a buffer size here for the
+        // PipedRDFIterator, see the documentation for details about recommended
+        // buffer sizes
+
+    }
 
     public static InputStream getInputStreamForFile(File file) throws CompressorException, FileNotFoundException {
         InputStream is;

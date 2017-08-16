@@ -19,6 +19,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jena-sparql-api-version>3.0.1-1</jena-sparql-api-version>
         <org-apache-jena-version>3.0.1</org-apache-jena-version>
+        <!--org-apache-jena-version>3.4.0</org-apache-jena-version-->
         <rdfunit-version>0.8</rdfunit-version>
         <slf4j-version>1.7.19</slf4j-version>
     </properties>
@@ -104,6 +105,13 @@
             <artifactId>core</artifactId>
             <version>4.2-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.dbpedia.data</groupId>
+            <artifactId>redirects</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.mapdb</groupId>
             <artifactId>mapdb</artifactId>

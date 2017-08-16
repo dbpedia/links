@@ -102,7 +102,6 @@ public class CLI {
         //Log all issues
         metadatas.stream().forEach(m -> {
             m.issues.stream().forEach(mi -> {
-                System.out.println(mi.toString());
                 printIssue(mi, L);
             });
             m.linkSets.stream().forEach(l -> {
