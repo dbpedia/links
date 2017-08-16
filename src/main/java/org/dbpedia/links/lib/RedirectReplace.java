@@ -1,4 +1,4 @@
-package org.dbpedia.data.redirects;
+package org.dbpedia.links.lib;
 
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.mapdb.DB;
@@ -13,6 +13,7 @@ public class RedirectReplace {
 
     public ConcurrentMap<String, String> getMap() {
         if(map == null) {
+            //TODO needs to be extracted
             String dbfile = this.getClass().getClassLoader().getResource("org/dbpedia/data/redirects/redirects_en_de_nl_it_ja.db").getFile();
             System.out.println(new File(dbfile).exists());
             DB db = DBMaker.fileDB(dbfile).make();

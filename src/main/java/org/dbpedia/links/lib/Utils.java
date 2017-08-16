@@ -8,14 +8,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.*;
 import org.apache.log4j.Logger;
-import org.dbpedia.data.redirects.RedirectReplace;
 import org.dbpedia.extraction.util.UriUtils$;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
 
 import static java.util.Arrays.stream;
 
@@ -151,9 +149,6 @@ public final class Utils {
                 }
             }
 
-
-            //TODO zip the files
-
             //FileWriter fw = new FileWriter(destination);
             OutputStream fout = Files.newOutputStream(Paths.get(destination.toString()+".bz2"));
             BufferedOutputStream bout = new BufferedOutputStream(fout);
@@ -162,7 +157,7 @@ public final class Utils {
                 try {
 
                     bzOut.write(line.getBytes());
-
+                    bzOut.write("\n".getBytes());
                     //fw.write(line);
                     //fw.write("\n");
                 } catch (IOException e) {
