@@ -129,10 +129,10 @@ public final class Utils {
                         String last = line.substring(index + 1);
 
                         // encode DBpedia URIs correctly
-                        //first = UriUtils$.MODULE$.uriToIri(first);
+                        // first = UriUtils$.MODULE$.uriToIri(first);
 
                         //replace with redirects
-                        String replace = null;// map.get(first);
+                        String replace = map.get(first);
                         if(replace!=null){
                             first = replace;
                         }
