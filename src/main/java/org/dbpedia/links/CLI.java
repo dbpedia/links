@@ -80,13 +80,27 @@ public class CLI {
         File outdir = new File((String) options.valueOf("outdir"));
 
         List<Metadata> metadatas = getMetadata(generate, gl, basedir, outdir);
+        getIssues(metadatas);
+
+
+        //analyse archive and add revisions
+
+        //list all datafolders
+
+        metadatas.stream().forEach(m->{
+
+           // getFile("archive/2016-12-01/"+m.reponame+"/"+"m.nicename_links.nt.bz2");
+
+            //m.revisions.add(new Revision("2016-12-01"),triplecount);
+        });
+
+
 
         //JSON output
         metadatas.stream().forEach(m -> {
             m.prepareJSON();
         });
 
-        getIssues(metadatas);
 
         FileWriter fw = new FileWriter(outdir + File.separator + "data.json");
         new Gson().toJson(metadatas, fw);

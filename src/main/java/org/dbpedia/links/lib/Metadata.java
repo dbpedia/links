@@ -43,12 +43,12 @@ public class Metadata {
     /**
      * the bare folder name
      */
-    String nicename;
+    public String nicename;
 
     /**
      * either "dbpedia.org" or xxx.dbpedia.org/$lang
      */
-    String reponame;
+    public String reponame;
 
 
     String gitHubLink;
@@ -60,7 +60,7 @@ public class Metadata {
     JsonElement modelasjson;
     public List<LinkSet> linkSets = new ArrayList<LinkSet>();
     public List<Issue> issues = new ArrayList<Issue>();
-    List<Revision> revisions = new ArrayList<Revision>();
+    public List<Revision> revisions = new ArrayList<Revision>();
 
 
 
@@ -104,14 +104,14 @@ public class Metadata {
             return m;
         }
 
-        TestExecution te = rval.checkMetadataModelWithRdfUnit(model);
+        /*TestExecution te = rval.checkMetadataModelWithRdfUnit(model);
         Collection<TestCaseResult> tcrs = te.getTestCaseResults();
         tcrs.stream().forEach(tcr -> {
             m.issues.add(Issue.create(tcr.getSeverity().name(), tcr.getMessage()+" "+((ShaclTestCaseResult)tcr).getFailingResource(),L,null));
         });
         if (!tcrs.isEmpty()) {
             L.warn(tcrs.size() + " issues found by RDFUnit in " + file);
-        }
+        }*/
 
         m.setLinkSets();
 
