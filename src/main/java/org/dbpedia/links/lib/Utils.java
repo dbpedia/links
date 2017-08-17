@@ -125,12 +125,11 @@ public final class Utils {
 
                         // splitting for special subject handling
                         int index = line.indexOf(">");
-                        String first = line.substring(1, index).replaceAll("%25","%");
+                        String first = line.substring(1, index);
                         String last = line.substring(index + 1);
 
                         // encode DBpedia URIs correctly
-                        //System.out.println(first);
-                        first = UriUtils$.MODULE$.uriToIri(first);
+                        //first = UriUtils$.MODULE$.uriToIri(first);
 
                         //replace with redirects
                         String replace = null;// map.get(first);
@@ -142,7 +141,7 @@ public final class Utils {
                         line = new StringBuilder("<").append(first).append(">").append(last).toString();
 
                         //collect and sort
-                        ss.add(line);
+                        //ss.add(line);
                     }
                 }
                 if (nodbpediacount > 0) {
