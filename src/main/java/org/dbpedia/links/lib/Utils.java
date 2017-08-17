@@ -6,16 +6,15 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.*;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RiotException;
 import org.apache.log4j.Logger;
 import org.dbpedia.extraction.util.UriUtils$;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
@@ -129,7 +128,7 @@ public final class Utils {
                         String last = line.substring(index + 1);
 
                         // encode DBpedia URIs correctly
-                        // first = UriUtils$.MODULE$.uriToIri(first);
+                         first = UriUtils$.MODULE$.uriToIri(first);
 
                         //replace with redirects
                         String replace = map.get(first);
