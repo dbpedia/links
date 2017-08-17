@@ -149,7 +149,6 @@ public final class Utils {
                 }
             }
 
-/*
             //FileWriter fw = new FileWriter(destination);
             OutputStream fout = Files.newOutputStream(Paths.get(destination.toString()));
             BufferedOutputStream bout = new BufferedOutputStream(fout);
@@ -167,7 +166,6 @@ public final class Utils {
             }
             bzOut.close();
             //fw.close();
-*/
 
         }
         //TODO add 10 revisions
