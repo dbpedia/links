@@ -35,7 +35,7 @@ public class TestBuild {
         List<Metadata> metadatas =new CLI().getMetadata(new File(this.metadataFolder));
 
         metadatas.stream().forEach(m->{
-            //new GenerateLinks().generateLinkSets(m,new File("snapshot"));
+            new GenerateLinks().generateLinkSets(m,new File("snapshot"));
         });
 
         List<Issue> is = getIssues(metadatas);

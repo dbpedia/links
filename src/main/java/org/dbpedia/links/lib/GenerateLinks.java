@@ -97,12 +97,13 @@ public class GenerateLinks {
             }
         });//end linkset handling
 
+        /*
         try {
-            Utils.joinFilesSpecial(resultFile, m, m.linkNamespace);
+           Utils.joinFilesSpecial(resultFile, m, m.linkNamespace);
         } catch (IOException e) {
             L.error(e);
             e.printStackTrace();
-        }
+        }*/
 
     }
 
