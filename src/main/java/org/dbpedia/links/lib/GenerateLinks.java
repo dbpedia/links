@@ -77,7 +77,7 @@ public class GenerateLinks {
 
         m.linkSets.stream().forEach(linkSet -> {
 
-            if (linkSet.endpoint != null) {
+            if (false && linkSet.endpoint != null) {
                 File destination = new File(outFolderData + linkSet.outputFilePrefix + "_sparql.nt");
 
                 Model model = ModelFactory.createDefaultModel();
@@ -85,7 +85,7 @@ public class GenerateLinks {
 
                 linkSet.constructqueries.stream().forEach(constructQuery -> {
                     L.info("Processing (SPARQL): " + linkSet.endpoint + " query: " + constructQuery);
-
+                    ;
                     try {
                         model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint, linkSet.updateFrequencyInDays));
                     } catch (Exception e) {

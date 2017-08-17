@@ -32,7 +32,7 @@ public class TestBuild {
 
     @Test
     public void checkIssuesForError() {
-        List<Metadata> metadatas =new CLI().getMetadata(false, new GenerateLinks(),new File(this.m),new File("snapshot"));
+        List<Metadata> metadatas =new CLI().getMetadata(true, new GenerateLinks(),new File(this.m),new File("snapshot"));
         List<Issue> is = getIssues(metadatas);
         is.stream().forEach(i->{
             assertNotEquals(i.message,i.level,"ERROR");
