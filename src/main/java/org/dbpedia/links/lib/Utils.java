@@ -60,7 +60,7 @@ public final class Utils {
 
 
     public static void joinFilesSpecial(File destination, Metadata metadata, String namespace) throws IOException {
-        //ConcurrentMap<String,String> map = new RedirectReplace().getMap();
+        ConcurrentMap<String,String> map = new RedirectReplace().getMap();
         int sourcecount = 0;
         SortedSet<String> ss = new TreeSet<String>();
 
