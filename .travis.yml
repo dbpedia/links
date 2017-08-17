@@ -8,11 +8,9 @@ jdk:
 branches:
   only:
     - master
-    - dev
-    - coverity_scan
 install: /bin/true
 script:
-  - "mvn clean install -Dmaven.test.skip=false"
+  - "mvn clean install -e -X -Dmaven.test.skip=false"
 notifications:
   email:
     recipients:

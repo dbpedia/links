@@ -46,6 +46,8 @@ public class CLI {
 
     public static void main(String[] args) throws IOException {
 
+        //mvn exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate --scripts true"
+
         OptionParser parser = getCLIParser();
         OptionSet options = null;
 
