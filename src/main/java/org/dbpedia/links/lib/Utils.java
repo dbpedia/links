@@ -103,8 +103,8 @@ public final class Utils {
                     }
                 }*/
                 try{
-                    //Model model = ModelFactory.createDefaultModel();
-                   // RDFDataMgr.read(model, sourceFile.toURI().toString(), "", Lang.NTRIPLES);
+                    Model model = ModelFactory.createDefaultModel();
+                    RDFDataMgr.read(model, sourceFile.toURI().toString(), "", Lang.NTRIPLES);
                     L.info("Syntax check passed: "+sourceFile);
                 }catch (RiotException e){
                     linkSet.issues.add(Issue.create("ERROR","Syntax check failed: " + sourceFile +", skipping" , L, e ));
