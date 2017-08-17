@@ -11,6 +11,28 @@ public class Issue {
         this.message = message;
     }
 
+    /**
+     * no logging
+     * @param level
+     * @param message
+     * @return
+     */
+    public static Issue create(String level, String message ){
+        level = level.toUpperCase();
+
+        return new Issue(level,message);
+    }
+
+    /**
+     * logging
+     *
+     * @param level
+     * @param message
+     * @param L
+     * @param e
+     * @return
+     */
+
     public static Issue create(String level, String message, Logger L, Exception e  ){
         level = level.toUpperCase();
         String issueMessage = (e==null)? message : message+"- Error: "+e.toString() ;
