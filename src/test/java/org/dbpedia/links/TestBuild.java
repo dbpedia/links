@@ -18,10 +18,10 @@ import static org.dbpedia.links.CLI.getIssues;
 @RunWith(Parameterized.class)
 public class TestBuild {
 
-    String m;
+    String metadataFolder;
 
     public TestBuild(File m) {
-        this.m = m.getParent();
+        this.metadataFolder = m.getParent();
     }
 
 
@@ -32,7 +32,12 @@ public class TestBuild {
 
     @Test
     public void checkIssuesForError() {
-        List<Metadata> metadatas =new CLI().getMetadata(true, new GenerateLinks(),new File(this.m),new File("snapshot"));
+        List<Metadata> metadatas =new CLI().getMetadata(new File(this.metadataFolder));
+
+        metadatas.stream().forEach(m->{
+            //new GenerateLinks().generateLinkSets(m,new File("snapshot"));
+        });
+
         List<Issue> is = getIssues(metadatas);
         is.stream().forEach(i->{
             assertNotEquals(i.message,i.level,"ERROR");
