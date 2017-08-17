@@ -141,7 +141,7 @@ public final class Utils {
                         line = new StringBuilder("<").append(first).append(">").append(last).toString();
 
                         //collect and sort
-                        //ss.add(line);
+                        ss.add(line);
                     }
                 }
                 if (nodbpediacount > 0) {
