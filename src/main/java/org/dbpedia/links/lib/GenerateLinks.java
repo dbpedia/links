@@ -59,6 +59,7 @@ public class GenerateLinks {
         outFolderData.mkdirs();
         File resultFile = new File(outFolder + File.separator + m.nicename + "_links.nt.bz2");
 
+        //DEBUG part
         int sparqlsize = 0;
         int scriptsize = 0;
         int linkConfSize = 0;
@@ -77,87 +78,101 @@ public class GenerateLinks {
 
         m.linkSets.stream().forEach(linkSet -> {
 
-            if (false && linkSet.endpoint != null) {
+            if (linkSet.endpoint != null) {
                 File destination = new File(outFolderData + linkSet.outputFilePrefix + "_sparql.nt");
-
-                Model model = ModelFactory.createDefaultModel();
-                //TODO validate whether SPARQL Endpoint is active
-
-                linkSet.constructqueries.stream().forEach(constructQuery -> {
-                    L.info("Processing (SPARQL): " + linkSet.endpoint + " query: " + constructQuery);
-                    ;
-                    try {
-                        model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint, linkSet.updateFrequencyInDays));
-                    } catch (Exception e) {
-                        linkSet.issues.add( Issue.create("ERROR", "Construct query failed on endpoint " + linkSet.endpoint + " query: " + constructQuery,L,e));
-                    }
-                });
-                try {
-
-                    FileWriter fw = new FileWriter(destination);
-                    model.write(fw, "NTriples");
-                    fw.close();
-                    linkSet.destinationFiles.add(destination.toString());
-
-                } catch (IOException e) {
-                    L.error(e);
-                }
+                sparqlForLinkSet(linkSet, destination);
             }
 
             if (!linkSet.linkConfs.isEmpty()) {
                 L.info("linkConfs not implemented yet");
             }
+
             if (!linkSet.scripts.isEmpty() && executeScripts ) {
-                int count = 0;
-                for (String script : linkSet.scripts) {
-                    File destination = new File(outFolderData + linkSet.outputFilePrefix + "_script" + count + ".nt");
-                    long differenceInDays = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
-                    L.info("Processing (SCRIPT): " + script + " last executed " + differenceInDays + " days ago");
-
-                    if (differenceInDays > linkSet.updateFrequencyInDays) {
-                        //TODO report failure
-                        executeShellScript(new File(script), destination);
-                    }
-                    linkSet.destinationFiles.add(destination.toString());
-                    count++;
-                }
+                scriptsForLinkset(outFolderData, linkSet);
             }
+
+
             if (!linkSet.ntriplefilelocations.isEmpty()) {
-                int count = 0;
-                for (String ntriplefile : linkSet.ntriplefilelocations) {
-                    L.info("Processing (NT-FILE): " + ntriplefile);
-                    File destination = new File(outFolderData + linkSet.outputFilePrefix + "_ntriplefile" + count + ".nt");
-
-                    if (ntriplefile.startsWith("http://")) {
-                        if (getDate(ntriplefile) == null) {
-                            linkSet.issues.add( Issue.create("WARN", ntriplefile + " was not reachable at  " + new Date(),L,null));
-                        }
-                    }
-
-                    if (toBeUpdated(ntriplefile, destination)) {
-                        try {
-                            retrieveNTFile(ntriplefile, destination);
-                            L.debug("File retrieved " + destination + ", Size: " + destination.length() + " Bytes");
-                        } catch (Exception e) {
-                            linkSet.issues.add(Issue.create("WARN", "",L,e));
-                        }
-                    } else {
-                        L.info("Skipping " + ntriplefile + ", last modified not newer than current");
-                    }
-
-                    linkSet.destinationFiles.add(destination.toString());
-                    count++;
-                }
-
+                ntriplefileForLinkset(outFolderData, linkSet);
             }
         });//end linkset handling
 
         try {
             Utils.joinFilesSpecial(resultFile, m, m.linkNamespace);
         } catch (IOException e) {
+            L.error(e);
             e.printStackTrace();
         }
 
+    }
+
+    private void ntriplefileForLinkset(File outFolderData, LinkSet linkSet) {
+        int count = 0;
+        for (String ntriplefile : linkSet.ntriplefilelocations) {
+            L.info("Processing (NT-FILE): " + ntriplefile);
+            File destination = new File(outFolderData + linkSet.outputFilePrefix + "_ntriplefile" + count + ".nt");
+
+            if (ntriplefile.startsWith("http://")) {
+                if (getDate(ntriplefile) == null) {
+                    linkSet.issues.add( Issue.create("WARN", ntriplefile + " was not reachable at  " + new Date(),L,null));
+                }
+            }
+
+            if (toBeUpdated(ntriplefile, destination)) {
+                try {
+                    retrieveNTFile(ntriplefile, destination);
+                    L.debug("File retrieved " + destination + ", Size: " + destination.length() + " Bytes");
+                } catch (Exception e) {
+                    linkSet.issues.add(Issue.create("WARN", "",L,e));
+                }
+            } else {
+                L.info("Skipping " + ntriplefile + ", last modified not newer than current");
+            }
+
+            linkSet.destinationFiles.add(destination.toString());
+            count++;
+        }
+    }
+
+    private void scriptsForLinkset(File outFolderData, LinkSet linkSet) {
+        int count = 0;
+        for (String script : linkSet.scripts) {
+            File destination = new File(outFolderData + linkSet.outputFilePrefix + "_script" + count + ".nt");
+            long differenceInDays = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
+            L.info("Processing (SCRIPT): " + script + " last executed " + differenceInDays + " days ago");
+
+            if (differenceInDays > linkSet.updateFrequencyInDays) {
+                //TODO report failure
+                executeShellScript(new File(script), destination);
+            }
+            linkSet.destinationFiles.add(destination.toString());
+            count++;
+        }
+    }
+
+    private void sparqlForLinkSet(LinkSet linkSet, File destination) {
+        Model model = ModelFactory.createDefaultModel();
+        //TODO validate whether SPARQL Endpoint is active
+
+        linkSet.constructqueries.stream().forEach(constructQuery -> {
+            L.info("Processing (SPARQL): " + linkSet.endpoint + " query: " + constructQuery);
+            ;
+            try {
+                model.add(executeSPARQLQuery(constructQuery, linkSet.endpoint, linkSet.updateFrequencyInDays));
+            } catch (Exception e) {
+                linkSet.issues.add( Issue.create("ERROR", "Construct query failed on endpoint " + linkSet.endpoint + " query: " + constructQuery,L,e));
+            }
+        });
+        try {
+
+            FileWriter fw = new FileWriter(destination);
+            model.write(fw, "NTriples");
+            fw.close();
+            linkSet.destinationFiles.add(destination.toString());
+
+        } catch (IOException e) {
+            L.error(e);
+        }
     }
 
     /*
@@ -289,68 +304,7 @@ public class GenerateLinks {
         QueryExecution qe = testSource.getExecutionFactory().createQueryExecution(query);
         model = qe.execConstruct();
         L.debug("retrieved " + model.size() + " triples");
-
         return model;
-
     }
-
-
-    /**
-     * Returns whether a linkset should be regenerated
-     *
-     * @param model            used to access the update rate of this linkset.
-     * @param ntriplelocations a <code>Pair</code> containing the locations of the ntriple links
-     *                         file: the one which is referred in the metadata file, and the one which may exist
-     *                         in the file system.
-     * @return whether the linkset should be regenerated
-     */
-    private static boolean shouldRegenerate(Model model, Pair<String, String> ntriplelocations) {
-        boolean shouldRegenerate = false;
-        int frequency = 10; //default update frequency (days).
-
-        Property updateFrequencyInDaysProperty =
-                ResourceFactory.createProperty("http://dbpedia.org/property/updateFrequencyInDays");
-        if (model.listObjectsOfProperty(updateFrequencyInDaysProperty).hasNext()) {
-            frequency = model.listObjectsOfProperty(updateFrequencyInDaysProperty).next()
-                    .asLiteral().getInt();
-
-            if (frequency <= 0) return false;
-        }
-
-        Date localLinksFileDate = null;
-
-
-        String originalLinksFileLocation = ntriplelocations.getLeft();
-        String localLinksFileLocation = ntriplelocations.getRight();
-
-
-        if (originalLinksFileLocation == null) return true; //if property doesn't exist in metatada
-
-        File localLinksFile = new File(localLinksFileLocation);
-        if (!localLinksFile.exists()) return true; // if linkset was not generated yet
-
-
-        if (originalLinksFileLocation.startsWith("http://")) //external file
-        {
-
-            //TODO change to LocalDate
-            localLinksFileDate = new Date(localLinksFile.lastModified());
-            //shouldRegenerate = (getLastModifiedForURL(originalLinksFileLocation).after(localLinksFileDate));
-
-
-        } else if (originalLinksFileLocation.startsWith("file://")) {
-
-
-            localLinksFileDate = new Date(localLinksFile.lastModified());
-            LocalDate linksetDateModified = Instant.ofEpochMilli(localLinksFile.lastModified())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-
-            LocalDate now = LocalDate.now();
-            shouldRegenerate = (!now.minusDays(frequency).isBefore(linksetDateModified));
-        }
-        return shouldRegenerate;
-    }
-
 
 }

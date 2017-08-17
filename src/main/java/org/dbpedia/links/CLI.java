@@ -71,7 +71,7 @@ public class CLI {
         GenerateLinks gl = new GenerateLinks();
         //debugging
         //gl.validate = (options.has("validate")) ? true : false;
-        gl.executeScripts = (Boolean) (options.valueOf("scripts")) ;
+        gl.executeScripts = (Boolean) (options.valueOf("scripts"));
         gl.sparqlonly = (options.has("sparqlonly")) ? true : false;
         gl.scriptonly = (options.has("scriptonly")) ? true : false;
         gl.linkConfsonly = (options.has("linkconfonly")) ? true : false;
@@ -79,22 +79,30 @@ public class CLI {
         File basedir = new File((String) options.valueOf("basedir"));
         File outdir = new File((String) options.valueOf("outdir"));
 
-        List<Metadata> metadatas = getMetadata(generate, gl, basedir, outdir);
-        getIssues(metadatas);
+        // prepare metadata
+        List<Metadata> metadatas = getMetadata(basedir);
 
+        //generate links
+        if (generate) {
+            metadatas.stream().forEach(m -> {
+                gl.generateLinkSets(m, outdir);
+            });
+        }
+
+        // also prints all issues
+        getIssues(metadatas);
 
 //TODO comment Utils.java line 173
         //analyse archive and add revisions
 
         //list all datafolders
 
-        metadatas.stream().forEach(m->{
+        metadatas.stream().forEach(m -> {
 
-           // getFile("archive/2016-12-01/"+m.reponame+"/"+"m.nicename_links.nt.bz2");
+            // getFile("archive/2016-12-01/"+m.reponame+"/"+"m.nicename_links.nt.bz2");
 
             //m.revisions.add(new Revision("2016-12-01"),triplecount);
         });
-
 
 
         //JSON output
@@ -109,10 +117,9 @@ public class CLI {
         L.info("wrote json to " + outdir + File.separator + "data.json");
 
 
-
     }
 
-    protected static List<Issue> getIssues(List<Metadata> metadatas){
+    protected static List<Issue> getIssues(List<Metadata> metadatas) {
         List<Issue> i = new ArrayList<>();
         //Log all issues
         metadatas.stream().forEach(m -> {
@@ -131,8 +138,9 @@ public class CLI {
         return i;
     }
 
+
     @NotNull
-    protected static List<Metadata> getMetadata(boolean generate, GenerateLinks gl, File basedir, File outdir) {
+    protected static List<Metadata> getMetadata(File basedir) {
         List<File> allFilesInRepo = Utils.getAllMetadataFiles(basedir);
         RDFUnitValidate rval = new RDFUnitValidate();
 
@@ -141,10 +149,6 @@ public class CLI {
         allFilesInRepo.stream().forEach(one -> {
             try {
                 Metadata m = Metadata.create(one, rval);
-
-                if (generate) {
-                    gl.generateLinkSets(m, outdir);
-                }
                 metadatas.add(m);
             } catch (Exception e) {
                 L.error(e);
@@ -156,14 +160,13 @@ public class CLI {
     }
 
 
-
     static void printIssue(Issue i, Logger L) {
         if (i.level.equals("WARN")) {
             L.warn(i.message);
         } else if (i.level.equals("ERROR")) {
             L.error(i.message);
         } else {
-            L.error("Level "+i.level+" not implemented in org.dbpedia.links.CLI$printIssue");
+            L.error("Level " + i.level + " not implemented in org.dbpedia.links.CLI$printIssue");
         }
     }
 

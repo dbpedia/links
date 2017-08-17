@@ -104,14 +104,14 @@ public class Metadata {
             return m;
         }
 
-        /*TestExecution te = rval.checkMetadataModelWithRdfUnit(model);
+        TestExecution te = rval.checkMetadataModelWithRdfUnit(model);
         Collection<TestCaseResult> tcrs = te.getTestCaseResults();
         tcrs.stream().forEach(tcr -> {
             m.issues.add(Issue.create(tcr.getSeverity().name(), tcr.getMessage()+" "+((ShaclTestCaseResult)tcr).getFailingResource(),L,null));
         });
         if (!tcrs.isEmpty()) {
             L.warn(tcrs.size() + " issues found by RDFUnit in " + file);
-        }*/
+        }
 
         m.setLinkSets();
 
