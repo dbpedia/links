@@ -5,7 +5,7 @@ import java.util.Arrays.{binarySearch, sort}
 import java.util.Locale
 import java.util.regex.{Matcher, Pattern}
 
-import org.dbpedia.extraction.RichString._
+import RichString._
 
 import scala.language.implicitConversions
 import scala.util.matching.Regex

@@ -1,5 +1,7 @@
 package org.dbpedia.extraction
 
+import RichString.wrapString
+
 /**
  * Contains several utility functions related to WikiText.
  */
