@@ -2,6 +2,7 @@ DBpedia-Links
 =============
 A repo that contains links and alternative classifications for DBpedia. Other database owners can contribute links into the links folder. The link framework is run each day and validates all link contributions. An overiew and current errors can be seen at the [LinkViz](http://dbpedia.github.io/links/tools/linkviz/). 
 
+
 # About
 
 Links are the key enabler for retrieval of related information on the Web of Data and DBpedia is one of the central interlinking hubs in the Linked Open Data (LOD) cloud. The DBpedia-Links repository maintains linksets between DBpedia and other LOD datasets. System for maintenance, update and quality assurance of the linksets are in place and can be explored further.
