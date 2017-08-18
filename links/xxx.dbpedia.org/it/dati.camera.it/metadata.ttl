@@ -5,7 +5,7 @@
 
 <#ls1> a void:Linkset ;
 	dbp:endpoint <http://dati.camera.it/sparql> ;
-	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o <http://www.w3.org/2002/07/owl#sameAs> ?b. FILTER(REGEX(STR(?b),'http://dbpedia.org')) }" ;
+	dbp:constructquery "CONSTRUCT {?b <http://www.w3.org/2002/07/owl#sameAs> ?o} where { ?o <http://www.w3.org/2002/07/owl#sameAs> ?b. FILTER(REGEX(STR(?b),'^http://it.dbpedia.org')) }" ;
 	#see recorded error
 	#dbp:ntriplefilelocation <http://lobid.org/download/dumps/DE-605/enrich/2dbpedia.ttl> ;
 	void:objectsTarget <https://datahub.io/dataset/dati-camera-it> ;
