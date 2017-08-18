@@ -11,7 +11,6 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.log4j.Logger;
 import org.dbpedia.my.UriUtils$;
-//import org.dbpedia.extraction.util.UriUtils$;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -30,6 +29,7 @@ public final class Utils {
 
     public static int replacecount = 0;
     public static int decodecount = 0;
+    public static boolean deactivateUriToIriDecodingForTests = false;
 
 
     /**
@@ -134,11 +134,12 @@ public final class Utils {
                         String last = line.substring(index + 1);
 
                         // encode DBpedia URIs correctly
-                        //first = UriUtils$.MODULE$.uriToIri(first);
-                        String tmp = UriUtils$.MODULE$.uriToIri(first);
-                        if (!tmp.equals(first)) {
-                            decodecount++;
-                            first = tmp;
+                        if (!deactivateUriToIriDecodingForTests) {
+                            String tmp = UriUtils$.MODULE$.uriToIri(first);
+                            if (!tmp.equals(first)) {
+                                decodecount++;
+                                first = tmp;
+                            }
                         }
 
                         //replace with redirects

@@ -17,7 +17,9 @@ import static org.dbpedia.links.CLI.getIssues;
 
 @RunWith(Parameterized.class)
 public class TestBuild {
-
+    static{
+        Utils.deactivateUriToIriDecodingForTests=true;
+    }
     String metadataFolder;
 
     public TestBuild(File m) {

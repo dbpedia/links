@@ -10,8 +10,7 @@ branches:
     - master
 install: /bin/true
 script:
-  - "mvn scala:compile"
-  - "mvn install -e -Dmaven.test.skip=false"
+  - "mvn install -Dmaven.test.skip=false"
 notifications:
   email:
     recipients:
