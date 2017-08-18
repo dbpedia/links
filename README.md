@@ -1,6 +1,6 @@
 DBpedia-Links
 =============
-A repo that contains links and alternative classifications for DBpedia. Other database owners can contribute links into the links folder. The link framework is run each day and validates all link contributions. An overiew and current errors can be seen at the [LinkViz}(http://dbpedia.github.io/links/tools/linkviz/). 
+A repo that contains links and alternative classifications for DBpedia. Other database owners can contribute links into the links folder. The link framework is run each day and validates all link contributions. An overiew and current errors can be seen at the [LinkViz](http://dbpedia.github.io/links/tools/linkviz/). 
 
 # About
 
@@ -33,7 +33,7 @@ If you want to download the current, or older, releases of the given links, plea
 
 # How to download the daily link snapshot
 
-The publishing process is automated via a cronjob which will run all given downloads, scripts, LIMES/SILK configurations, patches, etc. to generate the linksets. It is executed daily on our own server
+The publishing process is automated via a cronjob which will run all given downloads, scripts, LIMES/SILK configurations, patches, etc. to generate the linksets. It is executed daily on our own server and published (http://downloads.dbpedia.org/links/snapshot)
 
 Please check out the [how to](https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia#automated-process) for more informations regarding the automated process, how to set it up, run it and customize it.
 
@@ -52,13 +52,22 @@ An overiew and current errors can be seen at the [LinkViz}(http://dbpedia.github
 ## Install
 ```
 mvn clean install
+
+# tests are deactivated by default, tests will test the links, so activating tests will make a full run of the software 
+mvn clean install -DskipTests=true
 ```
 
 ## Running
 ```
-# run everything for one folder in links:
-mvn exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate --scripts true --basedir links/dbpedia.org/"
+# create a snapshot
+mvn exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate"
 
+# create a snapshot, also running scripts (increase runtime, immensely)
+mvn exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate --scripts true"
+
+# run everything for one folder, e.g. your contributed link folder:
+mvn exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate --scripts true --basedir links/dbpedia.org/YOUR_PROJECT"
+```
 
 # description of further tools in the repo and how to access/execute them
 
