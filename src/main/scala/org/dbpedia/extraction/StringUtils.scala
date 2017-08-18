@@ -1,9 +1,9 @@
-package org.dbpedia.my
+package org.dbpedia.extraction
 
 import java.lang.StringBuilder
-import java.text.{DateFormat,SimpleDateFormat}
-import java.util.TimeZone
 import java.security.MessageDigest
+import java.text.{DateFormat, SimpleDateFormat}
+import java.util.TimeZone
 
 /**
  */

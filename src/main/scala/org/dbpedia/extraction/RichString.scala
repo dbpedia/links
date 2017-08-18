@@ -1,12 +1,14 @@
-package org.dbpedia.my
+package org.dbpedia.extraction
 
-import java.util.Locale
 import java.lang.StringBuilder
-import scala.util.matching.Regex
-import RichString._
-import java.util.regex.{Pattern,Matcher}
-import java.util.Arrays.{sort,binarySearch}
+import java.util.Arrays.{binarySearch, sort}
+import java.util.Locale
+import java.util.regex.{Matcher, Pattern}
+
+import org.dbpedia.extraction.RichString._
+
 import scala.language.implicitConversions
+import scala.util.matching.Regex
 
 /**
  * Defines additional methods on strings, which are missing in the standard library.

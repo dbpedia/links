@@ -10,7 +10,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.log4j.Logger;
-import org.dbpedia.my.UriUtils$;
+import org.dbpedia.extraction.UriUtils$;
 
 import java.io.*;
 import java.nio.file.Files;

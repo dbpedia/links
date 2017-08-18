@@ -1,6 +1,4 @@
-package org.dbpedia.my
-
-import org.dbpedia.my.RichString.wrapString
+package org.dbpedia.extraction
 
 /**
  * Contains several utility functions related to WikiText.

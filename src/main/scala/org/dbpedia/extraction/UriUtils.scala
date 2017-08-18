@@ -1,4 +1,4 @@
-package org.dbpedia.my
+package org.dbpedia.extraction
 
 import java.net._
 
