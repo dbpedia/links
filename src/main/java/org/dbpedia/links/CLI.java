@@ -84,9 +84,11 @@ public class CLI {
 
         //generate links
         if (generate) {
-            metadatas.stream().forEach(m -> {
+            for (Metadata m : metadatas) {
+                L.info("Processing " + m.nicename + " with " + m.linkSets.size() + " linksets");
                 gl.generateLinkSets(m, outdir);
-            });
+            }
+
         }
 
         // also prints all issues
@@ -116,6 +118,10 @@ public class CLI {
         fw.close();
         L.info("wrote json to " + outdir + File.separator + "data.json");
 
+
+        L.error("decoded: "+Utils.decodecount);
+
+        L.error("replaced: "+ Utils.replacecount);
 
     }
 
@@ -155,7 +161,7 @@ public class CLI {
             }
         });
 
-        L.info("Finished processing all metadata.ttl files");
+        L.info("Finished processing all "+metadatas.size()+" metadata.ttl files");
         return metadatas;
     }
 

@@ -12,7 +12,6 @@ import org.apache.jena.riot.RiotException;
 import org.apache.log4j.Logger;
 import org.dbpedia.my.UriUtils$;
 //import org.dbpedia.extraction.util.UriUtils$;
-///import org.dbpedia.my.UriUtils$;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -28,6 +27,9 @@ import static java.util.Arrays.stream;
  */
 public final class Utils {
     private static Logger L = Logger.getLogger(Utils.class);
+
+    public static int replacecount = 0;
+    public static int decodecount = 0;
 
 
     /**
@@ -61,9 +63,10 @@ public final class Utils {
 
 
     public static void joinFilesSpecial(File destination, Metadata metadata, String namespace) throws IOException {
-        ConcurrentMap<String,String> map = new RedirectReplace().getMap();
+        ConcurrentMap<String, String> map = new RedirectReplace().getMap();
         int sourcecount = 0;
         SortedSet<String> ss = new TreeSet<String>();
+
 
         // iterate over each linkset
         for (LinkSet linkSet : metadata.linkSets) {
@@ -103,14 +106,15 @@ public final class Utils {
                         continue;
                     }
                 }*/
-                try{
+                try {
                     Model model = ModelFactory.createDefaultModel();
                     RDFDataMgr.read(model, sourceFile.toURI().toString(), "", Lang.NTRIPLES);
-                    L.info("Syntax check passed: "+sourceFile);
-                }catch (RiotException e){
-                    linkSet.issues.add(Issue.create("ERROR","Syntax check failed: " + sourceFile +", skipping" , L, e ));
+                    L.info("Syntax check passed: " + sourceFile);
+                } catch (RiotException e) {
+                    linkSet.issues.add(Issue.create("ERROR", "Syntax check failed: " + sourceFile + ", skipping", L, e));
                     continue;
                 }
+
 
                 try (BufferedReader br = new BufferedReader(new FileReader(sourceFile))) {
                     String line;
@@ -130,13 +134,18 @@ public final class Utils {
                         String last = line.substring(index + 1);
 
                         // encode DBpedia URIs correctly
-                         //first = UriUtils$.MODULE$.uriToIri(first);
-                         first = UriUtils$.MODULE$.uriToIri(first);
+                        //first = UriUtils$.MODULE$.uriToIri(first);
+                        String tmp = UriUtils$.MODULE$.uriToIri(first);
+                        if (!tmp.equals(first)) {
+                            decodecount++;
+                            first = tmp;
+                        }
 
                         //replace with redirects
                         String replace = map.get(first);
-                        if(replace!=null){
+                        if (replace != null) {
                             first = replace;
+                            replacecount++;
                         }
 
                         //reassemble
@@ -147,15 +156,18 @@ public final class Utils {
                     }
                 }
                 if (nodbpediacount > 0) {
-                    linkSet.issues.add( Issue.create("ERROR", "Expected " + namespace + " for subject namespace, " + nodbpediacount + " deviations found in " + source + " and excluded.",L,null));
+                    linkSet.issues.add(Issue.create("ERROR", "Expected " + namespace + " for subject namespace, " + nodbpediacount + " deviations found in " + source + " and excluded.", L, null));
                 }
+
+
             }
+
 
             //FileWriter fw = new FileWriter(destination);
             OutputStream fout = Files.newOutputStream(Paths.get(destination.toString()));
             BufferedOutputStream bout = new BufferedOutputStream(fout);
             BZip2CompressorOutputStream bzOut = new BZip2CompressorOutputStream(bout);
-            for (String line : ss){
+            for (String line : ss) {
                 try {
 
                     bzOut.write(line.getBytes());
@@ -170,33 +182,35 @@ public final class Utils {
             //fw.close();
 
         }
+
+
         //TODO add 10 revisions
 
         double r = Math.random();
         int triplecount = ss.size();
-        if (r < 0.25){ // stagnant
-            for (int i=0;i<10;i++){
-                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+        if (r < 0.25) { // stagnant
+            for (int i = 0; i < 10; i++) {
+                metadata.revisions.add(new Revision("2017-" + (i + 1) + "-01", triplecount));
             }
 
-        }else if(r<0.50){ //increasing
-            for (int i=0;i<10;i++){
-                triplecount *=1.2;
-                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+        } else if (r < 0.50) { //increasing
+            for (int i = 0; i < 10; i++) {
+                triplecount *= 1.2;
+                metadata.revisions.add(new Revision("2017-" + (i + 1) + "-01", triplecount));
             }
 
-        }else if(r<0.75){ //regressing
-            for (int i=0;i<10;i++){
-                triplecount *=0.6;
-                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+        } else if (r < 0.75) { //regressing
+            for (int i = 0; i < 10; i++) {
+                triplecount *= 0.6;
+                metadata.revisions.add(new Revision("2017-" + (i + 1) + "-01", triplecount));
             }
 
-        }else { // failing
-            for (int i=0;i<10;i++){
-                if(i>=7) {
+        } else { // failing
+            for (int i = 0; i < 10; i++) {
+                if (i >= 7) {
                     triplecount = 0;
                 }
-                metadata.revisions.add(new Revision("2017-"+(i+1)+"-01", triplecount));
+                metadata.revisions.add(new Revision("2017-" + (i + 1) + "-01", triplecount));
             }
         }
 
@@ -236,11 +250,13 @@ public final class Utils {
             IOUtils.closeQuietly(output);
         }
     }
+
     @Deprecated
     private static BufferedOutputStream createAppendableStream(File destination)
             throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(destination, true));
     }
+
     @Deprecated
     private static void appendFile(OutputStream output, File source)
             throws IOException {

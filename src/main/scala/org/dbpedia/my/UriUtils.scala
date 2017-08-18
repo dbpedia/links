@@ -3,7 +3,6 @@ package org.dbpedia.my
 import java.net._
 
 import org.apache.commons.lang3.StringEscapeUtils
-//import org.dbpedia.my.{UriDecoder, UriToIriDecoder}
 
 import scala.util.{Failure, Success, Try}
 

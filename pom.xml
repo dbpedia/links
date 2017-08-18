@@ -32,6 +32,11 @@
                 <version>3.5.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <!--arg>-verbose</arg>
+                        <arg>-Xlint:all,-options,-path</arg-->
+                        <arg>-Xlint:unchecked</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -71,7 +76,7 @@
                     <!-- Use an external Zinc server for compilation. If there is no Zinc
                         server currently running then the plugin falls back to regular incremental
                         compilation. Seems pretty safe. -->
-                    <useZincServer>true</useZincServer>
+                    <!--useZincServer>true</useZincServer-->
                 </configuration>
             </plugin>
         </plugins>

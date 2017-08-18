@@ -1,8 +1,6 @@
 package org.dbpedia.my
 
 import org.dbpedia.my.RichString.wrapString
-//import org.dbpedia.util.text.uri.UriDecoder
-import java.util.Arrays
 
 /**
  * Contains several utility functions related to WikiText.

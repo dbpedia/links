@@ -1,6 +1,6 @@
 package org.dbpedia.my;
 
-import sun.nio.cs.ThreadLocalCoders;
+//import sun.nio.cs.ThreadLocalCoders;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -65,9 +65,8 @@ public class UriToIriDecoder {
         StringBuffer sb = new StringBuffer(n);
         ByteBuffer bb = ByteBuffer.allocate(n);
         CharBuffer cb = CharBuffer.allocate(n);
-        CharsetDecoder dec = ThreadLocalCoders.decoderFor("UTF-8")
-                .onMalformedInput(CodingErrorAction.REPLACE)
-                .onUnmappableCharacter(CodingErrorAction.REPLACE);
+        //TODO
+        //CharsetDecoder dec = ThreadLocalCoders.decoderFor("UTF-8").onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
 
         char c = s.charAt(0);
         boolean betweenBrackets = false;
@@ -115,11 +114,12 @@ public class UriToIriDecoder {
             }
             bb.flip();
             cb.clear();
-            dec.reset();
-            CoderResult cr = dec.decode(bb, cb, true);
-            assert cr.isUnderflow();
-            cr = dec.flush(cb);
-            assert cr.isUnderflow();
+            //TODO
+            //dec.reset();
+            //CoderResult cr = dec.decode(bb, cb, true);
+            //assert cr.isUnderflow();
+            //cr = dec.flush(cb);
+            //assert cr.isUnderflow();
             sb.append(cb.flip().toString());
         }
 
