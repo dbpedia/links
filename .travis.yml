@@ -18,4 +18,8 @@ notifications:
       - hellmann@informatik.uni-leipzig.de
     on_success: change
     on_failure: change
+    
+cache:
+  directories:
+  - $HOME/.m2
 
