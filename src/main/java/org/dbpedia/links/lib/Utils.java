@@ -183,10 +183,12 @@ public final class Utils {
             //fw.close();
 
         }
+        L.info("merged " + sourcecount + " sources (" + ss.size() + " lines) into: " + destination);
 
+    }
 
-        //TODO add 10 revisions
-
+    //TODO add 10 revisions
+        /*
         double r = Math.random();
         int triplecount = ss.size();
         if (r < 0.25) { // stagnant
@@ -213,11 +215,8 @@ public final class Utils {
                 }
                 metadata.revisions.add(new Revision("2017-" + (i + 1) + "-01", triplecount));
             }
-        }
+        }*/
 
-        L.info("merged " + sourcecount + " sources (" + ss.size() + " lines) into: " + destination);
-
-    }
 
     public static InputStream getInputStreamForFile(File file) throws CompressorException, FileNotFoundException {
         InputStream is;

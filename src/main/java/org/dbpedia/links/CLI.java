@@ -1,5 +1,6 @@
 package org.dbpedia.links;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
@@ -8,12 +9,8 @@ import org.apache.log4j.Logger;
 import org.dbpedia.links.lib.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class CLI {
     private static Logger L = Logger.getLogger(CLI.class);
@@ -29,6 +26,10 @@ public class CLI {
         parser.accepts("outdir", "Path to the directory where results are written; defaults to 'snapshot'")
                 .withRequiredArg().ofType(String.class)
                 .defaultsTo("snapshot");
+        parser.accepts("archive", "Path to the directory where previous revisions reside")
+                .withRequiredArg().ofType(String.class)
+                .defaultsTo("archive");
+
         //parser.accepts("validate", "enables extensive validation, i.e. with SHACL/RDFUNIT and also validation of links");
         parser.accepts("generate", "enables the generation of links, if the option is not set, the tool will just parse all the metadata files in memory");
         parser.accepts("scripts", "scripts take a long time to run, they are deactivated by default, set this parameter to true to run included scripts")
@@ -78,6 +79,8 @@ public class CLI {
         gl.ntripleFilesonly = (options.has("ntfileonly")) ? true : false;
         File basedir = new File((String) options.valueOf("basedir"));
         File outdir = new File((String) options.valueOf("outdir"));
+        if (!outdir.exists()) outdir.mkdirs();
+        File archive = new File((String) options.valueOf("archive"));
 
         // prepare metadata
         List<Metadata> metadatas = getMetadata(basedir);
@@ -94,16 +97,45 @@ public class CLI {
         // also prints all issues
         getIssues(metadatas);
 
-//TODO comment Utils.java line 173
-        //analyse archive and add revisions
-
-        //list all datafolders
+        final List<File> revisions = Lists.newArrayList(archive.listFiles(File::isDirectory));
+        Collections.sort(revisions, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                return o1.compareTo(o2);
+            }
+        });
 
         metadatas.stream().forEach(m -> {
+            for (File revision : revisions) {
 
-            // getFile("archive/2016-12-01/"+m.reponame+"/"+"m.nicename_links.nt.bz2");
+                File repo = new File(revision, m.reponame);
+                File archiveFile = new File(repo, m.nicename + "_links.nt.bz2");
 
-            //m.revisions.add(new Revision("2016-12-01"),triplecount);
+                int triplecount = 0;
+                if (archiveFile.exists()) {
+
+                    InputStream is = null;
+                    try {
+                        is = Utils.getInputStreamForFile(archiveFile);
+                    } catch (Exception e) {
+                        L.error(e);
+                    }
+
+                    Scanner sc = new Scanner(is);
+                    while (sc.hasNextLine()) {
+                        String line = sc.nextLine();
+                        if (!line.startsWith("#")) {
+                            triplecount += 1;
+                        }
+                    }
+                    L.debug("archive found for "+archiveFile.getAbsoluteFile() + " triples: "+ triplecount);
+
+                }else{
+                   L.warn("no archive found for "+archiveFile.getAbsoluteFile());
+                }
+                //System.out.println(revision.getName() + "\t" + triplecount);
+                m.revisions.add(new Revision(revision.getName(), triplecount));
+            }
         });
 
 
@@ -112,16 +144,14 @@ public class CLI {
             m.prepareJSON();
         });
 
-
         FileWriter fw = new FileWriter(outdir + File.separator + "data.json");
         new Gson().toJson(metadatas, fw);
         fw.close();
         L.info("wrote json to " + outdir + File.separator + "data.json");
 
-
-        L.error("decoded: "+Utils.decodecount);
-
-        L.error("replaced: "+ Utils.replacecount);
+        //debug stuff
+        L.error("decoded: " + Utils.decodecount);
+        L.error("replaced: " + Utils.replacecount);
 
     }
 
@@ -161,7 +191,7 @@ public class CLI {
             }
         });
 
-        L.info("Finished processing all "+metadatas.size()+" metadata.ttl files");
+        L.info("Finished processing all " + metadatas.size() + " metadata.ttl files");
         return metadatas;
     }
 
