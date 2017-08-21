@@ -26,7 +26,7 @@ public class CLI {
         parser.accepts("outdir", "Path to the directory where results are written; defaults to 'snapshot'")
                 .withRequiredArg().ofType(String.class)
                 .defaultsTo("snapshot");
-        parser.accepts("archive", "Path to the directory where previous revisions reside")
+        parser.accepts("archive", "Path to the directory where previous revisions reside; defaults to 'archive'")
                 .withRequiredArg().ofType(String.class)
                 .defaultsTo("archive");
 
@@ -67,16 +67,16 @@ public class CLI {
         }
 
 
-        final boolean generate = (options.has("generate")) ? true : false;
+        final boolean generate = options.has("generate");
 
         GenerateLinks gl = new GenerateLinks();
         //debugging
         //gl.validate = (options.has("validate")) ? true : false;
         gl.executeScripts = (Boolean) (options.valueOf("scripts"));
-        gl.sparqlonly = (options.has("sparqlonly")) ? true : false;
-        gl.scriptonly = (options.has("scriptonly")) ? true : false;
-        gl.linkConfsonly = (options.has("linkconfonly")) ? true : false;
-        gl.ntripleFilesonly = (options.has("ntfileonly")) ? true : false;
+        gl.sparqlonly = options.has("sparqlonly");
+        gl.scriptonly = options.has("scriptonly");
+        gl.linkConfsonly = options.has("linkconfonly");
+        gl.ntripleFilesonly = options.has("ntfileonly");
         File basedir = new File((String) options.valueOf("basedir"));
         File outdir = new File((String) options.valueOf("outdir"));
         if (!outdir.exists()) outdir.mkdirs();
@@ -97,48 +97,49 @@ public class CLI {
         // also prints all issues
         getIssues(metadatas);
 
-        final List<File> revisions = Lists.newArrayList(archive.listFiles(File::isDirectory));
-        Collections.sort(revisions, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                return o1.compareTo(o2);
-            }
-        });
-
-        metadatas.stream().forEach(m -> {
-            for (File revision : revisions) {
-
-                File repo = new File(revision, m.reponame);
-                File archiveFile = new File(repo, m.nicename + "_links.nt.bz2");
-
-                int triplecount = 0;
-                if (archiveFile.exists()) {
-
-                    InputStream is = null;
-                    try {
-                        is = Utils.getInputStreamForFile(archiveFile);
-                    } catch (Exception e) {
-                        L.error(e);
-                    }
-
-                    Scanner sc = new Scanner(is);
-                    while (sc.hasNextLine()) {
-                        String line = sc.nextLine();
-                        if (!line.startsWith("#")) {
-                            triplecount += 1;
-                        }
-                    }
-                    L.debug("archive found for "+archiveFile.getAbsoluteFile() + " triples: "+ triplecount);
-
-                }else{
-                   L.warn("no archive found for "+archiveFile.getAbsoluteFile());
+        if (archive.exists()) {
+            final List<File> revisions = Lists.newArrayList(archive.listFiles(File::isDirectory));
+            Collections.sort(revisions, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return o1.compareTo(o2);
                 }
-                //System.out.println(revision.getName() + "\t" + triplecount);
-                m.revisions.add(new Revision(revision.getName(), triplecount));
-            }
-        });
+            });
 
+            metadatas.stream().forEach(m -> {
+                for (File revision : revisions) {
 
+                    File repo = new File(revision, m.reponame);
+                    File archiveFile = new File(repo, m.nicename + "_links.nt.bz2");
+
+                    int triplecount = 0;
+                    if (archiveFile.exists()) {
+
+                        InputStream is = null;
+                        try {
+                            is = Utils.getInputStreamForFile(archiveFile);
+                        } catch (Exception e) {
+                            L.error(e);
+                        }
+
+                        Scanner sc = new Scanner(is);
+                        while (sc.hasNextLine()) {
+                            String line = sc.nextLine();
+                            if (!line.startsWith("#")) {
+                                triplecount += 1;
+                            }
+                        }
+                        L.debug("archive found for " + archiveFile.getAbsoluteFile() + " triples: " + triplecount);
+
+                    } else {
+                        L.warn("no archive found for " + archiveFile.getAbsoluteFile());
+                    }
+                    //System.out.println(revision.getName() + "\t" + triplecount);
+                    m.revisions.add(new Revision(revision.getName(), triplecount));
+                }
+            });
+
+        }
         //JSON output
         metadatas.stream().forEach(m -> {
             m.prepareJSON();

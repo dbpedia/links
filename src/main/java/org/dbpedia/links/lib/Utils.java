@@ -183,7 +183,12 @@ public final class Utils {
             //fw.close();
 
         }
-        L.info("merged " + sourcecount + " sources (" + ss.size() + " lines) into: " + destination);
+
+        metadata.numberOfsources = sourcecount;
+        metadata.latestTripleCount = ss.size();
+        metadata.destinationFile = "http://downloads.dbpedia.org/links/snapshot/"+ metadata.reponame+"/"+ metadata.nicename+"/"+destination.toString();
+
+        L.info("merged " + sourcecount + " sources (" + metadata.latestTripleCount + " lines) into: " + destination);
 
     }
 

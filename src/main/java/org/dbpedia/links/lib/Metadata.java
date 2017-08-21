@@ -58,6 +58,11 @@ public class Metadata {
      */
     String linkNamespace;
     JsonElement modelasjson;
+
+    public int latestTripleCount = 0;
+    public String destinationFile = "";
+    public int numberOfsources = 0;
+
     public List<LinkSet> linkSets = new ArrayList<LinkSet>();
     public List<Issue> issues = new ArrayList<Issue>();
     public List<Revision> revisions = new ArrayList<Revision>();
