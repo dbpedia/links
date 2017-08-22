@@ -8,14 +8,24 @@
     font-weight: 300;
     text-align: center;
     line-height: 1.125;
-    padding: 150px 0px;
 }
 
-.linklist .linkset-line
+.section.top
+{
+    padding: 0;
+}
+
+.linklist .project-line
 {
 	padding: 12px;
 	border-bottom: 1px solid #DFDFDF;
 }
+
+.linklist .linkset-line
+{
+    border-top: 1px solid #DFDFDF;
+}
+
 
 .linkset-header
 {
@@ -25,11 +35,67 @@
 	border-bottom: 1px solid #AFAFAF;
 }
 
+.data-summary-outer
+{
+    height: 100vh;  
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.data-summary
+{
+    height: 70%;
+    width: 100%;
+}
+
+.data-summary-chart
+{
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+}
+
+.data-summary-bar
+{
+    background-color: #FABE5C;
+    padding: 0px;
+    margin: 1px;
+}
+
+.data-summary-bar:hover
+{
+    background-color: #FEE291;
+}
+
+.data-summary-text
+{
+    pointer-events:none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
 .chart .bar {
   font: 12px sans-serif;
   text-align: right;
-  padding: 10px;
+  padding: 5px;
   margin: 1px;
+}
+
+.diagram-bar
+{
+    height: 5px;
+    margin: 1px;
+    padding: 0;
+    background-color: #FABE5C;
+    width: 0;
 }
 
 .bar-label {
@@ -46,26 +112,60 @@
 /* Tooltip text */
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 120px;
     background-color: #555;
     color: #fff;
     text-align: center;
     padding: 10px 10px;
-    border-radius: 6px;
+    border-radius: 3px;
     font-size: 1rem;
-    font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    white-space: nowrap;
+    max-width: 300px;
 
+   
     /* Position the tooltip text */
     position: absolute;
     z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
+    bottom: 100%;
+    transform: translateX(-50%);
+    left:50%;
+    margin-bottom: 12px;
 
     /* Fade in tooltip */
     opacity: 0;
     transition: opacity 1s;
 }
+
+.tooltip .tooltiptext ul {
+    margin: 0px 0px 0px 20px;
+    text-align: left;
+}
+
+.box h1
+{
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.issue-box ul
+{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    word-wrap: break-word;
+}
+
+
+.issue-box li.warn b
+{
+    color: #FABE5C;
+}
+
+.issue-box li.error b
+{
+    color: #FF7777;
+}
+
+
 
 /* Tooltip arrow */
 .tooltip .tooltiptext::after {
@@ -73,8 +173,8 @@
     position: absolute;
     top: 100%;
     left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
+    margin-left: -10px;
+    border-width: 10px;
     border-style: solid;
     border-color: #555 transparent transparent transparent;
 }
@@ -83,4 +183,54 @@
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+.githublink {
+    color: #2B4253;
+}
+
+.project-icons span
+{
+    margin: 0px 10px;
+}
+
+.revision-chart ul
+{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.revision-chart li
+{
+    height: 10px;
+    background-color: #FABE5C;
+}
+
+.description-box
+{
+    margin-bottom: 1rem;
+}
+
+.details-table td:first-child
+{
+    min-width: 200px;
+}
+
+.details-table td:last-child
+{
+    overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
