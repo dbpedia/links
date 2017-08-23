@@ -143,7 +143,7 @@ function onLoad()
 
                 // CLICK EVENT ON THE PROJECT LINES
 
-                event.stopPropagation();
+                d3.event.stopPropagation();
 
                 if(d != activeElement)
                 {
