@@ -231,6 +231,7 @@ function onLoad()
 
                     flexTableEntry(infoTable, "Author", d.metadata.author);
                     flexTableEntry(infoTable, "Current Version", d.revisions[d.revisions.length - 1].time);
+                    flexTableEntry(infoTable, "Repository Name", d.reponame);
                     flexTableEntry(infoTable, "#Links (current version)", d.metadata.current);
                     flexTableEntry(infoTable, "#Links (previous version)", d.metadata.previous);
                     flexTableEntry(infoTable, "#Links (all-time high)", d.metadata.max);
