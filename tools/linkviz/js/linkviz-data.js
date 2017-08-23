@@ -50,8 +50,9 @@ function createMetadata(project)
 
     metadata.description = getMetadataValueByName(project.modelasjson, "description");
     metadata.author = getMetadataValueByName(project.modelasjson, "author");
+    metadata.label = getMetadataValueByName(project.modelasjson, "label");
     metadata.numSets = project.linkSets.length;
-    metadata.id = project.nicename.replace(/\./g, "").replace(/_/g, "");
+    metadata.id = project.nicename.replace(/\./g, "").replace(/_/g, "") + "_" + project.reponame.replace(/\./g, "").replace(/\//g, "");
     metadata.max = getTripleMax(project);
     metadata.current = getTripleCount(project, 0);
     metadata.previous = getTripleCount(project, 1);
@@ -69,19 +70,25 @@ function generateWarnings(metadata)
     // WARN: Description missing
     if(metadata.description == null)
     {
-        issues.push({ level: "WARN", message: "Description is missing." });
+        issues.push({ level: "WARN", message: "Description is missing in metadata.ttl." });
     }
 
     // WARN: Author missing
     if(metadata.author == null)
     {
-        issues.push({ level: "WARN", message: "Author is missing." });
+        issues.push({ level: "WARN", message: "Author is missing in metadata.ttl." });
+    }
+
+    // WARN: Label missing
+    if(metadata.label == null)
+    {
+        issues.push({ level: "WARN", message: "Label is missing in metadata.ttl." });
     }
    
     // WARN: Number of links stagnant
     if(metadata.current == metadata.previous && metadata.current == metadata.preprevious)
     {
-        issues.push({ level: "WARN", message : "Number of links stagnant over last 3 sets!" });
+        issues.push({ level: "WARN", message : "Number of links stagnant over last 3 sets." });
     }
 
     // WARN: Smaller than previous version
@@ -115,7 +122,7 @@ function getMetadataValueByName(modelasjson, name)
         }
     }
 
-    return "[missing]";
+    return null;
 }
 
 // Gets the triple count of a project with offset 0 being the latest revision
