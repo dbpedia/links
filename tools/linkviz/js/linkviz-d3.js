@@ -103,7 +103,7 @@ function onLoad()
 
         lineExpandible.append("div")
             .attr("class", "name")
-            .text(function(d) { return d.nicename; });
+            .text(function(d) { return d.metadata.label !== null ? d.metadata.label : d.nicename; });
 
         var lineIcons = line.append("div")
             .attr("class", "icons");
