@@ -1,6 +1,10 @@
-#/bin/bash
+#!/bin/sh
 
 RELEASEFOLDER=$1
+dbpedia_links=</path/to/dbpedia-links>
+www=</path/to/www>
+
+cd $dbpedia_links
 
 # dbpedia.org
 mkdir -p archive/$RELEASEFOLDER/dbpedia.org
@@ -13,4 +17,4 @@ mkdir -p archive/$RELEASEFOLDER/xxx.dbpedia.org/$i
 find ./snapshot/xxx.dbpedia.org/$i -name "*links.nt.bz2" -exec cp {} archive/$RELEASEFOLDER/xxx.dbpedia.org/$i \;
 done
 
-ln -s archive/$RELEASEFOLDER ../www/downloads.dbpedia.org/links/$RELEASEFOLDER
+ln -s $dbpedia_links/archive/$RELEASEFOLDER $www/downloads.dbpedia.org/links/$RELEASEFOLDER
