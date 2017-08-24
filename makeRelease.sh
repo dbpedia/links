@@ -17,4 +17,5 @@ mkdir -p archive/$RELEASEFOLDER/xxx.dbpedia.org/$i
 find ./snapshot/xxx.dbpedia.org/$i -name "*links.nt.bz2" -exec cp {} archive/$RELEASEFOLDER/xxx.dbpedia.org/$i \;
 done
 
+chmod 775  $dbpedia_links/archive/$RELEASEFOLDER
 ln -sfn $dbpedia_links/archive/$RELEASEFOLDER $www/downloads.dbpedia.org/links/$RELEASEFOLDER
