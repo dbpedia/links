@@ -32,6 +32,7 @@ public class CLI {
 
         //parser.accepts("validate", "enables extensive validation, i.e. with SHACL/RDFUNIT and also validation of links");
         parser.accepts("generate", "enables the generation of links, if the option is not set, the tool will just parse all the metadata files in memory");
+        parser.accepts("nojs", "disables json generation");
         parser.accepts("scripts", "scripts take a long time to run, they are deactivated by default, set this parameter to true to run included scripts")
                 .withRequiredArg().ofType(Boolean.class)
                 .defaultsTo(false);
@@ -68,6 +69,8 @@ public class CLI {
 
 
         final boolean generate = options.has("generate");
+        final boolean nojs = options.has("nojs");
+
 
         GenerateLinks gl = new GenerateLinks();
         //debugging
@@ -140,16 +143,18 @@ public class CLI {
             });
 
         }
-        //JSON output
-        metadatas.stream().forEach(m -> {
-            m.prepareJSON();
-        });
 
-        FileWriter fw = new FileWriter(outdir + File.separator + "data.json");
-        new Gson().toJson(metadatas, fw);
-        fw.close();
-        L.info("wrote json to " + outdir + File.separator + "data.json");
+        if(!nojs) {
+            //JSON output
+            metadatas.stream().forEach(m -> {
+                m.prepareJSON();
+            });
 
+            FileWriter fw = new FileWriter(outdir + File.separator + "data.json");
+            new Gson().toJson(metadatas, fw);
+            fw.close();
+            L.info("wrote json to " + outdir + File.separator + "data.json");
+        }
         //debug stuff
         L.error("decoded: " + Utils.decodecount);
         L.error("replaced: " + Utils.replacecount);
