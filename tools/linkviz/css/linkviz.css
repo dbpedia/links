@@ -1,5 +1,8 @@
 
-
+th
+{
+    font-weight: 600;
+}
 
 .link-vizzz
 {
@@ -15,27 +18,174 @@
     padding: 0;
 }
 
+
+
 .linklist .project-line
 {
-	padding: 12px;
+
 	border-bottom: 1px solid #DFDFDF;
 }
 
-.linklist .linkset-line
+.linklist .project-line.expanded
 {
-    border-top: 1px solid #DFDFDF;
+    
+    margin: -0.5rem;
+    z-index: 99;
+    border: 1px solid #DFDFDF;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, .2) 2px 2px 10px;
+}
+
+.linklist .project-line .inner
+{
+    padding: 1rem;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.linklist .project-line .inner .expandible
+{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex: 1 1 auto;
+    cursor: pointer;
+}
+
+.linklist .project-line .expand
+{
+    padding: 2rem;
+}
+
+.linklist .project-line .expand .content-section
+{
+    max-width: 900px;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #DFDFDF;
+}
+
+.linklist .project-line .expand .content-section:last-child
+{
+    border-bottom: none;
 }
 
 
-.linkset-header
+.linklist .project-line .expand .content-section h1
 {
-	height: 50px;
-	padding: 12px;
-	font-weight: 500;
-	border-bottom: 1px solid #AFAFAF;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
 }
 
-.data-summary-outer
+.linklist .project-line .inner .icons
+{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex: none;
+}
+
+.linklist .project-line .inner .icons .icon
+{
+    margin: 0px 10px;
+}
+
+.linklist .project-line .inner .chevron
+{
+    flex: none;
+    padding: 1rem;
+}
+
+.linklist .project-line .inner .name
+{
+    flex: 1 1 auto;
+}
+
+.linklist .project-line .inner .icons
+{
+    flex: none;
+    padding: 1rem;
+}
+
+.linklist .project-line .expand .content-section.issue-box
+{
+
+}
+
+.linklist .project-line .expand .content-section.issue-box ul
+{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    word-wrap: break-word;
+}
+
+
+.linklist .project-line .expand .content-section.issue-box li.warn b
+{
+    color: #FABE5C;
+}
+
+.linklist .project-line .expand .content-section.issue-box li.error b
+{
+    color: #FF7777;
+}
+
+
+
+.flex-table .flex-row
+{
+    display: flex;
+    word-wrap: break-word;
+    padding: .5rem;
+    border-bottom: 1px solid #DFDFDF;
+}
+
+.flex-table .flex-row:hover
+{
+    background-color: #F5F5F5;
+}
+
+.flex-table .flex-row:last-child
+{
+    border-bottom: none;
+}
+
+.flex-table .flex-row
+{
+    display: flex;
+    flex-wrap: wrap;
+    word-wrap: break-word;
+    padding: .5rem;
+    border-bottom: 1px solid #DFDFDF;
+}
+
+.flex-table .flex-row .flex-cell
+{
+    flex: 1 1 auto;
+}
+
+.flex-table .flex-row .flex-cell:first-child
+{
+    width: 400px;
+    flex: none;
+    font-weight: 600;
+}
+
+.flex-table .flex-row .flex-cell:last-child
+{
+    width: 400px;
+    max-width: 100%;
+    flex: none; 
+
+}
+
+
+
+
+.data-globalStats-outer
 {
     height: 100vh;  
     width: 100%;
@@ -43,32 +193,32 @@
     align-items: center;
 }
 
-.data-summary
+.data-globalStats
 {
     height: 70%;
     width: 100%;
 }
 
-.data-summary-chart
+.data-globalStats-chart
 {
     display: flex;
     align-items: flex-end;
     height: 100%;
 }
 
-.data-summary-bar
+.data-globalStats-bar
 {
     background-color: #FABE5C;
     padding: 0px;
     margin: 1px;
 }
 
-.data-summary-bar:hover
+.data-globalStats-bar:hover
 {
     background-color: #FEE291;
 }
 
-.data-summary-text
+.data-globalStats-text
 {
     pointer-events:none;
     display: flex;
@@ -110,18 +260,11 @@
 }
 
 /* Tooltip text */
-.tooltip .tooltiptext {
+.tooltip .popup {
     visibility: hidden;
     background-color: #555;
-    color: #fff;
-    text-align: center;
-    padding: 10px 10px;
     border-radius: 3px;
-    font-size: 1rem;
-    white-space: nowrap;
-    max-width: 300px;
 
-   
     /* Position the tooltip text */
     position: absolute;
     z-index: 1;
@@ -133,42 +276,40 @@
     /* Fade in tooltip */
     opacity: 0;
     transition: opacity 1s;
-}
 
-.tooltip .tooltiptext ul {
-    margin: 0px 0px 0px 20px;
-    text-align: left;
-}
-
-.box h1
-{
+    font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    color: #fff;
     font-size: 1rem;
-    margin-bottom: 1rem;
+    padding: .6rem;
+    white-space: nowrap;
+    text-align: center;
 }
 
-.issue-box ul
-{
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    word-wrap: break-word;
+.tooltip .text {
+    visibility: hidden;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 3px;
+    font-size: 1rem;
+    max-width: 300px;
+
+    /* Position the tooltip text */
+    position: relative;
+    z-index: 1;
+    bottom: 100%;
+    transform: translateX(-50%);
+    left:50%;
+    margin-bottom: 12px;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 1s;
 }
-
-
-.issue-box li.warn b
-{
-    color: #FABE5C;
-}
-
-.issue-box li.error b
-{
-    color: #FF7777;
-}
-
-
 
 /* Tooltip arrow */
-.tooltip .tooltiptext::after {
+.tooltip .popup::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -180,10 +321,17 @@
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
+.tooltip:hover .popup {
     visibility: visible;
     opacity: 1;
 }
+
+
+
+
+
+
+
 
 .githublink {
     color: #2B4253;
@@ -220,17 +368,61 @@
 .details-table td:last-child
 {
     overflow-wrap: break-word;
-  word-wrap: break-word;
+    word-wrap: break-word;
 
-  -ms-word-break: break-all;
-  /* This is the dangerous one in WebKit, as it breaks things wherever */
-  word-break: break-all;
-  /* Instead use this non-standard one: */
-  word-break: break-word;
+    z-indexms-word-break: break-all;
+    /* This is the dangerous one in WebKit, as it breaks things wherever */
+    word-break: break-all;
+    /* Instead use this non-standard one: */
+    word-break: break-word;
 
-  /* Adds a hyphen where the word breaks, if supported (No Blink) */
-  -ms-hyphens: auto;
-  -moz-hyphens: auto;
-  -webkit-hyphens: auto;
-  hyphens: auto;
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+tr:last-child td
+{
+    border: none;
+}
+
+.revision-chart
+{
+    width: 100%;
+    margin-top: 2rem;
+    padding: 2px;
+}
+
+.revision-chart-row 
+{
+    display: flex;
+    align-items: center;
+    margin: 1px;
+}
+
+.revision-chart-row .chart-first
+{
+    flex: none;
+    font-size: 0.75rem;
+    text-align: right;
+    width: 80px;
+    margin-right: 5px;
+}
+
+.revision-chart-row .chart-second
+{
+    flex: 1 1 auto;
+    display: flex;
+}
+
+.revision-chart-row .bar
+{
+    height: 100%;
+    background-color: #FABE5C;
+    font-size: 0.75rem;
+    text-align: right;
+    color: #fff;
+    padding: 0px 5px;
 }
