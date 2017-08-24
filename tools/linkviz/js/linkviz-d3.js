@@ -57,7 +57,7 @@ function onLoad()
 
         var labelglobalStats = sumText.append("div")
             .text(function(d) {
-                return globalStats.numDataSets + " datasets / " + globalStats.numLinks + " triples";
+                return globalStats.numDataSets + " datasets / " + globalStats.numLinks + " links";
             });
 
        
