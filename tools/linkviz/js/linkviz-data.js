@@ -79,11 +79,12 @@ function generateWarnings(metadata)
         issues.push({ level: "WARN", message: "Author is missing in metadata.ttl." });
     }
 
-    // WARN: Label missing
-    if(metadata.label == null)
-    {
+    /* SH: there are no labels
+     * WARN: Label missing
+     * if(metadata.label == null)
+      {
         issues.push({ level: "WARN", message: "Label is missing in metadata.ttl." });
-    }
+      } */
    
     // WARN: Number of links stagnant
     if(metadata.current == metadata.previous && metadata.current == metadata.preprevious)

@@ -156,8 +156,8 @@ public class CLI {
             L.info("wrote json to " + outdir + File.separator + "data.json");
         }
         //debug stuff
-        L.error("decoded: " + Utils.decodecount);
-        L.error("replaced: " + Utils.replacecount);
+        L.debug("decoded: " + Utils.decodecount);
+        L.debug("replaced: " + Utils.replacecount);
 
     }
 
