@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.dbpedia.links.lib.*;
 import org.jetbrains.annotations.NotNull;
@@ -84,18 +85,39 @@ public class CLI {
         File outdir = new File((String) options.valueOf("outdir"));
         if (!outdir.exists()) outdir.mkdirs();
         File archive = new File((String) options.valueOf("archive"));
+        if(!archive.exists()) archive.mkdirs();
 
         // prepare metadata
         List<Metadata> metadatas = getMetadata(basedir);
 
         //generate links
         if (generate) {
-            for (Metadata m : metadatas) {
+            for (Metadata m : metadatas)
+            {
                 L.info("Processing " + m.nicename + " with " + m.linkSets.size() + " linksets");
                 gl.generateLinkSets(m, outdir);
+
+
             }
 
+            //create a snapshot-revision
+            FileFilter linksFilter =
+                    new FileFilter()
+                    {
+                        @Override
+                        public boolean accept(File file) {
+                            return 	file.isDirectory() ||
+                                    (file.isFile() && file.getName().endsWith("links.nt.bz2"));
+
+                        }};
+            File snapshotRevDir=new File(archive,outdir.getName());
+            FileUtils.copyDirectory(outdir,snapshotRevDir, linksFilter,true);
+
+
+
         }
+
+
 
         // also prints all issues
         getIssues(metadatas);
