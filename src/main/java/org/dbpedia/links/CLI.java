@@ -11,7 +11,12 @@ import org.dbpedia.links.lib.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class CLI {
     private static Logger L = Logger.getLogger(CLI.class);
@@ -100,19 +105,26 @@ public class CLI {
 
             }
 
-            //create a snapshot-revision
-            FileFilter linksFilter =
-                    new FileFilter()
-                    {
-                        @Override
-                        public boolean accept(File file) {
-                            return 	file.isDirectory() ||
-                                    (file.isFile() && file.getName().endsWith("links.nt.bz2"));
+            //create a snapshot revision
+            File archiveSnapshotDir = new File(archive, outdir.getName()); //
+            if(!archiveSnapshotDir.exists())  archiveSnapshotDir.mkdirs();
 
-                        }};
-            File snapshotRevDir=new File(archive,outdir.getName());
-            FileUtils.copyDirectory(outdir,snapshotRevDir, linksFilter,true);
 
+            File dbpSnapshot = new File(outdir, "dbpedia.org");
+            File dbpArchiveSnapshot = new File(archiveSnapshotDir, "dbpedia.org");
+            if(!dbpArchiveSnapshot.exists()) dbpArchiveSnapshot.mkdirs();
+            copyLinksetFiles(dbpSnapshot,dbpArchiveSnapshot);
+
+
+            File xxxSnapshot = new File(outdir, "xxx.dbpedia.org");
+            File xxxArchiveSnapshot = new File(archiveSnapshotDir,"xxx.dbpedia.org");
+            if(!xxxArchiveSnapshot.exists()) xxxArchiveSnapshot.mkdirs();
+            File[] xxxlangs = new File(xxxSnapshot.getPath()).listFiles(File::isDirectory);
+            for (File lang: xxxlangs)
+            {
+                File langArchiveDir = new File(xxxArchiveSnapshot,lang.getName());
+                copyLinksetFiles(lang,langArchiveDir);
+            }
 
 
         }
@@ -223,6 +235,44 @@ public class CLI {
         return metadatas;
     }
 
+
+    /**
+     * copies linksets from snapshot to archive respective directory, to create a snapshot revision
+     * @param snapshotDir
+     * @param archiveSnapshotDir
+     * @throws IOException
+     */
+    public static void copyLinksetFiles(File snapshotDir, File archiveSnapshotDir) //throws IOException
+    {
+        if (!archiveSnapshotDir.exists()) archiveSnapshotDir.mkdirs();
+        Stream<Path> paths = null;
+        try
+        {
+            paths = Files.walk(Paths.get(snapshotDir.toURI()))
+                    .filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().endsWith("_links.nt.bz2") );
+        }
+        catch (IOException e)
+        {
+            L.error(e);
+        }
+
+        paths.forEach((Path p) ->
+        {	File archiveFile = new File(archiveSnapshotDir, p.getFileName().toString());
+            archiveFile.setWritable(true);
+            try
+            {
+                Files.copy(p, archiveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            }
+            catch (IOException e)
+            {
+                L.error(e);
+            }
+        });
+
+
+    }
 
     static void printIssue(Issue i, Logger L) {
         if (i.level.equals("WARN")) {
