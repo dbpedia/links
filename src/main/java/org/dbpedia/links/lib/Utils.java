@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.dbpedia.extraction.UriUtils$;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -113,7 +114,11 @@ public final class Utils {
                 } catch (RiotException e) {
                     linkSet.issues.add(Issue.create("ERROR", "Syntax check failed: " + sourceFile + ", skipping", L, e));
                     continue;
+                } catch (Exception e) { // e.g., java.lang.reflect.InvocationTargetException | java.nio.charset.MalformedInputException
+                    linkSet.issues.add(Issue.create("ERROR", "Syntax check failed: " + sourceFile + ", skipping", L, e));
+                    continue;
                 }
+
 
 
                 try (BufferedReader br = new BufferedReader(new FileReader(sourceFile))) {
