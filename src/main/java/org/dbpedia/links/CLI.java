@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -48,6 +50,10 @@ public class CLI {
         parser.accepts("scriptonly", "processes all metadata files that contain scripts, debug flag; default false");
         parser.accepts("ntfileonly", "processes all metadata files that contain ntriplefiles, debug flag; default false");
         parser.accepts("linkconfonly", "processes all metadata files that contain link configurations for SILK, debug flag; default false");
+        parser.accepts("rdom","day of month to produce a release (rather than a snapshot); default 1")
+                .withRequiredArg().ofType(Integer.class)
+                .defaultsTo(1);
+
         return parser;
     }
 
@@ -86,6 +92,9 @@ public class CLI {
         gl.scriptonly = options.has("scriptonly");
         gl.linkConfsonly = options.has("linkconfonly");
         gl.ntripleFilesonly = options.has("ntfileonly");
+
+        int rdom = (int) options.valueOf("rdom");
+        //System.out.println("+++++++++++++ rdom "+rdom+"------------");
         File basedir = new File((String) options.valueOf("basedir"));
         File outdir = new File((String) options.valueOf("outdir"));
         if (!outdir.exists()) outdir.mkdirs();
@@ -105,25 +114,28 @@ public class CLI {
 
             }
 
-            //create a snapshot revision
-            File archiveSnapshotDir = new File(archive, outdir.getName()); //
-            if(!archiveSnapshotDir.exists())  archiveSnapshotDir.mkdirs();
+            //create  revision in archive: snapshot or release
+            String revisionDirName   = (LocalDate.now().getDayOfMonth()==rdom)?
+                                                LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE):
+                                                outdir.getName();
+            File revisionDir = new File(archive, revisionDirName); //
+            if(!revisionDir.exists())  revisionDir.mkdirs();
 
 
             File dbpSnapshot = new File(outdir, "dbpedia.org");
-            File dbpArchiveSnapshot = new File(archiveSnapshotDir, "dbpedia.org");
-            if(!dbpArchiveSnapshot.exists()) dbpArchiveSnapshot.mkdirs();
-            copyLinksetFiles(dbpSnapshot,dbpArchiveSnapshot);
+            File dbpRevision = new File(revisionDir, "dbpedia.org");
+            if(!dbpRevision.exists()) dbpRevision.mkdirs();
+            copyLinksetFiles(dbpSnapshot,dbpRevision);
 
 
             File xxxSnapshot = new File(outdir, "xxx.dbpedia.org");
-            File xxxArchiveSnapshot = new File(archiveSnapshotDir,"xxx.dbpedia.org");
-            if(!xxxArchiveSnapshot.exists()) xxxArchiveSnapshot.mkdirs();
+            File xxxRevision = new File(revisionDir,"xxx.dbpedia.org");
+            if(!xxxRevision.exists()) xxxRevision.mkdirs();
             File[] xxxlangs = new File(xxxSnapshot.getPath()).listFiles(File::isDirectory);
             for (File lang: xxxlangs)
             {
-                File langArchiveDir = new File(xxxArchiveSnapshot,lang.getName());
-                copyLinksetFiles(lang,langArchiveDir);
+                File langRevisionDir = new File(xxxRevision,lang.getName());
+                copyLinksetFiles(lang,langRevisionDir);
             }
 
 
@@ -133,8 +145,8 @@ public class CLI {
 
         // also prints all issues
         getIssues(metadatas);
-
-        if (archive.exists()) {
+        if (false) {
+        //if (archive.exists()) {
             final List<File> revisions = Lists.newArrayList(archive.listFiles(File::isDirectory));
             Collections.sort(revisions, new Comparator<File>() {
                 @Override
@@ -239,12 +251,12 @@ public class CLI {
     /**
      * copies linksets from snapshot to archive respective directory, to create a snapshot revision
      * @param snapshotDir
-     * @param archiveSnapshotDir
+     * @param archiveRevisionDir
      * @throws IOException
      */
-    public static void copyLinksetFiles(File snapshotDir, File archiveSnapshotDir) //throws IOException
+    public static void copyLinksetFiles(File snapshotDir, File archiveRevisionDir) //throws IOException
     {
-        if (!archiveSnapshotDir.exists()) archiveSnapshotDir.mkdirs();
+        if (!archiveRevisionDir.exists()) archiveRevisionDir.mkdirs();
         Stream<Path> paths = null;
         try
         {
@@ -258,7 +270,7 @@ public class CLI {
         }
 
         paths.forEach((Path p) ->
-        {	File archiveFile = new File(archiveSnapshotDir, p.getFileName().toString());
+        {	File archiveFile = new File(archiveRevisionDir, p.getFileName().toString());
             archiveFile.setWritable(true);
             try
             {
