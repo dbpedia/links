@@ -145,8 +145,8 @@ public class CLI {
 
         // also prints all issues
         getIssues(metadatas);
-        if (false) {
-        //if (archive.exists()) {
+
+        if (archive.exists()) {
             final List<File> revisions = Lists.newArrayList(archive.listFiles(File::isDirectory));
             Collections.sort(revisions, new Comparator<File>() {
                 @Override
