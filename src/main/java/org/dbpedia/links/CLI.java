@@ -93,8 +93,8 @@ public class CLI {
         gl.linkConfsonly = options.has("linkconfonly");
         gl.ntripleFilesonly = options.has("ntfileonly");
 
-        int rdom = (int) options.valueOf("rdom");
-        //System.out.println("+++++++++++++ rdom "+rdom+"------------");
+        final int rdom = (int) options.valueOf("rdom");
+        System.out.println("+++++++++++++ rdom "+rdom+"------------");
         File basedir = new File((String) options.valueOf("basedir"));
         File outdir = new File((String) options.valueOf("outdir"));
         if (!outdir.exists()) outdir.mkdirs();
@@ -104,6 +104,9 @@ public class CLI {
         // prepare metadata
         List<Metadata> metadatas = getMetadata(basedir);
 
+        String revisionDirName=(LocalDate.now().getDayOfMonth()==rdom)?
+                                LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE):
+                                outdir.getName();
         //generate links
         if (generate) {
             for (Metadata m : metadatas)
@@ -115,9 +118,6 @@ public class CLI {
             }
 
             //create  revision in archive: snapshot or release
-            String revisionDirName   = (LocalDate.now().getDayOfMonth()==rdom)?
-                                                LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE):
-                                                outdir.getName();
             File revisionDir = new File(archive, revisionDirName); //
             if(!revisionDir.exists())  revisionDir.mkdirs();
 
@@ -141,12 +141,25 @@ public class CLI {
 
         }
 
+        //if it is a release, remove snapshot
+        if (archive.exists() && !revisionDirName.equals(outdir.getName()))
+        {
+                File snapshotVerArchive = new File(archive,outdir.getName());
+                if (snapshotVerArchive.exists() &&snapshotVerArchive.isDirectory())
+                {
+                    L.info("removing snapshot dir: "+outdir.getName()+" revision from "+archive.getName());
+                    FileUtils.deleteDirectory(snapshotVerArchive);
+                }
+        }
+
 
 
         // also prints all issues
         getIssues(metadatas);
 
+        //retrieve revision statistics for each linkset
         if (archive.exists()) {
+
             final List<File> revisions = Lists.newArrayList(archive.listFiles(File::isDirectory));
             Collections.sort(revisions, new Comparator<File>() {
                 @Override

@@ -28,8 +28,8 @@ then
 fi
 
 chmod 775  $dbpedia_links/archive/$REVISIONFOLDER
-cd $www/downloads.dbpedia.org/links
-ln -sfn $dbpedia_links/archive/$REVISIONFOLDER #$www/downloads.dbpedia.org/links/$REVISIONFOLDER
+#cd $www/downloads.dbpedia.org/links
+ln -sfn $dbpedia_links/archive/$REVISIONFOLDER $www/downloads.dbpedia.org/links/$REVISIONFOLDER
 
 
 cp snapshot/data.json tools/linkviz/data/
