@@ -55,9 +55,9 @@ public class GenerateLinks {
         //Set<String> outputFileNames = new HashSet<String>();
         File outFolder = new File(baseOutFolder + File.separator + m.reponame + File.separator + m.nicename + File.separator);
         outFolder.mkdirs();
-        File outFolderData = new File(outFolder + File.separator + "data" + File.separator);
+        File outFolderData = new File(outFolder, "data" + File.separator);
         outFolderData.mkdirs();
-        File resultFile = new File(outFolder + File.separator + m.nicename + "_links.nt.bz2");
+        File resultFile = new File(outFolder, m.nicename + "_links.nt.bz2");
 
         //DEBUG part
         int sparqlsize = 0;
@@ -79,7 +79,7 @@ public class GenerateLinks {
         m.linkSets.stream().forEach(linkSet -> {
 
             if (linkSet.endpoint != null) {
-                File destination = new File(outFolderData + linkSet.outputFilePrefix + "_sparql.nt");
+                File destination = new File(outFolderData, linkSet.outputFilePrefix + "_sparql.nt");
                 sparqlForLinkSet(linkSet, destination);
             }
 
@@ -111,7 +111,7 @@ public class GenerateLinks {
         int count = 0;
         for (String ntriplefile : linkSet.ntriplefilelocations) {
             L.info("Processing (NT-FILE): " + ntriplefile);
-            File destination = new File(outFolderData + linkSet.outputFilePrefix + "_ntriplefile" + count + ".nt");
+            File destination = new File(outFolderData, linkSet.outputFilePrefix + "_ntriplefile" + count + ".nt");
 
             if (ntriplefile.startsWith("http://")) {
                 if (getDate(ntriplefile) == null) {
@@ -138,7 +138,7 @@ public class GenerateLinks {
     private void scriptsForLinkset(File outFolderData, LinkSet linkSet) {
         int count = 0;
         for (String script : linkSet.scripts) {
-            File destination = new File(outFolderData + linkSet.outputFilePrefix + "_script" + count + ".nt");
+            File destination = new File(outFolderData, linkSet.outputFilePrefix + "_script" + count + ".nt");
             long differenceInDays = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
             L.info("Processing (SCRIPT): " + script + " last executed " + differenceInDays + " days ago");
 
