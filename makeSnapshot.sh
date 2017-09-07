@@ -13,24 +13,18 @@ then
 fi
 
 
-
-
 git pull
 mvn clean install exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate --rdom=${RDOM}" -Dexec.cleanupDaemonThreads=false
 
 # generated results reside under $dbpedia_links/snapshot;
 # respective linksets are to be copied to $www/downloads.dbpedia.org/links/$REVISIONFOLDER
+# link in www is created every month 
 
-snapLink=$www/downloads.dbpedia.org/links/snapshot
-if [ $(date -d "$DATE" '+%d') -eq $RDOM ] && [ -L $snapLink ]
+if [ $(date -d "$DATE" '+%d') -eq $RDOM ] 
 then
-    rm $snapLink #$www/downloads.dbpedia.org/links/snapshot
+    chmod 775  $dbpedia_links/archive/$REVISIONFOLDER
+    ln -sfn $dbpedia_links/archive/$REVISIONFOLDER $www/downloads.dbpedia.org/links/$REVISIONFOLDER
 fi
-
-chmod 775  $dbpedia_links/archive/$REVISIONFOLDER
-#cd $www/downloads.dbpedia.org/links
-ln -sfn $dbpedia_links/archive/$REVISIONFOLDER $www/downloads.dbpedia.org/links/$REVISIONFOLDER
-
 
 cp snapshot/data.json tools/linkviz/data/
 git add tools/linkviz/data/
