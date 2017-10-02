@@ -28,6 +28,10 @@ function dataLoaded(data) {
         // Load project metadata
         project.metadata = createMetadata(project);
 
+        //FIX: formatting error with issue messages
+        for(var i in project.issues) {
+            project.issues[i].message = project.issues[i].message.replace("<", "").replace(">", "");
+        }
         // Find additional issues with the data
         project.issues = project.issues.concat(generateWarnings(project.metadata))
 
@@ -58,6 +62,8 @@ function createMetadata(project)
     metadata.previous = getTripleCount(project, 1);
     metadata.preprevious = getTripleCount(project, 2);
     metadata.average = getTripleAverage(project);
+    
+ 
 
     return metadata;
 }
