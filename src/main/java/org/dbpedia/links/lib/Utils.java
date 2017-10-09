@@ -32,6 +32,7 @@ public final class Utils {
     public static int decodecount = 0;
     public static boolean deactivateUriToIriDecodingForTests = false;
 
+    private static String commentLineMarker = "#";
 
     /**
      * Gets all metadata.ttl Files transitively from a root folderURL (input), it returns a list of files
@@ -113,7 +114,7 @@ public final class Utils {
                     L.info("Syntax check passed: " + sourceFile);
                 } catch (RiotException e) {
                     linkSet.issues.add(Issue.create("ERROR", "Syntax check failed: " + sourceFile + ", skipping", L, e));
-                    continue;
+                    //continue;
                 } catch (Exception e) { // e.g., java.lang.reflect.InvocationTargetException | java.nio.charset.MalformedInputException
                     linkSet.issues.add(Issue.create("ERROR", "Syntax check failed: " + sourceFile + ", skipping", L, e));
                     continue;
@@ -127,7 +128,7 @@ public final class Utils {
 
                         // Validate whether the links have the right DBpedia namespace for the subject
                         String ns = "<" + namespace;
-                        if (!line.startsWith(ns)) {
+                        if (!(line.startsWith(ns) || line.startsWith(commentLineMarker))) {
                             nodbpediacount++;
                             // remove all triples not starting with the right subject
                             continue;
