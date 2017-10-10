@@ -4,7 +4,7 @@
 @prefix dbp:	<http://dbpedia.org/property/> .
 
 <#ls1> a void:Linkset ;
-	dc:author <amit> ;
-	dbp:ntriplefilelocation <http://downloads.dbpedia.org/2016-04/links/nytimes_links_fixed.nt.bz2> ;
-	void:objectsTarget <http://data.nytimes.com/> ;
-	dct:description "nytimes information copied statically as legacy links from old releases. So far there has been no maintainer for this linkset. Do you have a better description? Can you contribute better links? Then have a look at the how-to wiki page: https://github.com/dbpedia/links/wiki/How-To-Contribute-Links-to-DBpedia " .
+	dc:author <TODO> ;
+	dbp:ntriplefilelocation <nyt-links.ttl> ;
+	void:objectsTarget <http://developer.nytimes.com/> ;
+	dct:description "TODO " .
