@@ -126,9 +126,15 @@ public final class Utils {
                     String line;
                     while ((line = br.readLine()) != null) {
 
+                        //skip comment line
+                       if(line.startsWith(commentLineMarker))
+                        {
+                            continue;
+                        }
+
                         // Validate whether the links have the right DBpedia namespace for the subject
                         String ns = "<" + namespace;
-                        if (!(line.startsWith(ns) || line.startsWith(commentLineMarker))) {
+                        if (!(line.startsWith(ns) && line.indexOf(">") > 0)) {
                             nodbpediacount++;
                             // remove all triples not starting with the right subject
                             continue;
