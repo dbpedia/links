@@ -2,6 +2,7 @@
 @prefix dc: 	<http://purl.org/dc/elements/1.1/> .
 @prefix void: 	<http://rdfs.org/ns/void#> .
 @prefix dbp:	<http://dbpedia.org/property/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 
 <http://zbw.eu/stw/mapping/dbpedia>
 rdfs:comment "copied from ttl version of the linkset file";
