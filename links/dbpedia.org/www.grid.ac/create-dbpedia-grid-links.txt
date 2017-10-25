@@ -42,5 +42,7 @@ cat grid-wikidata-redirected.ttl grid-dbpedia-wikipediabased.ttl wikidata-grid-r
 # input=dbpedia-grid-unredirected.ttl
 
 # rename and uniq the result file (turning https into http addresses)
-cat dbpedia-grid-unredirected-redirected.ttl | perl -pe 's/(.*)(https:)(.*)/$1http:$3/g' | sort -u > dbpedia-grid-links.ttl
+cat dbpedia-grid-unredirected-redirected.ttl | perl -pe 's/(.*)(https:)(.*)/$1http:$3/g' | sort -u > grid-links.ttl
 
+#############
+# using grid-isni and wikidata-isni links i added just about 100 additional links
