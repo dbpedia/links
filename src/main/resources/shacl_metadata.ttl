@@ -37,6 +37,7 @@ ex:MyShape
         sh:minCount 1;
         sh:nodeKind sh:Literal ;
         sh:datatype xsd:string ;
+	sh:severity rlog:WARN
     ] ;
 
     sh:property [
