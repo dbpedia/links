@@ -5,7 +5,8 @@
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix foaf:    <http://xmlns.com/foaf/0.1/> .
 @prefix cc:      <http://creativecommons.org/ns#> .
-@prefix waiver:  <http://vocab.org/waiver/terms/> . 
+@prefix waiver:  <http://vocab.org/waiver/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
 <http://zbw.eu/stw/mapping/dbpedia>
 rdfs:comment "copied from ttl version of the linkset file";
