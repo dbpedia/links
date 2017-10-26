@@ -1,0 +1,32 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dc: 	 <http://purl.org/dc/elements/1.1/> .
+@prefix void: 	 <http://rdfs.org/ns/void#> .
+@prefix dbp:	 <http://dbpedia.org/property/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix cc:      <http://creativecommons.org/ns#> .
+@prefix waiver:  <http://vocab.org/waiver/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<http://zbw.eu/stw/mapping/dbpedia>
+rdfs:comment "copied from ttl version of the linkset file";
+foaf:page <http://zbw.eu/stw/version/9.04/download/about.en.html>;
+        a                       void:Linkset ;
+        rdfs:label              "Mapping STW - DBpedia"@de , "Mapping STW - DBpedia"@en ;
+        cc:attributionName      "ZBW - Leibniz Information Centre for Economics"@en , "ZBW - Leibniz-Informationszentrum Wirtschaft"@de ;
+        cc:attributionURL       "http://zbw.eu" ;
+        cc:license              <http://creativecommons.org/publicdomain/zero/1.0/> ;
+        dc:creator              "ZBW - Leibniz Information Centre for Economics"@en , "ZBW - Leibniz-Informationszentrum Wirtschaft"@de ;
+        dc:publisher            "ZBW - Leibniz Information Centre for Economics"@en , "ZBW - Leibniz-Informationszentrum Wirtschaft"@de ;
+        dcterms:description     "The mapping was created automatically by looking up German and English STW labels in DBpedia (labels and redirects)."@en ;
+        dcterms:description     "Das Mapping wurde automatisiert durch den Abgleich deutscher und englischer STW Labels mit DBpedia Labels und Redirects erstellt."@de ;
+        dcterms:license         <http://creativecommons.org/publicdomain/zero/1.0/> ;
+        dcterms:rights          "Die CC0-Lizenzierung des Mappings soll eine möglichst breite und einfache Wiederverwendung ohne rechtliche Einschränkungen fördern. \n  Über einen Hinweis auf die oben angegebene Urheberschaft und eine freie Verfügbarkeit\n  von Projekten, die dieses Mapping verwenden, würden wir uns \n  jedoch freuen."@de , "The CC0 license has been applied to the mapping for broad and easy \n  re-use without legal restrictions. We would, however, appreciate an \n  attribution to the creators (as indicated above) and the free availability\n  of projects which make use of this mapping."@en ;
+        void:propertyPartition  [ void:property  skos:closeMatch ;
+                                  void:triples   1697
+                                ] ;
+        void:propertyPartition  [ void:property  skos:exactMatch ;
+                                  void:triples   915
+                                ] ;
+        void:target             <http://zbw.eu/stw> , <http://zbw.eu/stw/mapping/dbpedia/target> ;
+        waiver:norms            <http://opendatacommons.org/norms/odc-by-sa/> .
