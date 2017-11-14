@@ -156,9 +156,8 @@ public class CLI {
         File cache = new File("cache");
         String cachedFilenamePattern = "^(-)?\\d+.ser";
         List<File> cachedOutputFiles = Utils.getFilesByNamePattern(cache,cachedFilenamePattern);
+
         
-        cachedOutputFiles.stream()
-                        .forEach(f->System.err.print(f.getName()+";"));
 
         L.info("delete cached LIMES-output files from "+cache.getCanonicalPath()+ " :"
                 +Arrays.toString(cachedOutputFiles.stream()
