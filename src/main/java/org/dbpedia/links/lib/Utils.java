@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
@@ -245,6 +247,37 @@ public final class Utils {
         }
         return is;
     }
+
+
+    /**
+     * Deletes file which name matches a pattern from target directory
+     * @param targetDir target directory
+     * @param filenamePattern
+     */
+    public static void deleteFilesByNamePattern(File targetDir, String filenamePattern)
+    {
+        Pattern pattern = Pattern.compile(filenamePattern);
+        Arrays.stream(targetDir.listFiles())
+                .filter((File f)->f.getName().matches(filenamePattern))
+                .forEach((File f) -> {
+                    try {
+
+                        Files.delete(f.toPath());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+    }
+
+    public static List<File> getFilesByNamePattern(File targetDir, String filenamePattern)
+    {
+          return Arrays.stream(targetDir.listFiles())
+                .filter((File f)->f.getName().matches(filenamePattern))
+                .collect(Collectors.toList());
+
+    }
+
 
     @Deprecated
     public static Model checkRDFSyntax(File file) throws FileNotFoundException, CompressorException {
