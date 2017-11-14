@@ -94,7 +94,7 @@ public class CLI {
         gl.ntripleFilesonly = options.has("ntfileonly");
 
         final int rdom = (int) options.valueOf("rdom");
-        System.out.println("+++++++++++++ rdom "+rdom+"------------");
+        //System.out.println("+++++++++++++ rdom "+rdom+"------------");
         File basedir = new File((String) options.valueOf("basedir"));
         File outdir = new File((String) options.valueOf("outdir"));
         if (!outdir.exists()) outdir.mkdirs();

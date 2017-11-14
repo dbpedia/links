@@ -1,9 +1,15 @@
 package org.dbpedia.links.lib;
 
 
+import org.aksw.limes.core.controller.Controller;
+import org.aksw.limes.core.controller.ResultMappings;
+import org.aksw.limes.core.io.config.Configuration;
+import org.aksw.limes.core.io.serializer.ISerializer;
+import org.aksw.limes.core.io.serializer.SerializerFactory;
 import org.aksw.rdfunit.io.writer.RdfFileWriter;
 import org.aksw.rdfunit.sources.TestSource;
 import org.aksw.rdfunit.sources.TestSourceBuilder;
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -84,7 +90,9 @@ public class GenerateLinks {
             }
 
             if (!linkSet.linkConfs.isEmpty()) {
-                L.info("linkConfs not implemented yet");
+                //L.info("linkConfs not implemented yet");
+                linkConfsForLinkset(outFolderData,linkSet);
+
             }
 
             if (!linkSet.scripts.isEmpty() && executeScripts ) {
@@ -150,6 +158,23 @@ public class GenerateLinks {
             count++;
         }
     }
+    private void linkConfsForLinkset(File outFolderData, LinkSet linkSet) {
+        int count = 0;
+        for(String linkConf: linkSet.linkConfs)
+        {
+            File destination = new File(outFolderData, linkSet.outputFilePrefix + "_linkConf" + count + ".nt");
+            long differenceInDays = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
+            L.info("Processing (LINKCONF): " + linkConf + " last executed " + differenceInDays + " days ago");
+            if (differenceInDays > linkSet.updateFrequencyInDays) {
+
+                             executeLinkConf(linkConf, destination);
+            }
+            linkSet.destinationFiles.add(destination.toString());
+            count++;
+
+        }
+    }
+
 
     private void sparqlForLinkSet(LinkSet linkSet, File destination) {
         Model model = ModelFactory.createDefaultModel();
@@ -230,6 +255,23 @@ public class GenerateLinks {
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot execute script: " + file.getAbsolutePath(), e);
         }
+    }
+
+    /**
+     Execute LIMES/SILK with a given configuration file.
+     @param linkConf configuration file
+     @param destination output file
+     */
+    private void executeLinkConf(String linkConf, File destination)  {
+        CommandLine cmd = Controller.parseCommandLine(new String[]{linkConf});
+        Configuration config = Controller.getConfig(cmd);
+
+        String outputFormat = config.getOutputFormat();
+        ISerializer output = SerializerFactory.createSerializer(outputFormat);
+        output.setPrefixes(config.getPrefixes());
+        ResultMappings mappings = Controller.getMapping(config);
+
+        output.writeToFile(mappings.getAcceptanceMapping(), config.getAcceptanceRelation(), destination.getAbsolutePath());
     }
 
     private static Date getDate(String url) {
