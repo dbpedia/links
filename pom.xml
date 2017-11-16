@@ -22,8 +22,9 @@
         <jena-sparql-api-version>3.1.0-2-SNAPSHOT</jena-sparql-api-version>
         <!-- org-apache-jena-version>3.0.1</org-apache-jena-version -->
         <org-apache-jena-version>3.1.0</org-apache-jena-version>
-        <!-- rdfunit-version>0.8.7</rdfunit-version -->
         <rdfunit-version>0.8.8</rdfunit-version>
+        <!-- rdfunit-version>0.8.8</rdfunit-version -->
+>>>>>>> 1ee377b6adf54cb20f12f1074529bc386573e605
         <slf4j-version>1.7.19</slf4j-version>
     </properties>
 
