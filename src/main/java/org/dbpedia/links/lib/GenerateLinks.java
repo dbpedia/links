@@ -258,7 +258,7 @@ public class GenerateLinks {
     }
 
     /**
-     Execute LIMES/SILK with a given configuration file.
+     Execute LIMES with a given configuration file.
      @param linkConf configuration file
      @param destination output file
      */
