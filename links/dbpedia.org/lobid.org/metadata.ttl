@@ -5,8 +5,9 @@
 @prefix dbp:		<http://dbpedia.org/property/> .
 
 <#ls1> a void:Linkset ;
-	dbp:script "scripts/makeManifestationLinks.sh"^^dbp:bash ; 
-	dbp:updateFrequencyInDays "30"^^xsd:integer ;
+	#dbp:script "scripts/makeManifestationLinks.sh"^^dbp:bash ; 
+	dbp:script "scripts/makeManifestationLinks.sh" ; 
+	dbp:updateFrequencyInDays 30 ; 
 	dbp:ntriplefilelocation <manifestation_links.nt> ;
 #	dbp:linkConf <link-specs/lobid_dbpedia_Title.xml> ;
 	void:objectsTarget <https://datahub.io/dataset/lobid-resources> ;
@@ -15,8 +16,9 @@
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	.
 
 <#ls2> a void:Linkset ;
-	dbp:script "scripts/makeOrganisationLinks.sh"^^dbp:bash ;
-	dbp:updateFrequencyInDays "30"^^xsd:integer ;
+	#dbp:script "scripts/makeOrganisationLinks.sh"^^dbp:bash ;
+	dbp:script "scripts/makeOrganisationLinks.sh" ;
+	dbp:updateFrequencyInDays 30 ;
 	dbp:ntriplefilelocation <organisation_links.nt> ;
 #	dbp:linkConf <link-specs/lobid_dbpedia_Title.xml> ;
 	void:objectsTarget <https://datahub.io/dataset/lobid-resources> ;

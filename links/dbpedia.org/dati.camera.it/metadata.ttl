@@ -2,6 +2,7 @@
 @prefix dc: 		<http://purl.org/dc/elements/1.1/> .
 @prefix void: 		<http://rdfs.org/ns/void#> .
 @prefix dbp:		<http://dbpedia.org/property/> .
+@prefix xsd: 		<http://www.w3.org/2001/XMLSchema#> .
 
 <#ls1> a void:Linkset ;
 	dbp:endpoint <http://dati.camera.it/sparql> ;
@@ -12,6 +13,6 @@
 	dc:author <https://github.com/dvcama> ;
 	dct:description "This is a complete catalogue of digital data and documents from the Legislature of the Kingdom of Sardinia to the fifteenth of the Republic, which supply the historical portal of the Chamber of Deputies. There are also the first datasets of Deputies, parliamentary groups and bodies of the current legislature." ;
 	dbp:approvedPatch <patches/patch1/patch.ttl> ;
-	dbp:updateFrequencyInDays 10;
+	dbp:updateFrequencyInDays 10 ; #"10"^^xsd:integer;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	;
 	dbp:recordedError "provided ntriplefilelocation is in turtle, we implemented a patch to fix this, but patches are not working right now. Intended fix in September 2017" .

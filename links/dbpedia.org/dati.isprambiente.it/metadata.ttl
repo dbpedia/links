@@ -2,6 +2,7 @@
 @prefix dc: 		<http://purl.org/dc/elements/1.1/> .
 @prefix void: 		<http://rdfs.org/ns/void#> .
 @prefix dbp:		<http://dbpedia.org/property/> .
+@prefix xsd: 		<http://www.w3.org/2001/XMLSchema#> .
 
 <#ls1> a void:Linkset ;
 	dbp:endpoint <http://dati.isprambiente.it/sparql> ;
@@ -9,5 +10,5 @@
 	void:objectsTarget <https://datahub.io/dataset/ispra-lod-place> ;
 	dc:author <https://github.com/dvcama> ;
 	dct:description "dati.isprambiente.it - ISPRA Linked Open Data - The administrative divisions of Italy (regions/provinces/municipalities) + shape of municipalities + link to istat + link to geoname/dbpedia" ;
-	dbp:updateFrequencyInDays 30;
+	dbp:updateFrequencyInDays  30 ; #"30"^^xsd:integer ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/>	.
