@@ -147,7 +147,11 @@ public class GenerateLinks {
         int count = 0;
         for (String script : linkSet.scripts) {
             File destination = new File(outFolderData, linkSet.outputFilePrefix + "_script" + count + ".nt");
-            long differenceInDays = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
+            long  differenceInDays
+                    = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
+
+
+
             L.info("Processing (SCRIPT): " + script + " last executed " + differenceInDays + " days ago");
 
             if (differenceInDays > linkSet.updateFrequencyInDays) {
@@ -163,11 +167,11 @@ public class GenerateLinks {
         for(String linkConf: linkSet.linkConfs)
         {
             File destination = new File(outFolderData, linkSet.outputFilePrefix + "_linkConf" + count + ".nt");
-            long differenceInDays = ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
+            long differenceInDays =
+                    ((new Date().getTime()) - (new Date(destination.lastModified()).getTime())) / (24 * 60 * 60 * 1000);
             L.info("Processing (LINKCONF): " + linkConf + " last executed " + differenceInDays + " days ago");
             if (differenceInDays > linkSet.updateFrequencyInDays) {
-
-                             executeLinkConf(linkConf, destination);
+                      executeLinkConf(linkConf, destination);
             }
             linkSet.destinationFiles.add(destination.toString());
             count++;
@@ -227,7 +231,7 @@ public class GenerateLinks {
      */
     //TODO error handling
     private void executeShellScript(File file, File destination) {
-        String path = file.getParentFile().getAbsolutePath();//.replace("\\", "/");
+        String path = file.getParentFile().getAbsolutePath().replace("\\", "/");
         String cmd = "./" + file.getName() + " " + destination.getAbsolutePath();
         L.info("Executing script at " + path);
         L.info("bash -c " + cmd);

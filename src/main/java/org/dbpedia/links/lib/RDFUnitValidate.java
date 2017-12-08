@@ -37,7 +37,7 @@ public class RDFUnitValidate {
 
     public TestExecution checkMetadataModelWithRdfUnit(Model model) {
 
-        
+
         return RDFUnitStaticValidator.validate(TestCaseExecutionType.shaclTestCaseResult,model,this.ts);
 
     }
