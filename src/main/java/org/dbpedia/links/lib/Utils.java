@@ -1,5 +1,6 @@
 package org.dbpedia.links.lib;
 
+import com.google.common.base.Charsets;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
@@ -14,10 +15,14 @@ import org.dbpedia.extraction.UriUtils$;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
@@ -108,10 +113,16 @@ public final class Utils {
                         continue;
                     }
                 }*/
+
+
+
+                Reader in = new InputStreamReader(new FileInputStream(sourceFile), StandardCharsets.UTF_8);
                 try {
                     Model model = ModelFactory.createDefaultModel();
-                    RDFDataMgr.read(model, sourceFile.toURI().toString(), "", Lang.NTRIPLES);
+                    //RDFDataMgr.read(model, sourceFile.toURI().toString(), "", Lang.NTRIPLES);
+                    RDFDataMgr.read(model, in, "", Lang.NTRIPLES);
                     L.info("Syntax check passed: " + sourceFile);
+
                 } catch (RiotException e) {
                     linkSet.issues.add(Issue.create("ERROR", "Syntax check failed: " + sourceFile + ", skipping", L, e));
                     //continue;
@@ -119,6 +130,11 @@ public final class Utils {
                     linkSet.issues.add(Issue.create("ERROR", "Syntax check failed: " + sourceFile + ", skipping", L, e));
                     continue;
                 }
+                finally  {
+                    in.close();
+                }
+
+
 
 
 
@@ -166,6 +182,7 @@ public final class Utils {
 
                         //collect and sort
                         ss.add(line);
+
                     }
                 }
                 if (nodbpediacount > 0) {
@@ -174,6 +191,8 @@ public final class Utils {
 
 
             }
+
+
 
 
             //FileWriter fw = new FileWriter(destination);
@@ -245,6 +264,42 @@ public final class Utils {
         }
         return is;
     }
+
+
+    /*public static StringReader getStringReaderForFile(File file)
+    {
+
+    }*/
+
+    /**
+     * Deletes file which name matches a pattern from target directory
+     * @param targetDir target directory
+     * @param filenamePattern
+     */
+    public static void deleteFilesByNamePattern(File targetDir, String filenamePattern)
+    {
+        Pattern pattern = Pattern.compile(filenamePattern);
+        Arrays.stream(targetDir.listFiles())
+                .filter((File f)->f.getName().matches(filenamePattern))
+                .forEach((File f) -> {
+                    try {
+
+                        Files.delete(f.toPath());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+    }
+
+    public static List<File> getFilesByNamePattern(File targetDir, String filenamePattern)
+    {
+          return Arrays.stream(targetDir.listFiles())
+                .filter((File f)->f.getName().matches(filenamePattern))
+                .collect(Collectors.toList());
+
+    }
+
 
     @Deprecated
     public static Model checkRDFSyntax(File file) throws FileNotFoundException, CompressorException {

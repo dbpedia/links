@@ -1,0 +1,13 @@
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
+@prefix xsd: 	<http://www.w3.org/2001/XMLSchema#> .
+
+<#ls1> a void:Linkset ;
+	dbp:linkConf <link-specs/airport-dbp-ldg.ttl> ;
+	dc:author <do> ;
+	dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+	dbp:updateFrequencyInDays "30"^^xsd:integer ;
+	dcterms:description """This dataset contains links to information on airports from LinkedGeoData.""" .

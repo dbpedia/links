@@ -18,13 +18,27 @@
         <file.encoding>UTF-8</file.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jena-sparql-api-version>3.0.1-1</jena-sparql-api-version>
-        <org-apache-jena-version>3.0.1</org-apache-jena-version>
-        <!--org-apache-jena-version>3.4.0</org-apache-jena-version-->
-        <rdfunit-version>0.8</rdfunit-version>
+        <!--jena-sparql-api-version>3.0.1-1</jena-sparql-api-version-->
+        <jena-sparql-api-version>3.1.0-2-SNAPSHOT</jena-sparql-api-version>
+        <!-- org-apache-jena-version>3.0.1</org-apache-jena-version -->
+        <org-apache-jena-version>3.1.0</org-apache-jena-version>
+        <rdfunit-version>0.8.8</rdfunit-version>
+        <!-- rdfunit-version>0.8.8</rdfunit-version -->
         <slf4j-version>1.7.19</slf4j-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>23.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -105,7 +119,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+
+                <groupId>org.apache.maven.plugins</groupId>
+
+                <artifactId>maven-enforcer-plugin</artifactId>
+
+                <version>1.4.1</version>
+
+                <configuration>
+
+                    <rules>
+                        <dependencyConvergence/>
+                    </rules>
+
+                </configuration>
+
+            </plugin>
+
         </plugins>
+
     </build>
     <dependencies>
 
@@ -116,16 +149,41 @@
             <scope>test</scope>
         </dependency>
 
+
         <dependency>
             <groupId>org.aksw.rdfunit</groupId>
             <artifactId>rdfunit-io</artifactId>
             <version>${rdfunit-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.aksw.rdfunit</groupId>
             <artifactId>rdfunit-core</artifactId>
             <version>${rdfunit-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- jena-sparql-api -->
@@ -196,6 +254,12 @@
             <groupId>org.mapdb</groupId>
             <artifactId>mapdb</artifactId>
             <version>3.0.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
         <dependency>
@@ -210,8 +274,32 @@
             <version>2.11.4</version>
         </dependency>
 
+        <!--  LIMES has to be installed independently, since it currently does not have an entry in the maven repository  -->
+        <dependency>
+            <groupId>org.aksw.limes.core</groupId>
+            <artifactId>limes-core</artifactId>
+            <version>1.2.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
 
     </dependencies>
+
     <repositories>
         <repository>
             <!--releases>
@@ -224,7 +312,10 @@
             <url>http://downloads.dbpedia.org/maven2</url>
             <layout>default</layout>
         </repository>
+        <repository>
+            <id>maven.aksw.snapshots</id>
+            <name>AKSW Snapshot Repository</name>
+            <url>http://maven.aksw.org/archiva/repository/snapshots</url>
+        </repository>
     </repositories>
-
-
 </project>
