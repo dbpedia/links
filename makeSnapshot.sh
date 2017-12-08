@@ -14,7 +14,7 @@ fi
 
 
 git pull
-mvn clean install exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate --rdom=${RDOM}" -Dexec.cleanupDaemonThreads=false
+mvn clean install exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate --scripts true --rdom=${RDOM}" -Dexec.cleanupDaemonThreads=false
 
 # generated results reside under $dbpedia_links/snapshot;
 # respective linksets are to be copied to $www/downloads.dbpedia.org/links/$REVISIONFOLDER
