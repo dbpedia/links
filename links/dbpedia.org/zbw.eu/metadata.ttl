@@ -12,6 +12,7 @@
 rdfs:comment "copied from ttl version of the linkset file";
 foaf:page <http://zbw.eu/stw/version/9.04/download/about.en.html>;
         a                       void:Linkset ;
+        dbp:ntriplefilelocation <stw_dbpedia_mapping.nt> ;
         rdfs:label              "Mapping STW - DBpedia"@de , "Mapping STW - DBpedia"@en ;
         cc:attributionName      "ZBW - Leibniz Information Centre for Economics"@en , "ZBW - Leibniz-Informationszentrum Wirtschaft"@de ;
         cc:attributionURL       "http://zbw.eu" ;
