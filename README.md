@@ -79,12 +79,16 @@ mvn exec:java -Dexec.mainClass="org.dbpedia.links.CLI" -Dexec.args="--generate -
 
 - Sarven Capadisli, AKSW, Uni Leipzig (Csarven)
 - Pascal Christoph, (dr0i)
+- Milan Dojchinovski (m1ci)
 - Christopher Gutteridge (cgutteridge)
 - Amy Guy, BBC / Uni Edinburgh (rhiaro)
 - Sebastian Hellmann, AKSW, Uni Leipzig (kurzum)
 - Anja Jentzsch, HPI Potsdam (ajeve)
+- Dimitris Kontokostas (jimkont)
 - Barry Norton (BarryNorton)
 - Heiko Paulheim, Uni Mannheim (HeikoPaulheim)
 - Petar Ristoski, Uni Mannheim (petarR)
 - Robert Rößling, AKSW, Uni Leipzig (rpod)
 - Søren Roug, (sorenroug)
+- Amit Kirschenbaum (akirsche)
+
