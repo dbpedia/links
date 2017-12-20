@@ -17,7 +17,7 @@
 
 <#ls2> a void:Linkset ;
 	#dbp:script "scripts/makeOrganisationLinks.sh"^^dbp:bash ;
-	dbp:script "scripts/makeOrganisationLinks.sh" ;
+#	dbp:script "scripts/makeOrganisationLinks.sh" ;
 	dbp:updateFrequencyInDays 30 ;
 	dbp:ntriplefilelocation <organisation_links.nt> ;
 #	dbp:linkConf <link-specs/lobid_dbpedia_Title.xml> ;
