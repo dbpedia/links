@@ -47,7 +47,8 @@ public class GenerateLinks {
 
 
     //Options
-    public boolean executeScripts = false;
+    //public boolean executeScripts = false;
+    public boolean executeScripts = true;
 
     //Debug options for CLI
     public boolean sparqlonly = false;
