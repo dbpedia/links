@@ -6,7 +6,7 @@
 
 <#ls1> a void:Linkset ;
 #	dbp:script "scripts/makeLinks.sh"^^dbp:bash ;
-	dbp:script "scripts/makeLinks.sh" ;
+#	dbp:script "scripts/makeLinks.sh" ;
 	dbp:updateFrequencyInDays 30 ;
 	dbp:ntriplefilelocation <viaf2dbpedia.nt> ;
 	void:objectsTarget <http://viaf.org/viaf/> ;
