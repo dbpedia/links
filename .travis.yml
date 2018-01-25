@@ -9,6 +9,11 @@ branches:
   only:
     - master
 install: /bin/true
+addons:
+    apt:
+        packages:
+            - p7zip-full
+
 script:
   - "mvn install -Dmaven.test.skip=false"
 notifications:
