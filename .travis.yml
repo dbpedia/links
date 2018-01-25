@@ -8,15 +8,15 @@ jdk:
 branches:
   only:
     - master
-# install: /bin/true
-install: travis_wait 30 mvn install -Dmaven.test.skip=false #for testing large linksets, e.g., YAGO
+ install: /bin/true
+# install: travis_wait 30 mvn install -Dmaven.test.skip=false #for testing large linksets, e.g., YAGO
 addons:
     apt:
         packages:
             - p7zip-full
 
-#script:
-#  - "mvn install -Dmaven.test.skip=false"
+script:
+  - "travis_wait 30 mvn install -Dmaven.test.skip=false"
 notifications:
   email:
     recipients:
