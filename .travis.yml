@@ -9,14 +9,15 @@ branches:
   only:
     - master
 # install: /bin/true
- install: travis_wait 30 mvn install #-Dmaven.test.skip=false #for testing large linksets, e.g., YAGO
+#for testing large linksets, e.g., YAGO
+install: travis_wait 30 mvn install
 addons:
     apt:
         packages:
             - p7zip-full
 
 script:
-  - "travis_wait mvn install -Dmaven.test.skip=false"
+  - "mvn install -Dmaven.test.skip=false"
 notifications:
   email:
     recipients:
