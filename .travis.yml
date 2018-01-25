@@ -8,8 +8,8 @@ jdk:
 branches:
   only:
     - master
-#install: /bin/true
-travis_wait 30 mvn install #for testing large linksets, e.g., YAGO
+# install: /bin/true
+install: travis_wait 30 mvn install #for testing large linksets, e.g., YAGO
 addons:
     apt:
         packages:
