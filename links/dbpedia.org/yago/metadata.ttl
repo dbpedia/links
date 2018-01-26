@@ -8,6 +8,6 @@
 	dbp:script "scripts/makeLinks.sh"^^dbp:bash ;
 	dbp:updateFrequencyInDays 30 ;
 	void:objectsTarget <https://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/yago/> ;
-	dc:author <amit> ;
+	dc:author <https://github.com/akirsche> ;
 	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
 	dct:description """YAGO is a huge semantic knowledge base, derived from Wikipedia, WordNet, and GeoNames.""" .
