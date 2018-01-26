@@ -49,6 +49,7 @@ public class GenerateLinks {
     //Options
     public boolean executeScripts = false;
 
+
     //Debug options for CLI
     public boolean sparqlonly = false;
     public boolean scriptonly = false;
@@ -232,7 +233,7 @@ public class GenerateLinks {
     //TODO error handling
     private void executeShellScript(File file, File destination) {
         String path = file.getParentFile().getAbsolutePath().replace("\\", "/");
-        String cmd = "./" + file.getName() + " " + destination.getAbsolutePath();
+        String cmd = "./" + file.getName() + " " + destination.getAbsolutePath().replace("\\", "/");
         L.info("Executing script at " + path);
         L.info("bash -c " + cmd);
 
