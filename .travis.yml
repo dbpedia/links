@@ -8,22 +8,14 @@ jdk:
 branches:
   only:
     - master
-# install: /bin/true
-#for testing large linksets, e.g., YAGO
-#install: travis_wait 30 mvn install
-install:
-  #output every 10 minutes to prevent killing the job by Travis-CI
-  - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
-  - mvn install -Dmaven.test.skip=false
-  #kill background sleep loop
-  - kill %1
+install: /bin/true
 addons:
     apt:
         packages:
             - p7zip-full
 
-#script:
-#  - travis_wait 30 mvn install -Dmaven.test.skip=false
+script:
+  -  mvn install -Dmaven.test.skip=false
 notifications:
   email:
     recipients:
