@@ -11,7 +11,8 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.log4j.Logger;
-import org.dbpedia.extraction.UriUtils$;
+import org.dbpedia.iri.UriUtils$;
+
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -103,7 +104,8 @@ public final class Utils {
                     }
                 };
                 executor.submit(parser);
-                try{
+                */
+                 /*try{
                 while (iter.hasNext()) {
                     Triple next = iter.next();
                     // Validate whether the links have the right DBpedia namespace for the subject
@@ -113,7 +115,6 @@ public final class Utils {
                         continue;
                     }
                 }*/
-
 
 
                 Reader in = new InputStreamReader(new FileInputStream(sourceFile), StandardCharsets.UTF_8);
@@ -163,7 +164,8 @@ public final class Utils {
 
                         // encode DBpedia URIs correctly
                         if (!deactivateUriToIriDecodingForTests) {
-                            String tmp = UriUtils$.MODULE$.uriToIri(first);
+                            String tmp = UriUtils$.MODULE$.uriToIri(first).toString();
+
                             if (!tmp.equals(first)) {
                                 decodecount++;
                                 first = tmp;
