@@ -1,6 +1,7 @@
-package org.dbpedia.extraction
+package org.dbpedia.extraction.util
 
 import java.lang.StringBuilder
+import org.dbpedia.extraction.util.NumberUtils.intToHex
 import java.security.MessageDigest
 import java.text.{DateFormat, SimpleDateFormat}
 import java.util.TimeZone
@@ -9,34 +10,6 @@ import java.util.TimeZone
  */
 object StringUtils
 {
-
-  private val hexChars = "0123456789ABCDEF".toCharArray
-
-
-  /**
-    * Returns hex digits for number. Number is treated as unsigned number.
-    * Warning: If the number is too large for the given number of hex digits,
-    * its most significant digits are silently ignored (which is probably not what you want).
-    * digits must be >= 0 and <= 8
-    */
-  def intToHex(num: Int, digits: Int): String = intToHex(new StringBuilder, num, digits).toString
-
-  /**
-    * Appends hex digits for number to string builder. Number is treated as unsigned number.
-    * Warning: If the number is too large for the given number of hex digits,
-    * its most significant digits are silently ignored (which is probably not what you want).
-    * digits must be >= 0 and <= 8
-    */
-  def intToHex(sb: StringBuilder, num: Int, digits: Int): StringBuilder = {
-    if (digits < 0 || digits > 8) throw new IllegalArgumentException("digits must be >= 0 and <= 8 but is "+digits)
-    var bits = digits << 2 // four bits per digit
-    while (bits > 0) {
-      bits -= 4
-      sb.append(hexChars((num >> bits) & 0xF))
-    }
-    sb
-  }
-
   // SimpleDateFormat is expensive but not thread-safe
   private val timestampFormat = new ThreadLocal[DateFormat] {
     override def initialValue() = {
@@ -149,7 +122,7 @@ object StringUtils
     if (chars.isEmpty) {
       new Array[String](0)
     } else {
-      var max = chars.max(Ordering.Char)
+      val max = chars.max(Ordering.Char)
       if (max >= limit) throw new IllegalArgumentException("highest code point "+max.toInt+" exceeds limit "+limit)
       val replace = new Array[String](max + 1)
       var pos = 0
