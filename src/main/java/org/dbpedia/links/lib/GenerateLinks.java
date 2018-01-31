@@ -344,6 +344,7 @@ public class GenerateLinks {
                 .setEndpoint(endpoint, Collections.emptyList())
                 .setPagination(500)
                 .setQueryDelay(50)
+                .setQueryLimit(10000) //must be set otherwise a smaller default value is set, which also overrides limit defined in the query.
                 .setCacheTTL(updateFrequencyInDays * 24L * 60L * 60L * 1000L)
                 .build();
 
