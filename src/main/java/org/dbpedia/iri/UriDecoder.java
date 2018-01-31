@@ -1,4 +1,4 @@
-package org.dbpedia.extraction;
+package org.dbpedia.iri;
 
 import java.nio.charset.Charset;
 
