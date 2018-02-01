@@ -164,7 +164,14 @@ public final class Utils {
 
                         // encode DBpedia URIs correctly
                         if (!deactivateUriToIriDecodingForTests) {
-                            String tmp = UriUtils$.MODULE$.uriToIri(first).toString();
+                            String tmp = null;
+                            try {
+                                tmp=UriUtils$.MODULE$.uriToIri(first).toASCIIString();
+                            }
+                            catch(NullPointerException e) {
+                                L.info("non IRI subject, skipped: "+first);
+                                continue;
+                            }
 
                             if (!tmp.equals(first)) {
                                 decodecount++;
