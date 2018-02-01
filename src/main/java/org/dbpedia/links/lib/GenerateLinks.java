@@ -49,6 +49,7 @@ public class GenerateLinks {
     //Options
     public boolean executeScripts = false;
 
+
     //Debug options for CLI
     public boolean sparqlonly = false;
     public boolean scriptonly = false;
@@ -232,7 +233,7 @@ public class GenerateLinks {
     //TODO error handling
     private void executeShellScript(File file, File destination) {
         String path = file.getParentFile().getAbsolutePath().replace("\\", "/");
-        String cmd = "./" + file.getName() + " " + destination.getAbsolutePath();
+        String cmd = "./" + file.getName() + " " + destination.getAbsolutePath().replace("\\", "/");
         L.info("Executing script at " + path);
         L.info("bash -c " + cmd);
 
@@ -344,6 +345,7 @@ public class GenerateLinks {
                 .setEndpoint(endpoint, Collections.emptyList())
                 .setPagination(500)
                 .setQueryDelay(50)
+                .setQueryLimit(10000) //must be set otherwise a smaller default value is set, which also overrides limit defined in the query.
                 .setCacheTTL(updateFrequencyInDays * 24L * 60L * 60L * 1000L)
                 .build();
 
