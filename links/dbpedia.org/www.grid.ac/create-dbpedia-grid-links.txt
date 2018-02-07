@@ -1,0 +1,48 @@
+# create grid to dbpedia links...
+# NOTE: we cant use sameAs, since grid has multiple identifiers for one org (e.g. for different countries or departments)
+
+# Download latest grid datasets: https://www.grid.ac/downloads
+# extract the grid.ttl file (is in real TURTLE)
+# we need to transform this to N-TRIPLES so we can use bash:
+# Install apache jena commandline tools (we need riot): https://jena.apache.org/documentation/tools/
+# tranform TURTLE file to N-TRIPLE
+riot --nocheck --output=N-Triples /path/grid.ttl >/path/grid.n3
+
+# extract dbpedia links based on wikipedia pages:
+# we ignore any link to non en.wikipedia (these were very few in 2017)
+# we also ignore when it linked to a specific section of a page (with fragments)
+cat '/path/grid.n3' | grep -E ".*/wikipediaPage>\s+<https?://en.wikipedia.org/wiki[^#]+$" | perl -pe 's/\s*<https?://([^>]+)>.*en.wikipedia.org\/wiki\/([^>]+)>.*/<http:\/\/dbpedia.org\/resource\/$2> <http:\/\/www.w3.org\/2004\/02\/skos\/core#closeMatch> <http:\/\/$1> ./g' > /path/grid-dbpedia-wikipediabased.ttl
+
+# extract the links to Wikidata
+cat '/home/chile/DBpedia/links/grid.n3' | grep -E ".*/hasWikidataId>\s+<http://www.wikidata.org/entity/*" | perl -pe 's/^\s*<https?://([^>]+)>.*<(http:\/\/www.wikidata.org\/entity\/[^>]+)>.*/<$2> <http:\/\/www.w3.org\/2004\/02\/skos\/core#closeMatch> <http:\/\/$1> ./g' > grid-wikidata.ttl
+
+# extract the grid identifiers from wikidata
+# TODO, bash script on raw_wikidata.ttl.bz2 (creates a 	http://www.w3.org/2004/02/skos/core#closeMatch file : wikidata-grid.ttl)
+
+# replace wikidata IRIs with DBpedia IRIs by using the MapIriScript script of the Extraction Framework (for both grid-wikidata.ttl and wikidata-grid.ttl)
+# Using the following (important) properties:
+# mapping-files=/home/chile/DBpedia/enwiki/20161020/enwiki-20161020-interlanguage-links
+# mapping-direction=object->subject
+# mapping-target=subject
+# mappings-filter=object,http://www.wikidata.org/entity
+# filter-out-non-matches=true
+# input=grid-wikidata.ttl,wikidata-grid.ttl
+
+# concat all 3 files
+cat grid-wikidata-redirected.ttl grid-dbpedia-wikipediabased.ttl wikidata-grid-redirected.ttl | grep "<http" > dbpedia-grid-unredirected.ttl
+
+# redirect all DBpedia Uris (recoding to IRIs at the same time) using the MapIriScript script of the Extraction Framework (for dbpedia-grid-unredirected.ttl)
+# Using the following (important) properties:
+# mapping-files=/home/chile/DBpedia/enwiki/20161020/transitive_redirects_en.ttl.bz2
+# mapping-direction=subject->object
+# mapping-target=subject
+# mappings-filter=
+# filter-out-non-matches=false
+# file-name-extension=-redirected
+# input=dbpedia-grid-unredirected.ttl
+
+# rename and uniq the result file (turning https into http addresses)
+cat dbpedia-grid-unredirected-redirected.ttl | perl -pe 's/(.*)(https:)(.*)/$1http:$3/g' | sort -u > grid-links.ttl
+
+#############
+# using grid-isni and wikidata-isni links i added just about 100 additional links
