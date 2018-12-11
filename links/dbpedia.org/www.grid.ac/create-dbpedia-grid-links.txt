@@ -17,9 +17,12 @@ cat '/path/grid.n3' | grep -E ".*/wikipediaPage>\s+<https?://en.wikipedia.org/wi
 cat '/home/chile/DBpedia/links/grid.n3' | grep -E ".*/hasWikidataId>\s+<http://www.wikidata.org/entity/*" | perl -pe 's/^\s*<https?://([^>]+)>.*<(http:\/\/www.wikidata.org\/entity\/[^>]+)>.*/<$2> <http:\/\/www.w3.org\/2004\/02\/skos\/core#closeMatch> <http:\/\/$1> ./g' > grid-wikidata.ttl
 
 # extract the grid identifiers from wikidata
-# TODO, bash script on raw_wikidata.ttl.bz2 (creates a 	http://www.w3.org/2004/02/skos/core#closeMatch file : wikidata-grid.ttl)
+https://query.wikidata.org/#SELECT%20%3Fwd%20%28wdt%3AP2427%20as%20%3Fprop%29%20%3Fgrid%0AWHERE%7B%0A%20%20%3Fwd%20wdt%3AP2427%20%3Fgrid.%0A%0A%20%20%7D
+#download results as csv
+# TODO, bash script on raw_wikidata.ttl.bz2 csv -> n-triple (creates a 	http://www.w3.org/2004/02/skos/core#closeMatch file : wikidata-grid.ttl)
 
 # replace wikidata IRIs with DBpedia IRIs by using the MapIriScript script of the Extraction Framework (for both grid-wikidata.ttl and wikidata-grid.ttl)
+(download: http://downloads.dbpedia.org/2016-10/core-i18n/en/interlanguage_links_en.ttl.bz2)
 # Using the following (important) properties:
 # mapping-files=/home/chile/DBpedia/enwiki/20161020/enwiki-20161020-interlanguage-links
 # mapping-direction=object->subject
