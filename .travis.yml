@@ -15,7 +15,7 @@ addons:
             - p7zip-full
 
 script:
-  -  mvn install -Dmaven.test.skip=false
+  -  mvn -q install -Dmaven.test.skip=false
 notifications:
   email:
     recipients:
