@@ -15,5 +15,5 @@ WHERE {
 }
 
 LIMIT 50000" http://aither.hbz-nrw.de:8000/sparql/ | grep -v "de.dbpedia" | sort -u > organisation_links_ascii.nt
-native2ascii -encoding UTF-8 -reverse organisation_links_ascii.nt $1
+native2ascii -encoding UTF-8 -reverse organisation_links_ascii.nt "$1"
 rm organisation_links_ascii.nt
