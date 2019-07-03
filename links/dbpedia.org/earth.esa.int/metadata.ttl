@@ -1,0 +1,13 @@
+@prefix dct:	<http://purl.org/dc/terms/> .
+@prefix dc: 	<http://purl.org/dc/elements/1.1/> .
+@prefix void: 	<http://rdfs.org/ns/void#> .
+@prefix xsd: 	<http://www.w3.org/2001/XMLSchema#> .
+@prefix dbp:	<http://dbpedia.org/property/> .
+
+<#ls1> a void:Linkset ;
+	dbp:script "scripts/makeEsaPlatformsLinks.sh"^^dbp:bash ;
+	dbp:updateFrequencyInDays 30 ;
+	void:objectsTarget <https://fedeo.spacebel.be/thesaurus/> ;
+	dc:author <https://github.com/akirsche> ;
+	dct:license <http://creativecommons.org/publicdomain/zero/1.0/> ;
+dct:description """Dataset with links to the European Space Agency Platforms.""" .
